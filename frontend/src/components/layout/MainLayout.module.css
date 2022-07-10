@@ -1,0 +1,11 @@
+.mainLayout {
+  display: grid;
+  grid-template-columns: 1.5fr 8.5fr;
+}
+
+.mainContent {
+  background: var(--MAIN-COLOR-BACKGROUND);
+
+  height: calc(100vh - 5rem);
+  padding: 1rem;
+}

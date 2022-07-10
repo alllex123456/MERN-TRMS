@@ -1,13 +1,52 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* COLOR KEY FLAT UI v1 PALETTE */
+/* 
+  --SIDE-COLOR-BACKGROUND: MIDNIGHT BLUE;
+  --SIDE-COLOR-BORDERS: PETER RIVER;
+  --SIDE-COLOR-TEXT: CLOUDS;
+
+  --HEADER-COLOR-BACKGROUND: MIDNIGHT BLUE;
+  --HEADER-COLOR-BORDERS: PETER RIVER;
+  --HEADER-COLOR-TEXT: CLOUDS;
+
+  --MAIN-COLOR-BACKGROUND: CLOUDS;
+  --MAIN-COLOR-BORDERS: CONCRETE;
+  --MAIN-COLOR-TEXT: MIDNIGHT BLUE;
+*/
+
+:root {
+  --SIDE-COLOR-BACKGROUND: #2c3e50;
+  --SIDE-COLOR-BORDERS: #3498db;
+  --SIDE-COLOR-TEXT: #ecf0f1;
+
+  --HEADER-COLOR-BACKGROUND: #2c3e50;
+  --HEADER-COLOR-BORDERS: #3498db;
+  --HEADER-COLOR-TEXT: #ecf0f1;
+
+  --MAIN-COLOR-BACKGROUND: #ecf0f1;
+  --MAIN-COLOR-BORDERS: #95a5a6;
+  --MAIN-COLOR-TEXT: #2c3e50;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,400;0,700;1,400&display=swap');
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 62.5%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style-type: none;
 }

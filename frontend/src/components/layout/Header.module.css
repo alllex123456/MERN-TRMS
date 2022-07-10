@@ -1,0 +1,34 @@
+.header {
+  grid-column: 1/-1;
+
+  background: var(--HEADER-COLOR-BACKGROUND);
+  color: var(--HEADER-COLOR-TEXT);
+
+  height: 5rem;
+  padding: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.userBar {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.userAvatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.userAvatar img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+}
