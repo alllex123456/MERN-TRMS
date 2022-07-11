@@ -11,6 +11,14 @@ export const QueuePage = () => {
       deadline: new Date().toLocaleString(),
       notes: 'notes',
     },
+    {
+      id: '2',
+      client: 'Test Client 2',
+      count: 250000,
+      rate: 12,
+      deadline: new Date().toLocaleString(),
+      notes: 'other notes',
+    },
   ];
 
   return <Queue orders={ORDERS_PENDING} />;

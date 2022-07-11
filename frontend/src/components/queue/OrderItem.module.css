@@ -1,0 +1,33 @@
+.orderItem span {
+  display: inline-block;
+  margin-right: 1rem;
+  padding: 0.5rem 0;
+}
+
+.orderItemIcon {
+  color: var(--SIDE-COLOR-BORDERS);
+  opacity: 0.7;
+  cursor: pointer;
+}
+.orderItemIcon:hover {
+  opacity: 1;
+}
+
+.orderItemNo {
+  width: 8rem;
+}
+.orderItemClient {
+  width: 30rem;
+}
+.orderItemCount {
+  width: 10rem;
+}
+.orderItemRate {
+  width: 8rem;
+}
+.orderItemDeadline {
+  width: 20rem;
+}
+.orderItemNotes {
+  width: 30rem;
+}

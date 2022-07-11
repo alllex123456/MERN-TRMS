@@ -50,3 +50,39 @@ a {
 ul {
   list-style-type: none;
 }
+
+/* UTILITY CLASSES */
+.marbo-s {
+  margin-bottom: 0.5rem;
+}
+.marbo-m {
+  margin-bottom: 1rem;
+}
+.marbo-l {
+  margin-bottom: 1.5rem;
+}
+.marbo-xl {
+  margin-bottom: 2rem;
+}
+
+/* CSSTransition */
+.slide-in-left-enter {
+  transform: translateX(-100%);
+}
+
+.slide-in-left-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 200ms;
+}
+
+.slide-in-left-exit {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.slide-in-left-exit-active {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: all 200ms;
+}

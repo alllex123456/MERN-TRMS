@@ -9,3 +9,15 @@
   height: calc(100vh - 5rem);
   padding: 1rem;
 }
+
+@media (max-width: 1300px) {
+  .mainLayout {
+    grid-template-columns: 2fr 8fr;
+  }
+}
+
+@media (max-width: 1000px) {
+  .mainContent {
+    grid-column: 1/-1;
+  }
+}

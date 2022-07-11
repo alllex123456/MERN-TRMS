@@ -52,3 +52,18 @@
 .linkActive {
   background: var(--SIDE-COLOR-BORDERS);
 }
+
+@media (max-width: 1600px) {
+  .link {
+    font-size: 1.2rem;
+  }
+  .navigationItem,
+  .profileItem {
+    margin: 1rem;
+  }
+}
+@media (max-width: 1000px) {
+  .navigation {
+    display: none;
+  }
+}

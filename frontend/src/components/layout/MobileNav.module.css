@@ -1,0 +1,51 @@
+.mobileNavigation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 70%;
+  background: white;
+}
+
+.navigationItem,
+.profileItem {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  padding-left: 2rem;
+
+  margin: 1rem;
+
+  text-decoration: none;
+}
+
+.profileItem {
+  transition: all 0.3s;
+}
+
+.icon {
+  color: var(--SIDE-COLOR-BACKGROUND);
+  transition: all 0.2s;
+}
+
+.link {
+  color: var(--SIDE-COLOR-BACKGROUND);
+  font-size: 1.4rem;
+  transition: all 0.2s;
+}
+
+.linkActive {
+  background: var(--SIDE-COLOR-BORDERS);
+}
+.linkActive .link {
+  color: white;
+}
+.linkActive .icon {
+  color: white;
+}
+
+@media (max-width: 400px) {
+  .mobileNavigation {
+    width: 100%;
+  }
+}
