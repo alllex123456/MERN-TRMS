@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 import { PencilSimple, Trash, Flag } from 'phosphor-react';
 
+import { Modal } from './Modal';
+
 import styles from './OrderItem.module.css';
 
-export const OrderItem = ({ itno, orderData }) => {
-  const [showModal, setShowModal] = useState(false);
-
-  const showModalHandler = () => {
-    setShowModal(true);
-  };
-  const hideModalHandler = () => {
-    setShowModal(true);
-  };
-
+export const OrderItem = ({ itno, orderData, onShowModal, onHideModal }) => {
   return (
     <li className={styles.orderItem}>
       <span className={styles.orderItemNo}>{itno}</span>
@@ -25,12 +18,20 @@ export const OrderItem = ({ itno, orderData }) => {
       <span className={styles.orderItemNotes}>{orderData.notes}</span>
       <span className={styles.orderItemActions}>
         <PencilSimple
-          onClick={showModalHandler}
+          onClick={() => onShowModal('editing', orderData)}
           className={styles.orderItemIcon}
           size={24}
         />
-        <Trash className={styles.orderItemIcon} size={24} />
-        <Flag className={styles.orderItemIcon} size={24} />
+        <Trash
+          onClick={() => onShowModal('delete')}
+          className={styles.orderItemIcon}
+          size={24}
+        />
+        <Flag
+          onClick={() => onShowModal('complete')}
+          className={styles.orderItemIcon}
+          size={24}
+        />
       </span>
     </li>
   );

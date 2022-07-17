@@ -15,4 +15,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: var(--MAIN-COLOR-BACKGROUND);
+  height: 30vh;
+  width: 30%;
 }
