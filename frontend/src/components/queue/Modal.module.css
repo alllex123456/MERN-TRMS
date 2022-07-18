@@ -15,6 +15,21 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: var(--MAIN-COLOR-BACKGROUND);
-  height: 30vh;
   width: 30%;
+  padding: 2rem;
+}
+
+.overlay input,
+select,
+textarea {
+  display: block;
+  width: 49%;
+  font: inherit;
+  font-size: 1.6rem;
+}
+
+.overlay label {
+  font: inherit;
+  font-size: 1.4rem;
+  font-weight: 700;
 }

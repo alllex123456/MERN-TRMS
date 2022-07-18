@@ -13,6 +13,11 @@ export const Queue = (props) => {
 
   // modal refs
   const editClientRef = useRef();
+  const editReceivedRef = useRef();
+  const editDeadlineRef = useRef();
+  const editRateRef = useRef();
+  const editCountRef = useRef();
+  const editNotesRef = useRef();
 
   const hideModalHandler = () => {
     setShowModal(false);
@@ -23,11 +28,61 @@ export const Queue = (props) => {
     if (mode === 'editing') {
       setModalContents(
         <Modal onHideModal={hideModalHandler}>
-          <select ref={editClientRef}>
-            <option defaultValue={orderData.client}>{orderData.client}</option>
-            <option>CLIENT</option>
-          </select>
-          <input type="number" step="0.01" defaultValue={orderData.rate} />
+          <div className={styles.formGroup}>
+            <label htmlFor="editClient">Client:</label>
+            <select id="editClient" ref={editClientRef}>
+              <option defaultValue={orderData.client}>
+                {orderData.client}
+              </option>
+              <option>CLIENT</option>
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="editReceived">Data primirii:</label>
+            <input
+              id="editReceived"
+              type="datetime"
+              defaultValue={orderData.received}
+              ref={editReceivedRef}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="editDeadline">Termen:</label>
+            <input
+              id="editDeadline"
+              type="datetime"
+              defaultValue={orderData.deadline}
+              ref={editDeadlineRef}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="editRate">Tarif:</label>
+            <input
+              id="editRate"
+              type="number"
+              step="0.01"
+              defaultValue={orderData.rate}
+              ref={editRateRef}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="editCount">Volum estimat:</label>
+            <input
+              id="editCount"
+              type="number"
+              step="0.01"
+              defaultValue={orderData.count}
+              ref={editCountRef}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="editNotes">Note:</label>
+            <textarea
+              id="editNotes"
+              defaultValue={orderData.notes}
+              ref={editNotesRef}
+            />
+          </div>
         </Modal>
       );
     }
@@ -53,9 +108,10 @@ export const Queue = (props) => {
       <li className={styles.queueItem}>
         <span className={styles.orderItemNo}>Nr. crt.</span>
         <span className={styles.orderItemClient}>Client</span>
+        <span className={styles.orderItemReceived}>Data primirii</span>
+        <span className={styles.orderItemDeadline}>Termen</span>
         <span className={styles.orderItemCount}>Volum estimat</span>
         <span className={styles.orderItemRate}>Tarif</span>
-        <span className={styles.orderItemDeadline}>Termen</span>
         <span className={styles.orderItemNotes}>Note</span>
         <span className={styles.orderItemActions}>Acțiuni</span>
       </li>

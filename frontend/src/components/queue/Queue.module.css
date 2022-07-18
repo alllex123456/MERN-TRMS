@@ -26,6 +26,9 @@
 .orderItemRate {
   width: 8rem;
 }
+.orderItemReceived {
+  width: 20rem;
+}
 .orderItemDeadline {
   width: 20rem;
 }
@@ -34,4 +37,8 @@
 }
 .orderItemActions {
   width: 10rem;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
 }
