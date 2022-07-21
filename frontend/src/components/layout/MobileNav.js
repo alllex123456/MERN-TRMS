@@ -43,7 +43,7 @@ export const MobileNav = (props) => {
               to="/queue"
             >
               <Hourglass size={32} className={styles.icon} />
-              <p className={styles.link}>COMENZI IN LUCRU</p>
+              <p className={styles.link}>COMENZI ÎN LUCRU</p>
             </NavLink>
           </li>
           <li>
@@ -53,7 +53,7 @@ export const MobileNav = (props) => {
               to="/clients"
             >
               <AddressBook size={32} className={styles.icon} />
-              <p className={styles.link}>CLIENTI</p>
+              <p className={styles.link}>CLIENȚI</p>
             </NavLink>
           </li>
           <li>
@@ -63,7 +63,7 @@ export const MobileNav = (props) => {
               to="/statements"
             >
               <BookOpen size={32} className={styles.icon} />
-              <p className={styles.link}>SITUATII CLIENTI</p>
+              <p className={styles.link}>SITUAȚII CLIENȚI</p>
             </NavLink>
           </li>
           <li>
@@ -96,7 +96,7 @@ export const MobileNav = (props) => {
               to="/"
             >
               <Gear size={32} className={styles.icon} />
-              <p className={styles.link}>SETARI</p>
+              <p className={styles.link}>SETĂRI</p>
             </NavLink>
           </li>
         </ul>

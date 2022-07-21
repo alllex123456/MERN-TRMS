@@ -6,6 +6,7 @@ import { OrderItem } from './OrderItem';
 import styles from './Queue.module.css';
 import '../../index.css';
 import { Modal } from './Modal';
+import Button from '../UIElements/Button';
 
 export const Queue = (props) => {
   const [showModal, setShowModal] = useState(false);
@@ -94,8 +95,10 @@ export const Queue = (props) => {
     }
   };
 
+  const addOrderHandler = () => {};
+
   if (props.orders.length === 0) {
-    return <h3>Nu exista comenzi in asteptare</h3>;
+    return <h3>Nu există comenzi în așteptare</h3>;
   }
 
   return (
@@ -103,7 +106,10 @@ export const Queue = (props) => {
       {showModal && modalContents}
       <div className={styles.queueHeader}>
         <Hourglass size={32} className={styles.icon} />
-        <h2 className="marbo-l">Organizator lucrari in curs</h2>
+        <h2>Organizator lucrări in curs</h2>
+        <Button type="button" onClick={addOrderHandler}>
+          + Adaugă comandă nouă
+        </Button>
       </div>
       <li className={styles.queueItem}>
         <span className={styles.orderItemNo}>Nr. crt.</span>

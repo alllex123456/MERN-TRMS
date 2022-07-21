@@ -30,19 +30,19 @@ export const Navigation = () => {
         <li>
           <NavLink className={activeLinks} to="/queue">
             <Hourglass size={32} className={styles.icon} />
-            <p className={styles.link}>COMENZI IN LUCRU</p>
+            <p className={styles.link}>COMENZI ÎN LUCRU</p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/clients">
             <AddressBook size={32} className={styles.icon} />
-            <p className={styles.link}>CLIENTI</p>
+            <p className={styles.link}>CLIENȚI</p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/statements">
             <BookOpen size={32} className={styles.icon} />
-            <p className={styles.link}>SITUATII CLIENTI</p>
+            <p className={styles.link}>SITUAȚII CLIENȚI</p>
           </NavLink>
         </li>
         <li>
@@ -63,7 +63,7 @@ export const Navigation = () => {
         <li>
           <NavLink className={styles.profileItem} to="/">
             <Gear size={32} className={styles.icon} />
-            <p className={styles.link}>SETARI</p>
+            <p className={styles.link}>SETĂRI</p>
           </NavLink>
         </li>
       </ul>

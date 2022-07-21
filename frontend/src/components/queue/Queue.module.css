@@ -1,10 +1,14 @@
 .queueList {
   font-size: 1.6rem;
+  padding: 2rem;
 }
 
 .queueHeader {
   display: flex;
   color: var(--MAIN-COLOR-TEXT);
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 .queueItem span {
