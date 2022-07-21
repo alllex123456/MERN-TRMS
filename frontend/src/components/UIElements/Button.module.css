@@ -12,5 +12,22 @@
 }
 
 .button:hover {
-  background: var(--BUTTON-COLOR-MAIN-HOVER);
+  background: var(--BUTTON-COLOR-MAIN--HOVER);
+}
+
+.danger {
+  background: var(--BUTTON-COLOR-DANGER);
+}
+.danger:hover {
+  background: var(--BUTTON-COLOR-DANGER--HOVER);
+}
+
+.inverse {
+  background: transparent;
+  color: var(--BUTTON-COLOR-MAIN);
+  border: 1px solid currentColor;
+}
+.inverse:hover {
+  background: var(--BUTTON-COLOR-MAIN);
+  color: var(--HEADER-COLOR-TEXT);
 }

@@ -23,8 +23,9 @@
   --MAIN-COLOR-TEXT: #2c3e50;
 
   --BUTTON-COLOR-MAIN: #3498db;
-  --BUTTON-COLOR-MAIN-HOVER: #2582c0;
-  --BUTTON-COLOR-DANGER: ;
+  --BUTTON-COLOR-MAIN--HOVER: #2582c0;
+  --BUTTON-COLOR-DANGER: #e74c3c;
+  --BUTTON-COLOR-DANGER--HOVER: #c0392b;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,400;0,700;1,400&display=swap');
@@ -63,6 +64,9 @@ ul {
 }
 .marbo-xl {
   margin-bottom: 2rem;
+}
+.center {
+  text-align: center;
 }
 
 /* CSSTransition */

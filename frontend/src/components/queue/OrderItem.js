@@ -16,18 +16,18 @@ export const OrderItem = ({ itno, orderData, onShowModal, onHideModal }) => {
       <span className={styles.orderItemRate}>{orderData.rate}</span>
       <span className={styles.orderItemNotes}>{orderData.notes}</span>
       <span className={styles.orderItemActions}>
+        <Flag
+          onClick={() => onShowModal('complete', orderData)}
+          className={styles.orderItemIcon}
+          size={24}
+        />
         <PencilSimple
-          onClick={() => onShowModal('editing', orderData)}
+          onClick={() => onShowModal('edit', orderData)}
           className={styles.orderItemIcon}
           size={24}
         />
         <Trash
-          onClick={() => onShowModal('delete')}
-          className={styles.orderItemIcon}
-          size={24}
-        />
-        <Flag
-          onClick={() => onShowModal('complete')}
+          onClick={() => onShowModal('delete', orderData)}
           className={styles.orderItemIcon}
           size={24}
         />

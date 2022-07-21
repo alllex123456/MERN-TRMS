@@ -33,3 +33,23 @@ textarea {
   font-size: 1.4rem;
   font-weight: 700;
 }
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  outline: none;
+  border: none;
+  width: 100%;
+}
+
+.formActions {
+  font-size: 1.4rem;
+  text-align: center;
+}
+.formActions > * {
+  margin-top: 3rem;
+  margin-right: 2rem;
+}
