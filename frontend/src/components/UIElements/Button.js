@@ -7,7 +7,7 @@ const Button = (props) => {
   if (props.href) {
     return (
       <a
-        className={`${styles.button} ${styles.button}--${
+        className={`${props.className} ${styles.button} ${styles.button}--${
           props.size || 'medium'
         } ${props.inverse && styles.inverse} ${props.danger && styles.danger}`}
         href={props.href}
@@ -20,7 +20,7 @@ const Button = (props) => {
   if (props.to) {
     return (
       <Link
-        className={`${styles.button} ${styles.button}--${
+        className={`${props.className} ${styles.button} ${styles.button}--${
           props.size || 'medium'
         } ${props.inverse && styles.inverse} ${props.danger && styles.danger}`}
         href={props.href}
@@ -33,10 +33,9 @@ const Button = (props) => {
 
   return (
     <button
-      className={`${styles.button} ${styles.button}--${
+      className={`${props.className} ${styles.button} ${styles.button}--${
         props.size || 'medium'
       } ${props.inverse && styles.inverse} ${props.danger && styles.danger}`}
-      href={props.href}
       type={props.type}
       disabled={props.disabled}
       onClick={props.onClick}

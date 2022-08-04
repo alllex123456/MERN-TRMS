@@ -1,0 +1,23 @@
+.clientItem {
+  border-bottom: 2px solid var(--PETER-RIVER);
+  font-size: 1.6rem;
+}
+
+.item {
+  display: inline-block;
+  width: 16.66%;
+}
+
+.clientLink {
+  font-weight: 500;
+  outline: 1px solid #fff;
+}
+
+.clientItemIcon {
+  color: var(--SIDE-COLOR-BclientS);
+  opacity: 0.7;
+  cursor: pointer;
+}
+.clientItemIcon:hover {
+  opacity: 1;
+}

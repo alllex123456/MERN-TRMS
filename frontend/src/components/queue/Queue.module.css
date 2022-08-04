@@ -21,6 +21,9 @@
 .orderItemNo {
   width: 8rem;
 }
+.orderItemRef {
+  width: 20rem;
+}
 .orderItemClient {
   width: 30rem;
 }

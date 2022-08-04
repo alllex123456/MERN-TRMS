@@ -10,6 +10,11 @@
 */
 
 :root {
+  --MIDNIGHT-BLUE: #2c3e50;
+  --PETER-RIVER: #3498db;
+  --CLOUDS: #ecf0f1;
+  --CONCRETE: #95a5a6;
+
   --SIDE-COLOR-BACKGROUND: #2c3e50;
   --SIDE-COLOR-BORDERS: #3498db;
   --SIDE-COLOR-TEXT: #ecf0f1;
@@ -26,6 +31,8 @@
   --BUTTON-COLOR-MAIN--HOVER: #2582c0;
   --BUTTON-COLOR-DANGER: #e74c3c;
   --BUTTON-COLOR-DANGER--HOVER: #c0392b;
+
+  --MODAL: #2c3e50;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,400;0,700;1,400&display=swap');
@@ -50,6 +57,22 @@ a {
 
 ul {
   list-style-type: none;
+}
+
+input,
+select,
+textarea {
+  border-radius: 3px;
+  border: none;
+  outline: none;
+}
+
+button {
+  font: inherit;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
 }
 
 /* UTILITY CLASSES */
@@ -87,6 +110,29 @@ ul {
 
 .slide-in-left-exit-active {
   transform: translateX(-100%);
+  opacity: 0;
+  transition: all 200ms;
+}
+
+/* modal */
+.modal-enter {
+  transform: translateY(10rem);
+  opacity: 0;
+}
+
+.modal-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 200ms;
+}
+
+.modal-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-exit-active {
+  transform: translateY(10rem);
   opacity: 0;
   transition: all 200ms;
 }

@@ -8,6 +8,7 @@
 
   height: calc(100vh - 5rem);
   padding: 1rem;
+  overflow-y: scroll;
 }
 
 @media (max-width: 1300px) {

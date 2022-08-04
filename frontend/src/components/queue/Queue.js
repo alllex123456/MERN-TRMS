@@ -1,79 +1,66 @@
-import React, { useState, useRef } from 'react';
+import React, { useReducer } from 'react';
 import { Hourglass } from 'phosphor-react';
 
-import { OrderItem } from './OrderItem';
+import OrderItem from './OrderItem';
+import AddModal from './modals/AddModal';
+import EditModal from './modals/EditModal';
+import CompleteModal from './modals/CompleteModal';
+import DeleteModal from './modals/DeleteModal';
+import Button from '../UIElements/Button';
 
 import styles from './Queue.module.css';
 import '../../index.css';
-import { Modal } from './Modal';
-import Button from '../UIElements/Button';
+
+const modalReducer = (state, action) => {
+  switch (action.type) {
+    case 'CLOSE':
+      return {
+        ...state,
+        show: false,
+      };
+    case 'ADD':
+      return {
+        type: action.type,
+        show: true,
+      };
+    case 'EDIT':
+      return {
+        type: action.type,
+        show: true,
+        contents: action.orderData,
+      };
+    case 'COMPLETE':
+      return {
+        type: action.type,
+        show: true,
+        contents: action.orderData,
+      };
+    case 'DELETE':
+      return {
+        type: action.type,
+        show: true,
+        contents: action.orderData,
+      };
+
+    default:
+      return state;
+  }
+};
 
 export const Queue = (props) => {
-  const [showModal, setShowModal] = useState(false);
-  const [modalContents, setModalContents] = useState();
+  const [modalState, dispatch] = useReducer(modalReducer, {
+    type: '',
+    show: false,
+    contents: {},
+  });
 
-  // modal refs
-  const clientRef = useRef();
-  const receivedRef = useRef();
-  const deadlineRef = useRef();
-  const rateRef = useRef();
-  const countRef = useRef();
-  const notesRef = useRef();
-
-  const hideModalHandler = () => {
-    setShowModal(false);
+  const closeModalHandler = (type) => {
+    dispatch({ type: 'CLOSE' });
   };
 
-  const showModalHandler = (mode, orderData) => {
-    setShowModal(true);
-    if (mode === 'complete') {
-      setModalContents(
-        <Modal
-          complete
-          orderData={orderData}
-          clientRef={clientRef}
-          receivedRef={receivedRef}
-          deadlineRef={deadlineRef}
-          rateRef={rateRef}
-          countRef={countRef}
-          notesRef={notesRef}
-          onHideModal={hideModalHandler}
-        />
-      );
-    }
-    if (mode === 'edit') {
-      setModalContents(
-        <Modal
-          edit
-          orderData={orderData}
-          clientRef={clientRef}
-          receivedRef={receivedRef}
-          deadlineRef={deadlineRef}
-          rateRef={rateRef}
-          countRef={countRef}
-          notesRef={notesRef}
-          onHideModal={hideModalHandler}
-        />
-      );
-    }
-    if (mode === 'delete') {
-      setModalContents(
-        <Modal
-          delete
-          orderData={orderData}
-          clientRef={clientRef}
-          receivedRef={receivedRef}
-          deadlineRef={deadlineRef}
-          rateRef={rateRef}
-          countRef={countRef}
-          notesRef={notesRef}
-          onHideModal={hideModalHandler}
-        />
-      );
-    }
+  const showModalHandler = (action, orderData) => {
+    dispatch({ type: action, orderData });
   };
-
-  const addOrderHandler = () => {};
 
   if (props.orders.length === 0) {
     return <h3>Nu există comenzi în așteptare</h3>;
@@ -81,16 +68,47 @@ export const Queue = (props) => {
 
   return (
     <ul className={styles.queueList}>
-      {showModal && modalContents}
+      {modalState.type === 'ADD' && (
+        <AddModal
+          orderData={modalState.contents}
+          show={modalState.show}
+          onCloseModal={closeModalHandler}
+        />
+      )}
+      {modalState.type === 'EDIT' && (
+        <EditModal
+          orderData={modalState.contents}
+          show={modalState.show}
+          onCloseModal={closeModalHandler}
+        />
+      )}
+
+      {modalState.type === 'COMPLETE' && (
+        <CompleteModal
+          orderData={modalState.contents}
+          show={modalState.show}
+          onCloseModal={closeModalHandler}
+        />
+      )}
+
+      {modalState.type === 'DELETE' && (
+        <DeleteModal
+          orderData={modalState.contents}
+          show={modalState.show}
+          onCloseModal={closeModalHandler}
+        />
+      )}
+
       <div className={styles.queueHeader}>
         <Hourglass size={32} className={styles.icon} />
         <h2>Organizator lucrări in curs</h2>
-        <Button type="button" onClick={addOrderHandler}>
+        <Button type="button" onClick={() => showModalHandler('ADD')}>
           + Adaugă comandă nouă
         </Button>
       </div>
       <li className={styles.queueItem}>
         <span className={styles.orderItemNo}>Nr. crt.</span>
+        <span className={styles.orderItemRef}>Referință</span>
         <span className={styles.orderItemClient}>Client</span>
         <span className={styles.orderItemReceived}>Data primirii</span>
         <span className={styles.orderItemDeadline}>Termen</span>
@@ -101,10 +119,11 @@ export const Queue = (props) => {
       </li>
       {props.orders.map((order, index) => (
         <OrderItem
+          key={index + 1}
           itno={index + 1}
           orderData={order}
           onShowModal={showModalHandler}
-          onHideModal={hideModalHandler}
+          onCloseModal={closeModalHandler}
         />
       ))}
     </ul>

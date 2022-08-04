@@ -1,0 +1,22 @@
+.error {
+  color: red;
+}
+
+.input,
+.select,
+.textarea {
+  padding: 0.5rem;
+  background: rgba(0, 0, 255, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.select > * {
+  font: inherit;
+  height: auto;
+}

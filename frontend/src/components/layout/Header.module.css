@@ -13,11 +13,48 @@
 }
 
 .userBar {
-  display: flex;
+  position: relative;
+  padding: 0.5rem;
 
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+}
+
+.userBarMenu {
+  position: absolute;
+  top: 4rem;
+  right: -2rem;
+
+  width: 30rem;
+  height: 10rem;
+  padding: 2rem;
+  border-radius: 5px;
+  box-shadow: 0 0 6px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  font-size: 1.4rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.3s;
+}
+
+.userBar:hover .userBarMenu {
+  opacity: 0.8;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.userBarMenu:hover {
+  opacity: 0.8;
+  visibility: visible;
+  pointer-events: all;
 }
 
 .userAvatar {
@@ -55,6 +92,67 @@
   width: 2rem;
   height: 2px;
   background: var(--SIDE-COLOR-BORDERS);
+}
+
+/* MODAL */
+.profileAvatar {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  font-size: 1.6rem;
+  margin-bottom: 3rem;
+}
+
+.profileSettings {
+  width: 50%;
+  font-size: 1.6rem;
+}
+
+.profileSettings > * {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.profileInput {
+  width: 50%;
+  display: block;
+  font-size: 1.6rem;
+}
+
+.profileLink,
+.logoutBtn {
+  color: var(--BUTTON-COLOR-MAIN);
+  display: flex;
+  align-items: center;
+}
+.profileLink span,
+.logoutBtn span {
+  font-weight: 700;
+  opacity: 0.8;
+  transition: all 1s;
+}
+.profileLink:hover {
+  color: var(--BUTTON-COLOR-MAIN--HOVER);
+}
+.profileLink:hover span,
+.logoutBtn:hover span {
+  opacity: 1;
+}
+
+.logoutBtn {
+  color: var(--BUTTON-COLOR-DANGER);
+}
+.logoutBtn:hover {
+  color: var(--BUTTON-COLOR-DANGER--HOVER);
+}
+
+.profileActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+
+  margin: 3rem;
 }
 
 @media (max-width: 1000px) {

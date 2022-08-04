@@ -1,0 +1,16 @@
+.clientsList {
+  padding: 1rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.clientsList h2 {
+  margin-bottom: 3rem;
+}
+
+.head {
+  display: inline-block;
+  background: var(--CONCRETE);
+  width: 16.66%;
+  font-size: 1.8rem;
+  font-weight: 700;
+}

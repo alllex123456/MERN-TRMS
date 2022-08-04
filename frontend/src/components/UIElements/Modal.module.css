@@ -1,0 +1,22 @@
+.overlay {
+  position: absolute;
+  top: 15vh;
+  left: 30%;
+  width: 40%;
+  background: var(--MAIN-COLOR-BACKGROUND);
+
+  z-index: 100;
+
+  padding: 2rem;
+  border-radius: 5px;
+}
+
+.header {
+  background: var(--HEADER-COLOR-BORDERS);
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}

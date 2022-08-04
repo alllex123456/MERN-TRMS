@@ -14,8 +14,9 @@
   gap: 2rem;
   align-items: center;
 
-  margin: 2rem;
-  padding: 1rem;
+  border-radius: 3px;
+  margin: 1rem;
+  padding: 0.5rem;
   text-decoration: none;
 }
 
@@ -24,7 +25,7 @@
 }
 
 .navigationItem:hover .link {
-  filter: brightness(200%);
+  filter: brightness(300%);
 }
 
 .profileItem {
@@ -34,8 +35,8 @@
 }
 
 .profileItem:hover {
-  border-radius: 5px;
-  box-shadow: 0 0 5px 3px var(--SIDE-COLOR-BORDERS);
+  border-radius: 3px;
+  box-shadow: 0 0 5px 3px var(--PETER-RIVER);
 }
 
 .icon {
@@ -50,7 +51,7 @@
 }
 
 .linkActive {
-  background: var(--SIDE-COLOR-BORDERS);
+  background: var(--PETER-RIVER);
 }
 
 @media (max-width: 1600px) {

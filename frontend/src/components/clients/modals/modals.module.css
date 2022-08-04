@@ -1,0 +1,63 @@
+.section {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.section span {
+  display: block;
+}
+
+.actions {
+  font-size: 1.4rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.input,
+.textarea {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 1.6rem;
+  outline: none;
+  border: none;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.formGroup label {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.formActions {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.formActions > * {
+  margin-top: 2rem;
+  margin-right: 1rem;
+}
+
+.modalGroup p {
+  padding: 0.5rem;
+  background: #fff;
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.flex {
+  display: flex;
+  gap: 2rem;
+}
+
+.flex > section {
+  width: 50%;
+}

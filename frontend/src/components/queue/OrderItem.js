@@ -3,10 +3,11 @@ import { PencilSimple, Trash, Flag } from 'phosphor-react';
 
 import styles from './OrderItem.module.css';
 
-export const OrderItem = ({ itno, orderData, onShowModal, onHideModal }) => {
+const OrderItem = ({ itno, orderData, onShowModal }) => {
   return (
     <li className={styles.orderItem}>
       <span className={styles.orderItemNo}>{itno}</span>
+      <span className={styles.orderItemRef}>{orderData.orderRef}</span>
       <span className={styles.orderItemClient}>{orderData.client}</span>
       <span className={styles.orderItemReceived}>{orderData.received}</span>
       <span className={styles.orderItemDeadline}>{orderData.deadline}</span>
@@ -17,17 +18,17 @@ export const OrderItem = ({ itno, orderData, onShowModal, onHideModal }) => {
       <span className={styles.orderItemNotes}>{orderData.notes}</span>
       <span className={styles.orderItemActions}>
         <Flag
-          onClick={() => onShowModal('complete', orderData)}
+          onClick={() => onShowModal('COMPLETE', orderData)}
           className={styles.orderItemIcon}
           size={24}
         />
         <PencilSimple
-          onClick={() => onShowModal('edit', orderData)}
+          onClick={() => onShowModal('EDIT', orderData)}
           className={styles.orderItemIcon}
           size={24}
         />
         <Trash
-          onClick={() => onShowModal('delete', orderData)}
+          onClick={() => onShowModal('DELETE', orderData)}
           className={styles.orderItemIcon}
           size={24}
         />
@@ -35,3 +36,5 @@ export const OrderItem = ({ itno, orderData, onShowModal, onHideModal }) => {
     </li>
   );
 };
+
+export default OrderItem;

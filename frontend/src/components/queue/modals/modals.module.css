@@ -1,0 +1,57 @@
+.input,
+.textarea {
+  display: block;
+  width: 49%;
+  font: inherit;
+  font-size: 1.6rem;
+  outline: none;
+  border: none;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.formGroup label {
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.formActions {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.formActions > * {
+  margin-top: 3rem;
+  margin-right: 2rem;
+}
+
+.modalGroup p,
+.modalGroup .input {
+  padding: 1rem;
+  background: #fff;
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.modalGroup input {
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3);
+}
+.modalGroup label {
+  color: red;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.flex {
+  display: flex;
+  gap: 2rem;
+}
+
+.flex > section {
+  width: 50%;
+}
