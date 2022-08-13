@@ -58,6 +58,20 @@
   gap: 2rem;
 }
 
-.flex > section {
+.flex > * {
   width: 50%;
+}
+
+@media (max-width: 400px) {
+  .input,
+  .textarea {
+    font-size: 1.2rem;
+  }
+  .modalGroup p {
+    font-size: 1.2rem;
+  }
+
+  .flex {
+    gap: 1rem;
+  }
 }

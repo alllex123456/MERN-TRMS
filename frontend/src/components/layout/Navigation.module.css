@@ -1,8 +1,6 @@
 .navigation {
-  border-top: 1px solid var(--SIDE-COLOR-BORDERS);
-  background: var(--SIDE-COLOR-BACKGROUND);
-  color: var(--SIDE-COLOR-TEXT);
-
+  background: var(--ELECTROMAGNETIC);
+  border-right: 1px solid black;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -36,22 +34,22 @@
 
 .profileItem:hover {
   border-radius: 3px;
-  box-shadow: 0 0 5px 3px var(--PETER-RIVER);
+  box-shadow: 0 0 5px 3px var(--BLEU-FRANCE-LIGHTER);
 }
 
 .icon {
-  color: var(--SIDE-COLOR-TEXT);
+  color: #fff;
   transition: all 0.2s;
 }
 
 .link {
-  color: var(--SIDE-COLOR-TEXT);
-  font-size: 1.4rem;
+  color: #fff;
+  font-size: 1.2rem;
   transition: all 0.2s;
 }
 
 .linkActive {
-  background: var(--PETER-RIVER);
+  background: var(--BLEU-FRANCE);
 }
 
 @media (max-width: 1600px) {

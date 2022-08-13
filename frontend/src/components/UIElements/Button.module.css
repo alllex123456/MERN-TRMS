@@ -1,26 +1,27 @@
 .button {
   display: inline-block;
+  min-width: 15rem;
   border: 1px solid transparent;
-  outline: none;
-  font: inherit;
+  border-radius: 3px;
   font-size: 1.4rem;
-  cursor: pointer;
   padding: 0.5rem 1.5rem;
   background: var(--BUTTON-COLOR-MAIN);
-  font-weight: 600;
-  color: var(--HEADER-COLOR-TEXT);
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 255, 0.3);
   transition: all 0.3s;
 }
 
 .button:hover {
-  background: var(--BUTTON-COLOR-MAIN--HOVER);
+  filter: brightness(120%);
 }
 
 .danger {
   background: var(--BUTTON-COLOR-DANGER);
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
 }
 .danger:hover {
-  background: var(--BUTTON-COLOR-DANGER--HOVER);
+  filter: brightness(120%);
 }
 
 .inverse {
@@ -30,7 +31,7 @@
 }
 .inverse:hover {
   background: var(--BUTTON-COLOR-MAIN);
-  color: var(--HEADER-COLOR-TEXT);
+  color: #fff;
 }
 
 .button:disabled,
@@ -40,4 +41,10 @@
   color: #979797;
   border-color: #ccc;
   cursor: not-allowed;
+}
+
+@media (max-width: 850px) {
+  .button {
+    font-size: 1.2rem;
+  }
 }

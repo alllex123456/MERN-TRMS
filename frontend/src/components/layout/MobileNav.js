@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { NavLink } from 'react-router-dom';
 import {
@@ -11,6 +11,8 @@ import {
   Gear,
 } from 'phosphor-react';
 
+import Backdrop from '../UIElements/Backdrop';
+
 import styles from './MobileNav.module.css';
 import '../../index.css';
 
@@ -21,86 +23,90 @@ export const MobileNav = (props) => {
       : styles.navigationItem;
 
   return (
-    <CSSTransition
-      classNames="slide-in-left"
-      in={props.showMobileNav}
-      timeout={200}
-      mountOnEnter
-      unmountOnExit
-    >
-      <nav className={styles.mobileNavigation}>
-        <ul className={styles.mobileNavigationList}>
-          <li>
-            <NavLink onClick={props.onClick} className={activeLinks} to="/">
-              <AppWindow size={32} className={styles.icon} />
-              <p className={styles.link}>PANOU DE BORD</p>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              onClick={props.onClick}
-              className={activeLinks}
-              to="/queue"
-            >
-              <Hourglass size={32} className={styles.icon} />
-              <p className={styles.link}>COMENZI ÎN LUCRU</p>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              onClick={props.onClick}
-              className={activeLinks}
-              to="/clients"
-            >
-              <AddressBook size={32} className={styles.icon} />
-              <p className={styles.link}>CLIENȚI</p>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              onClick={props.onClick}
-              className={activeLinks}
-              to="/statements"
-            >
-              <BookOpen size={32} className={styles.icon} />
-              <p className={styles.link}>SITUAȚII CLIENȚI</p>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              onClick={props.onClick}
-              className={activeLinks}
-              to="/statistics"
-            >
-              <Activity size={32} className={styles.icon} />
-              <p className={styles.link}>STATISTICI DE LUCRU</p>
-            </NavLink>
-          </li>
-        </ul>
+    <Fragment>
+      {props.showMobileNav && <Backdrop onClick={props.onClick} />}
 
-        <ul className={styles.profileList}>
-          <li>
-            <NavLink
-              onClick={props.onClick}
-              className={styles.profileItem}
-              to="/"
-            >
-              <User size={32} className={styles.icon} />
-              <p className={styles.link}>PROFIL</p>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              onClick={props.onClick}
-              className={styles.profileItem}
-              to="/"
-            >
-              <Gear size={32} className={styles.icon} />
-              <p className={styles.link}>SETĂRI</p>
-            </NavLink>
-          </li>
-        </ul>
-      </nav>
-    </CSSTransition>
+      <CSSTransition
+        classNames="slide-in-left"
+        in={props.showMobileNav}
+        timeout={200}
+        mountOnEnter
+        unmountOnExit
+      >
+        <nav className={styles.mobileNavigation}>
+          <ul className={styles.mobileNavigationList}>
+            <li>
+              <NavLink onClick={props.onClick} className={activeLinks} to="/">
+                <AppWindow size={32} className={styles.icon} />
+                <p className={styles.link}>PANOU DE BORD</p>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={props.onClick}
+                className={activeLinks}
+                to="/queue"
+              >
+                <Hourglass size={32} className={styles.icon} />
+                <p className={styles.link}>COMENZI ÎN LUCRU</p>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={props.onClick}
+                className={activeLinks}
+                to="/clients"
+              >
+                <AddressBook size={32} className={styles.icon} />
+                <p className={styles.link}>CLIENȚI</p>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={props.onClick}
+                className={activeLinks}
+                to="/statements"
+              >
+                <BookOpen size={32} className={styles.icon} />
+                <p className={styles.link}>SITUAȚII CLIENȚI</p>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={props.onClick}
+                className={activeLinks}
+                to="/statistics"
+              >
+                <Activity size={32} className={styles.icon} />
+                <p className={styles.link}>STATISTICI DE LUCRU</p>
+              </NavLink>
+            </li>
+          </ul>
+
+          <ul className={styles.profileList}>
+            <li>
+              <NavLink
+                onClick={props.onClick}
+                className={styles.profileItem}
+                to="/"
+              >
+                <User size={32} className={styles.icon} />
+                <p className={styles.link}>PROFIL</p>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                onClick={props.onClick}
+                className={styles.profileItem}
+                to="/"
+              >
+                <Gear size={32} className={styles.icon} />
+                <p className={styles.link}>SETĂRI</p>
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+      </CSSTransition>
+    </Fragment>
   );
 };

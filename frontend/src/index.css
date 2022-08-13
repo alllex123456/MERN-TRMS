@@ -1,36 +1,17 @@
 /* COLOR KEY FLAT UI v1 PALETTE */
-/* 
-  --#2c3e50: MIDNIGHT BLUE;
-  --#3498db: PETER RIVER;
-  --#ecf0f1: CLOUDS;
-  --#95a5a6: CONCRETE;
-  --#e74c3c: ALIZARIN;
-  --#c0392b: POMEGRANATE;
-
-*/
 
 :root {
-  --MIDNIGHT-BLUE: #2c3e50;
-  --PETER-RIVER: #3498db;
+  --ELECTROMAGNETIC: #2f3640;
+  --BLEU-FRANCE: #2e86de;
+  --BLEU-FRANCE-LIGHTER: #589ee5;
+  --BLEU-FRANCE-DARKER: #256bb2;
+  --REEF: #079992;
+
   --CLOUDS: #ecf0f1;
   --CONCRETE: #95a5a6;
 
-  --SIDE-COLOR-BACKGROUND: #2c3e50;
-  --SIDE-COLOR-BORDERS: #3498db;
-  --SIDE-COLOR-TEXT: #ecf0f1;
-
-  --HEADER-COLOR-BACKGROUND: #2c3e50;
-  --HEADER-COLOR-BORDERS: #3498db;
-  --HEADER-COLOR-TEXT: #ecf0f1;
-
-  --MAIN-COLOR-BACKGROUND: #ecf0f1;
-  --MAIN-COLOR-BORDERS: #95a5a6;
-  --MAIN-COLOR-TEXT: #2c3e50;
-
-  --BUTTON-COLOR-MAIN: #3498db;
-  --BUTTON-COLOR-MAIN--HOVER: #2582c0;
-  --BUTTON-COLOR-DANGER: #e74c3c;
-  --BUTTON-COLOR-DANGER--HOVER: #c0392b;
+  --BUTTON-COLOR-MAIN: #2e86de;
+  --BUTTON-COLOR-DANGER: #ee5253;
 
   --MODAL: #2c3e50;
 }
@@ -48,6 +29,7 @@
 html {
   font-family: 'Titillium Web', sans-serif;
   font-size: 62.5%;
+  color: var(--PETER-RIVER-DARK);
 }
 
 a {
@@ -57,6 +39,11 @@ a {
 
 ul {
   list-style-type: none;
+}
+
+h2 {
+  text-transform: uppercase;
+  font-size: 1.6rem;
 }
 
 input,
@@ -135,4 +122,14 @@ button {
   transform: translateY(10rem);
   opacity: 0;
   transition: all 200ms;
+}
+
+/* QUERIES */
+@media (max-width: 700px) {
+  html {
+    font-size: 55%;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
 }

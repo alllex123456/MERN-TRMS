@@ -21,3 +21,14 @@
 .clientItemIcon:hover {
   opacity: 1;
 }
+
+@media (max-width: 800px) {
+  .clientItem > span:nth-of-type(3),
+  .clientItem > span:nth-of-type(4),
+  .clientItem > span:nth-of-type(5) {
+    display: none;
+  }
+  .item {
+    width: 33.33%;
+  }
+}

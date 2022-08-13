@@ -66,7 +66,8 @@ const CompleteModal = (props) => {
             id="editCount"
             type="number"
             step="0.01"
-            defaultValue={props.orderData.count}
+            defaultValue={formState.inputs.editCount.value}
+            defaultValidity={formState.inputs.editCount.isValid}
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Nu a fost selectat volumul final"
             onInput={inputHandler}
@@ -79,7 +80,8 @@ const CompleteModal = (props) => {
           className={styles.textarea}
           element="textarea"
           id="editNotes"
-          defaultValue={props.orderData.notes}
+          defaultValue={formState.inputs.editNotes.value}
+          defaultValidity={formState.inputs.editNotes.isValid}
           validators={[]}
           onInput={inputHandler}
         />

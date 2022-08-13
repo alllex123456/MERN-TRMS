@@ -1,10 +1,14 @@
 import React, { useReducer } from 'react';
-import ClientItem from './ClientItem';
+import { AddressBook } from 'phosphor-react';
 
-import styles from './ClientsList.module.css';
+import ClientItem from './ClientItem';
 import DeleteModal from './modals/DeleteModal';
 import EditModal from './modals/EditModal';
 import ViewModal from './modals/ViewModal';
+import Button from '../UIElements/Button';
+
+import styles from './ClientsList.module.css';
+import AddModal from './modals/AddModal';
 
 const clientReducer = (state, action) => {
   switch (action.type) {
@@ -12,6 +16,11 @@ const clientReducer = (state, action) => {
       return {
         ...state,
         show: false,
+      };
+    case 'ADD':
+      return {
+        type: action.type,
+        show: true,
       };
     case 'VIEW':
       return {
@@ -53,6 +62,13 @@ const ClientsList = (props) => {
 
   return (
     <ul className={styles.clientsList}>
+      {modalState.type === 'ADD' && (
+        <AddModal
+          show={modalState.show}
+          clientData={modalState.content}
+          onCloseModal={closeModalHandler}
+        />
+      )}
       {modalState.type === 'VIEW' && (
         <ViewModal
           show={modalState.show}
@@ -75,7 +91,13 @@ const ClientsList = (props) => {
         />
       )}
 
-      <h2>Clienți înregistrați la {new Date().toLocaleString()}</h2>
+      <div className={styles.clientsHeader}>
+        <AddressBook size={32} className={styles.icon} />
+        <h2>Lista clienților înregistrați</h2>
+        <Button type="button" onClick={() => showModalHandler('ADD')}>
+          + Adaugă client nou
+        </Button>
+      </div>
 
       <span className={styles.head}>NUME</span>
       <span className={styles.head}>TELEFON</span>

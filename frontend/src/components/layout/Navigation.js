@@ -7,7 +7,6 @@ import {
   Activity,
   BookOpen,
   User,
-  Gear,
 } from 'phosphor-react';
 
 import styles from './Navigation.module.css';
@@ -58,12 +57,6 @@ export const Navigation = () => {
           <NavLink className={styles.profileItem} to="/">
             <User size={32} className={styles.icon} />
             <p className={styles.link}>PROFIL</p>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink className={styles.profileItem} to="/">
-            <Gear size={32} className={styles.icon} />
-            <p className={styles.link}>SETĂRI</p>
           </NavLink>
         </li>
       </ul>

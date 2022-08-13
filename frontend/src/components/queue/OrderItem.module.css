@@ -1,11 +1,21 @@
+.orderItem {
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.responsive {
+  display: none !important;
+  font-weight: 700;
+}
+
 .orderItem span {
   display: inline-block;
-  margin-right: 1rem;
-  padding: 0.5rem 0;
+  vertical-align: top;
+  margin-right: 0.5rem;
+  padding: 3px 0;
 }
 
 .orderItemIcon {
-  color: var(--SIDE-COLOR-BORDERS);
+  color: var(--BLEU-FRANCE-DARKER);
   opacity: 0.7;
   cursor: pointer;
 }
@@ -17,10 +27,10 @@
   width: 8rem;
 }
 .orderItemRef {
-  width: 20rem;
+  width: 15rem;
 }
 .orderItemClient {
-  width: 30rem;
+  width: 15rem;
 }
 .orderItemCount {
   width: 10rem;
@@ -29,11 +39,34 @@
   width: 8rem;
 }
 .orderItemReceived {
-  width: 20rem;
+  width: 15rem;
 }
 .orderItemDeadline {
-  width: 20rem;
+  width: 15rem;
 }
 .orderItemNotes {
-  width: 30rem;
+  width: 20rem;
+}
+.orderItemActions {
+  width: 10rem;
+}
+
+@media (max-width: 1500px) {
+  .orderItem > span {
+    width: 11rem;
+  }
+  .orderItemNo,
+  .orderItemRate {
+    width: 4rem !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .responsive {
+    display: block !important;
+  }
+
+  .orderItem > span {
+    width: 100%;
+  }
 }

@@ -3,7 +3,7 @@
   top: 15vh;
   left: 30%;
   width: 40%;
-  background: var(--MAIN-COLOR-BACKGROUND);
+  background: var(--CLOUDS);
 
   z-index: 100;
 
@@ -12,11 +12,18 @@
 }
 
 .header {
-  background: var(--HEADER-COLOR-BORDERS);
+  background: var(--REEF);
   color: #fff;
-  padding: 1rem;
   text-align: center;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 2rem;
+}
+
+@media (max-width: 1000px) {
+  .overlay {
+    top: 10vh;
+    left: 5%;
+    width: 90%;
+  }
 }

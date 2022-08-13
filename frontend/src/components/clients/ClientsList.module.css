@@ -1,16 +1,30 @@
 .clientsList {
+  font-size: 1.6rem;
   padding: 1rem;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
-.clientsList h2 {
+.clientsHeader {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
   margin-bottom: 3rem;
 }
 
 .head {
   display: inline-block;
-  background: var(--CONCRETE);
+  border-bottom: 2px solid var(--REEF);
   width: 16.66%;
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 1.6rem;
+}
+
+@media (max-width: 800px) {
+  .clientsList > span:nth-of-type(3),
+  .clientsList > span:nth-of-type(4),
+  .clientsList > span:nth-of-type(5) {
+    display: none;
+  }
+  .head {
+    width: 33.33%;
+  }
 }

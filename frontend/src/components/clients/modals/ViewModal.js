@@ -41,7 +41,7 @@ const ViewModal = (props) => {
         <span>Data adăugării: {props.clientData.dateAdded}</span>
       </div>
       <div className={styles.actions}>
-        <Button type="button" inverse onClick={() => props.onCloseModal()}>
+        <Button type="button" onClick={() => props.onCloseModal()}>
           Închide
         </Button>
       </div>

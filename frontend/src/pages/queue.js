@@ -13,13 +13,24 @@ export const QueuePage = () => {
       notes: 'notes',
     },
     {
-      client: 'Test Client 2',
+      client:
+        'Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2',
       orderRef: 'referinta comanda',
       received: new Date().toLocaleString().slice(0, 17),
       deadline: new Date().toLocaleString().slice(0, 17),
       count: 250000,
       rate: 12,
-      notes: 'other notes',
+      notes:
+        'other notesTest Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2Test Client 2',
+    },
+    {
+      client: 'Test Client 2',
+      orderRef: 'referinta comanda',
+      received: new Date().toLocaleString().slice(0, 17),
+      deadline: new Date().toLocaleString().slice(0, 17),
+      count: 120000,
+      rate: 10,
+      notes: 'notes',
     },
   ];
 

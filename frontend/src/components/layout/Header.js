@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { SignOut, User } from 'phosphor-react';
+import { SignOut, Gear } from 'phosphor-react';
 
 import { MobileNav } from './MobileNav';
 import { AuthContext } from '../../context/auth-context';
@@ -79,7 +79,10 @@ export const Header = () => {
           <span />
           <span />
         </button>
-        <h1>TRMS</h1>
+
+        <h1 className={styles.zent}>
+          ZenT<sup>freelance</sup>
+        </h1>
       </div>
 
       <MobileNav
@@ -97,7 +100,7 @@ export const Header = () => {
             className={styles.profileLink}
             onClick={() => setShowProfile(true)}
           >
-            <User size={32} />
+            <Gear size={32} />
             <span>setări</span>
           </button>
           <button className={styles.logoutBtn} onClick={logout}>

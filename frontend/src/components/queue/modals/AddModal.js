@@ -13,11 +13,11 @@ const AddModal = (props) => {
   const [formState, inputHandler] = useForm(
     {
       editReference: { value: '', isValid: true },
-      editClient: { value: '', isValid: true },
+      editClient: { value: '', isValid: false },
       editReceived: { value: '', isValid: true },
-      editDeadline: { value: '', isValid: true },
-      editRate: { value: '', isValid: true },
-      editCount: { value: '', isValid: true },
+      editDeadline: { value: '', isValid: false },
+      editRate: { value: '', isValid: false },
+      editCount: { value: '', isValid: false },
       editNotes: { value: '', isValid: true },
     },
     false
@@ -46,9 +46,11 @@ const AddModal = (props) => {
           id="editClient"
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Nu a fost selectat un client"
+          defaultValidity={formState.inputs.editClient.isValid}
           onInput={inputHandler}
         >
-          <option>CLIENT</option>
+          <option>selectează clientul...</option>
+          <option VALUE="CLIENT">CLIENT</option>
         </Input>
       </div>
       <div className={`${styles.formGroup} ${styles.flex}`}>
@@ -60,6 +62,7 @@ const AddModal = (props) => {
             id="editReceived"
             type="datetime"
             defaultValue={new Date().toLocaleString().slice(0, 17)}
+            defaultValidity={formState.inputs.editReceived.isValid}
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Nu a fost selectată data primirii"
             onInput={inputHandler}
@@ -75,6 +78,7 @@ const AddModal = (props) => {
             type="datetime"
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Nu a fost selectat termenul de predare"
+            defaultValidity={formState.inputs.editDeadline.isValid}
             onInput={inputHandler}
           />
         </section>
@@ -90,6 +94,7 @@ const AddModal = (props) => {
             step="0.01"
             validators={[VALIDATOR_REQUIRE()]}
             errorText="Nu a fost selectat un tarif"
+            defaultValidity={formState.inputs.editRate.isValid}
             onInput={inputHandler}
           />
         </section>
@@ -103,7 +108,8 @@ const AddModal = (props) => {
             type="number"
             step="0.01"
             validators={[VALIDATOR_REQUIRE()]}
-            errorText="Nu a fost selectat volumul final"
+            errorText="Nu a fost selectat volumul estimat"
+            defaultValidity={formState.inputs.editCount.isValid}
             onInput={inputHandler}
           />
         </section>
@@ -115,6 +121,7 @@ const AddModal = (props) => {
           element="textarea"
           id="editNotes"
           validators={[]}
+          defaultValidity={formState.inputs.editNotes.isValid}
           onInput={inputHandler}
         />
       </div>

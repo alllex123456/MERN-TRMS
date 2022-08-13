@@ -63,51 +63,53 @@ const Auth = () => {
   };
 
   return (
-    <Card className={styles.authCard}>
-      <h2>Autentificare</h2>
-      <hr />
-      <form onSubmit={authSubmit}>
-        <Input
-          id="email"
-          element="input"
-          label="Email"
-          type="text"
-          placeholder="Adresa de email..."
-          validators={[VALIDATOR_EMAIL()]}
-          errorText="Nu s-a introdus o adresă de email validă"
-          onInput={inputHandler}
-        />
-
-        <Input
-          id="password"
-          element="input"
-          label="Parola"
-          type="password"
-          placeholder="Parola..."
-          validators={[]}
-          onInput={inputHandler}
-        />
-
-        {!isLoggingIn && (
+    <div className={styles.authBackground}>
+      <Card className={styles.authCard}>
+        <h2>Autentificare</h2>
+        <hr />
+        <form onSubmit={authSubmit}>
           <Input
-            id="repeatPassword"
+            id="email"
             element="input"
-            label="Repetă parola"
-            type="password"
-            placeholder="Parola..."
-            validators={[VALIDATOR_MINLENGTH(5)]}
-            errorText="Parola trebuie să conțină minim 5 caractere"
+            label="Email"
+            type="text"
+            placeholder="Adresa de email..."
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="Nu s-a introdus o adresă de email validă"
             onInput={inputHandler}
           />
-        )}
-        <Button disabled={!formState.isValid} onClick={inputHandler}>
-          {!isLoggingIn ? 'CREEAZĂ CONT NOU' : 'AUTENTIFICARE'}
+
+          <Input
+            id="password"
+            element="input"
+            label="Parola"
+            type="password"
+            placeholder="Parola..."
+            validators={[]}
+            onInput={inputHandler}
+          />
+
+          {!isLoggingIn && (
+            <Input
+              id="repeatPassword"
+              element="input"
+              label="Repetă parola"
+              type="password"
+              placeholder="Parola..."
+              validators={[VALIDATOR_MINLENGTH(5)]}
+              errorText="Parola trebuie să conțină minim 5 caractere"
+              onInput={inputHandler}
+            />
+          )}
+          <Button disabled={!formState.isValid} onClick={inputHandler}>
+            {!isLoggingIn ? 'CREEAZĂ CONT NOU' : 'AUTENTIFICARE'}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          {!isLoggingIn ? 'AUTENTIFICARE' : 'CREEAZĂ CONT NOU'}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        {!isLoggingIn ? 'AUTENTIFICARE' : 'CREEAZĂ CONT NOU'}
-      </Button>
-    </Card>
+      </Card>
+    </div>
   );
 };
 
