@@ -8,7 +8,7 @@ const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
 SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey =
-  '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';
+  process.env.SENDINBLUE_KEY;
 
 exports.getUserData = async (req, res, next) => {
   const { userId } = req.userData;
