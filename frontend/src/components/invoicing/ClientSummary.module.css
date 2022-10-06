@@ -1,0 +1,21 @@
+.clientSummary {
+  background: rgba(59, 61, 61, 0.05);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.clientSummary:hover {
+  background: rgba(59, 61, 61, 0.07);
+}
+
+.clientName {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.clientDue {
+  font-weight: 500;
+  font-size: 1.4rem;
+  text-align: right;
+}

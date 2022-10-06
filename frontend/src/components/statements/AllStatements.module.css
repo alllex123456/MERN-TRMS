@@ -1,0 +1,27 @@
+.statementsHeader {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.label {
+  font-size: 1.2rem;
+}
+
+.input,
+.select,
+.option {
+  font-size: 1.4rem;
+  padding: 0.5rem;
+  width: 20rem;
+}
+
+.input {
+  margin-bottom: 2rem;
+}
+
+.flex {
+  max-width: 130rem;
+  margin: 0 auto;
+}

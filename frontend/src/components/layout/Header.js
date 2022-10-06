@@ -1,75 +1,40 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { SignOut, Gear } from 'phosphor-react';
+
+import SettingsModal from '../COMMON/Modals/UserModals/SettingsModal';
 
 import { MobileNav } from './MobileNav';
 import { AuthContext } from '../../context/auth-context';
-import { useForm } from '../../hooks/useForm';
-import Button from '../UIElements/Button';
-import Input from '../UIElements/Input';
 
 import styles from './Header.module.css';
-import Modal from '../UIElements/Modal';
 
 export const Header = () => {
-  const { logout } = useContext(AuthContext);
+  const { logout, avatar, userAlias } = useContext(AuthContext);
   const [showMobileNav, setShowMobileNav] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [file, setFile] = useState();
+  const [preview, setPreview] = useState();
 
-  const [formState, inputHandler] = useForm(
-    { language: 'RO', theme: 'default' },
-    true
-  );
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-  };
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setPreview(fileReader.result);
+    };
+    fileReader.readAsDataURL(file);
+  }, [file]);
 
   return (
     <header className={styles.header}>
-      <Modal
-        form
-        show={showProfile}
-        close={() => setShowProfile(false)}
-        header="NUME UTILIZATOR"
-        footer={`Profil modificat ultima dată la: ${new Date().toLocaleString()}`}
-      >
-        <div className={styles.profileAvatar}>
-          <img src="./images/avatar.jpg" alt="" />
-          <p>
-            Alias: <span>NICKNAME</span>
-          </p>
-        </div>
-        <div className={styles.profileSettings}>
-          <Input
-            className={styles.profileInput}
-            id="language"
-            element="select"
-            label="Limba selectată"
-            onInput={inputHandler}
-            validators={[]}
-          >
-            <option value="RO">Română</option>
-          </Input>
-          <Input
-            className={styles.profileInput}
-            id="theme"
-            element="select"
-            label="Temă"
-            onInput={inputHandler}
-            validators={[]}
-          >
-            <option value="Implicit">Implicit</option>
-          </Input>
-        </div>
-        <div className={styles.profileActions}>
-          <Button type="submit" onClick={submitHandler}>
-            Salvează
-          </Button>
-          <Button danger type="button" onClick={() => setShowProfile(false)}>
-            Închide
-          </Button>
-        </div>
-      </Modal>
+      <SettingsModal
+        show={showSettings}
+        preview={preview}
+        setPreview={setPreview}
+        setFile={setFile}
+        setShowSettings={setShowSettings}
+      />
       <div className={styles.headerName}>
         <button
           className={styles.navigationButton}
@@ -92,13 +57,17 @@ export const Header = () => {
 
       <div className={styles.userBar}>
         <div className={styles.userAvatar}>
-          <img src="./images/avatar.jpg" alt="" />
+          {avatar ? (
+            <img src={`http://localhost:8000/uploads/avatars/${avatar}`} />
+          ) : (
+            <div className="blankAvatar" />
+          )}
         </div>
-        <div className={styles.userName}>UTILIZATOR</div>
+        <div className={styles.userName}>{userAlias}</div>
         <div className={styles.userBarMenu}>
           <button
             className={styles.profileLink}
-            onClick={() => setShowProfile(true)}
+            onClick={() => setShowSettings(true)}
           >
             <Gear size={32} />
             <span>setări</span>

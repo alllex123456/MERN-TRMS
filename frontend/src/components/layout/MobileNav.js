@@ -9,9 +9,10 @@ import {
   BookOpen,
   User,
   Gear,
+  Money,
 } from 'phosphor-react';
 
-import Backdrop from '../UIElements/Backdrop';
+import Backdrop from '../COMMON/UIElements/Backdrop';
 
 import styles from './MobileNav.module.css';
 import '../../index.css';
@@ -36,7 +37,11 @@ export const MobileNav = (props) => {
         <nav className={styles.mobileNavigation}>
           <ul className={styles.mobileNavigationList}>
             <li>
-              <NavLink onClick={props.onClick} className={activeLinks} to="/">
+              <NavLink
+                onClick={props.onClick}
+                className={activeLinks}
+                to="/main"
+              >
                 <AppWindow size={32} className={styles.icon} />
                 <p className={styles.link}>PANOU DE BORD</p>
               </NavLink>
@@ -72,13 +77,19 @@ export const MobileNav = (props) => {
               </NavLink>
             </li>
             <li>
+              <NavLink className={activeLinks} to="/invoicing">
+                <Money size={32} className={styles.icon} />
+                <p className={styles.link}>FACTURI</p>
+              </NavLink>
+            </li>
+            <li>
               <NavLink
                 onClick={props.onClick}
                 className={activeLinks}
-                to="/statistics"
+                to="/metrics"
               >
                 <Activity size={32} className={styles.icon} />
-                <p className={styles.link}>STATISTICI DE LUCRU</p>
+                <p className={styles.link}>DATE DE LUCRU</p>
               </NavLink>
             </li>
           </ul>
@@ -88,7 +99,7 @@ export const MobileNav = (props) => {
               <NavLink
                 onClick={props.onClick}
                 className={styles.profileItem}
-                to="/"
+                to="/profile"
               >
                 <User size={32} className={styles.icon} />
                 <p className={styles.link}>PROFIL</p>

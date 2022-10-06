@@ -1,0 +1,15 @@
+.table-wrapper {
+  max-height: 40rem;
+  overflow-y: scroll;
+}
+
+.table {
+  table-layout: fixed;
+  width: 100%;
+  word-wrap: break-word;
+  padding-right: 1rem;
+}
+
+.invoicingTable {
+  font-size: 1.2rem;
+}

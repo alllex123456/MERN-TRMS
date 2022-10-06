@@ -7,6 +7,7 @@ import {
   Activity,
   BookOpen,
   User,
+  Money,
 } from 'phosphor-react';
 
 import styles from './Navigation.module.css';
@@ -21,7 +22,7 @@ export const Navigation = () => {
     <nav className={styles.navigation}>
       <ul className={styles.navigationList}>
         <li>
-          <NavLink className={activeLinks} to="/">
+          <NavLink className={activeLinks} to="/main">
             <AppWindow size={32} className={styles.icon} />
             <p className={styles.link}>PANOU DE BORD</p>
           </NavLink>
@@ -45,16 +46,22 @@ export const Navigation = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink className={activeLinks} to="/statistics">
+          <NavLink className={activeLinks} to="/invoicing">
+            <Money size={32} className={styles.icon} />
+            <p className={styles.link}>FACTURI</p>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink className={activeLinks} to="/metrics">
             <Activity size={32} className={styles.icon} />
-            <p className={styles.link}>STATISTICI DE LUCRU</p>
+            <p className={styles.link}>DATE DE LUCRU</p>
           </NavLink>
         </li>
       </ul>
 
       <ul className={styles.profileList}>
         <li>
-          <NavLink className={styles.profileItem} to="/">
+          <NavLink className={styles.profileItem} to="/profile">
             <User size={32} className={styles.icon} />
             <p className={styles.link}>PROFIL</p>
           </NavLink>

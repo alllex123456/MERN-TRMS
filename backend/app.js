@@ -1,30 +1,54 @@
 const express = require('express');
+const dotenv = require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config();
 const HttpError = require('./models/http-error');
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use('/uploads/avatars', express.static(path.join('uploads', 'avatars')));
+
+//CORS
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, Content-Type, X-Requested-With, Accept, Authorization, Payload'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+
+  next();
+});
 
 // ROUTES
+const appRoutes = require('./routes/app-routes');
+const orderRoutes = require('./routes/order-routes');
 const userRoutes = require('./routes/user-routes');
-const queueRoutes = require('./routes/queue-routes');
 const clientsRoutes = require('./routes/clients-routes');
 const statementsRoutes = require('./routes/statements-routes');
-const statisticsRoutes = require('./routes/statistics-routes');
+const metricsRoutes = require('./routes/metrics-routes');
+const noteRoutes = require('./routes/note-routes');
+const invoiceRoutes = require('./routes/invoice-routes');
+app.use('/app', appRoutes);
 app.use('/user', userRoutes);
-app.use('/queue', queueRoutes);
+app.use('/orders', orderRoutes);
 app.use('/clients', clientsRoutes);
 app.use('/statements', statementsRoutes);
-app.use('/statistics', statisticsRoutes);
+app.use('/invoicing', invoiceRoutes);
+app.use('/metrics', metricsRoutes);
+app.use('/notes', noteRoutes);
 
 app.use((req, res, next) => {
   throw new HttpError('No route found', 500);
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => console.log(err));
+  }
   if (res.headerSent) {
     return next(error);
   }

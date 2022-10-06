@@ -1,118 +1,120 @@
-import React, { useReducer } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AddressBook } from 'phosphor-react';
 
 import ClientItem from './ClientItem';
-import DeleteModal from './modals/DeleteModal';
-import EditModal from './modals/EditModal';
-import ViewModal from './modals/ViewModal';
-import Button from '../UIElements/Button';
+import DeleteModal from '../COMMON/Modals/ClientModals/DeleteModal';
+import EditModal from '../COMMON/Modals/ClientModals/EditModal';
+import ViewModal from '../COMMON/Modals/ClientModals/ViewModal';
+import Button from '../COMMON/UIElements/Button';
+import AddModal from '../COMMON/Modals/ClientModals/AddModal';
+import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
+import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
+
+import { useHttpClient } from '../../hooks/useHttpClient';
+import { useModal } from '../../hooks/useModal';
+import { AuthContext } from '../../context/auth-context';
 
 import styles from './ClientsList.module.css';
-import AddModal from './modals/AddModal';
-
-const clientReducer = (state, action) => {
-  switch (action.type) {
-    case 'CLOSE':
-      return {
-        ...state,
-        show: false,
-      };
-    case 'ADD':
-      return {
-        type: action.type,
-        show: true,
-      };
-    case 'VIEW':
-      return {
-        type: action.type,
-        show: true,
-        content: action.clientData,
-      };
-    case 'EDIT':
-      return {
-        type: action.type,
-        show: true,
-        content: action.clientData,
-      };
-    case 'DELETE':
-      return {
-        type: action.type,
-        show: true,
-        content: action.clientData,
-      };
-    default:
-      return state;
-  }
-};
 
 const ClientsList = (props) => {
-  const [modalState, dispatch] = useReducer(clientReducer, {
-    type: '',
-    show: false,
-    content: '',
-  });
+  const { token } = useContext(AuthContext);
+  const [loadedClients, setLoadedClients] = useState();
 
-  const showModalHandler = (action, clientData) => {
-    dispatch({ type: action, clientData });
+  const { modalState, closeModalHandler, showModalHandler } = useModal(
+    '',
+    '',
+    false
+  );
+
+  const { sendRequest, isLoading, error, clearError } = useHttpClient();
+
+  const refreshClients = async () => {
+    const responseData = await sendRequest(
+      `http://localhost:8000/clients`,
+      'GET',
+      null,
+      { Authorization: 'Bearer ' + token }
+    );
+    setLoadedClients(responseData.message.clients);
   };
 
-  const closeModalHandler = () => {
-    dispatch({ type: 'CLOSE' });
-  };
+  useEffect(() => {
+    const getClients = async () => {
+      const responseData = await sendRequest(
+        `http://localhost:8000/clients`,
+        'GET',
+        null,
+        { Authorization: 'Bearer ' + token }
+      );
+      setLoadedClients(responseData.message.clients);
+    };
+    getClients();
+  }, [token, sendRequest]);
 
   return (
-    <ul className={styles.clientsList}>
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+
       {modalState.type === 'ADD' && (
         <AddModal
+          refreshClients={refreshClients}
           show={modalState.show}
-          clientData={modalState.content}
+          clientData={modalState.contents}
           onCloseModal={closeModalHandler}
         />
       )}
       {modalState.type === 'VIEW' && (
         <ViewModal
           show={modalState.show}
-          clientData={modalState.content}
+          clientData={modalState.contents}
           onCloseModal={closeModalHandler}
         />
       )}
       {modalState.type === 'EDIT' && (
         <EditModal
+          refreshClients={refreshClients}
           show={modalState.show}
-          clientData={modalState.content}
+          clientData={modalState.contents}
           onCloseModal={closeModalHandler}
         />
       )}
       {modalState.type === 'DELETE' && (
         <DeleteModal
+          refreshClients={refreshClients}
           show={modalState.show}
-          clientData={modalState.content}
+          clientData={modalState.contents}
           onCloseModal={closeModalHandler}
         />
       )}
 
-      <div className={styles.clientsHeader}>
-        <AddressBook size={32} className={styles.icon} />
-        <h2>Lista clienților înregistrați</h2>
-        <Button type="button" onClick={() => showModalHandler('ADD')}>
-          + Adaugă client nou
-        </Button>
-      </div>
+      <div className="pageContainer">
+        <div className={styles.clientsHeader}>
+          <AddressBook size={32} className={styles.icon} />
+          <h2>Nomenclator clienți</h2>
+          <Button type="button" onClick={() => showModalHandler('ADD')}>
+            + Adaugă client nou
+          </Button>
+        </div>
 
-      <span className={styles.head}>NUME</span>
-      <span className={styles.head}>TELEFON</span>
-      <span className={styles.head}>EMAIL</span>
-      <span className={styles.head}>TARIF</span>
-      <span className={styles.head}>UM</span>
-      <span className={styles.head}>Acțiuni</span>
-      {props.clients.map((client, index) => (
-        <ClientItem
-          key={index}
-          clientData={client}
-          onShowModal={showModalHandler}
-        />
-      ))}
-    </ul>
+        {isLoading && <LoadingSpinner className="center martop-xl" />}
+        {!isLoading && (
+          <ul className={styles.clientsList}>
+            {loadedClients && loadedClients.length === 0 && (
+              <li className="center noItems">Nu aveți clienți adăugați</li>
+            )}
+            {loadedClients &&
+              loadedClients.map((client, index) => (
+                <ClientItem
+                  key={client.id}
+                  itno={index + 1}
+                  clientData={client}
+                  onShowModal={showModalHandler}
+                />
+              ))}
+          </ul>
+        )}
+      </div>
+    </React.Fragment>
   );
 };
 

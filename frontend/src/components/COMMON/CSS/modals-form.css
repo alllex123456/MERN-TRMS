@@ -1,0 +1,149 @@
+.input,
+.textarea {
+  display: block;
+  font: inherit;
+  font-size: 1.6rem;
+  outline: none;
+  border: none;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.formGroup label {
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.formActions {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.formActions > * {
+  margin-top: 3rem;
+  margin-right: 2rem;
+}
+
+.modalGroup p,
+.modalGroup .input {
+  padding: 1rem;
+  background: #fff;
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.modalGroup span {
+  display: block;
+  font-weight: 500;
+  font-size: 1.4rem;
+}
+
+.modalGroup input {
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3);
+}
+.modalGroup label {
+  color: red;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.flex {
+  display: flex;
+  gap: 2rem;
+}
+
+.flex > * {
+  width: 50%;
+}
+
+/* in client ViewModal */
+.actions {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+/*  */
+
+/* in client EditModal */
+.clientAvatar {
+  position: relative;
+  transform: translateX(calc(50% - 6rem));
+  margin-bottom: 3rem;
+}
+
+.clientAvatar img {
+  width: 12rem;
+  height: 12rem;
+  object-fit: cover;
+}
+
+.clientHeader {
+  display: flex;
+  gap: 2rem;
+}
+
+.viewCard {
+  margin-bottom: 3rem;
+}
+
+.profileAvatar {
+  position: relative;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  font-size: 1.6rem;
+  margin-bottom: 3rem;
+}
+
+.profileAvatar img {
+  object-fit: cover;
+  width: 12rem;
+  height: 12rem;
+}
+
+.changeProfileAvatar {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  color: #fff;
+  padding: 1rem;
+  background: rgb(255 255 255 / 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.changeProfileAvatar:hover {
+  background: rgb(255 255 255 / 0.6);
+}
+
+/* in user SettingsModal */
+.profileSettings {
+  width: 50%;
+  font-size: 1.6rem;
+}
+
+.profileSettings > * {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.profileInput {
+  width: 50%;
+  display: block;
+  font-size: 1.6rem;
+}
+
+.profileActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+
+  margin: 3rem;
+}
+/*  */

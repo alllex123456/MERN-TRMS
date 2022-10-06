@@ -6,12 +6,18 @@
   justify-content: space-between;
 }
 
+.navigationList {
+  padding: 5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .navigationItem,
 .profileItem {
   display: flex;
-  gap: 2rem;
   align-items: center;
-
+  gap: 2rem;
   border-radius: 3px;
   margin: 1rem;
   padding: 0.5rem;
@@ -52,6 +58,12 @@
   background: var(--BLEU-FRANCE);
 }
 
+@media (max-width: 2000px) {
+  .navigationList {
+    padding: 0;
+  }
+}
+
 @media (max-width: 1600px) {
   .link {
     font-size: 1.2rem;
@@ -61,7 +73,7 @@
     margin: 1rem;
   }
 }
-@media (max-width: 1000px) {
+@media (max-width: 1400px) {
   .navigation {
     display: none;
   }

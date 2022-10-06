@@ -1,0 +1,9 @@
+.successModal {
+  text-align: center;
+}
+
+.success {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}

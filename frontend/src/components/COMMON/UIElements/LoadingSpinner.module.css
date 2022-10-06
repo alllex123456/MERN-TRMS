@@ -1,0 +1,38 @@
+.loadingSpinner {
+  display: inline-block;
+  width: 6rem;
+  height: 6rem;
+}
+
+.loadingSpinner:after {
+  content: ' ';
+  display: block;
+  width: 4rem;
+  height: 4rem;
+  margin: 1px;
+  border-radius: 50%;
+  border: 5px solid #510077;
+  border-color: #510077 transparent #510077 transparent;
+  animation: dual-ring 1.2s linear infinite;
+}
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

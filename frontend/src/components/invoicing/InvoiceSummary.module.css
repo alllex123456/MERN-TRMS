@@ -1,0 +1,94 @@
+.invoiceSummary {
+  position: relative;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 10rem;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--REEF);
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.specifics {
+  font-size: 1.2rem;
+}
+
+.status {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  padding: 0.5rem;
+  font-weight: 700;
+  color: var(--CLOUDS);
+}
+.status--issued {
+  background: var(--ELECTROMAGNETIC);
+}
+.status--cashed {
+  background: var(--BLEU-FRANCE-LIGHTER);
+}
+.status--delayed {
+  background: var(--BUTTON-COLOR-DANGER);
+}
+
+.actions {
+  color: var(--REEF);
+  position: relative;
+}
+
+.actionsIcon {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.3s;
+}
+.actionsIcon:hover {
+  filter: brightness(50%);
+}
+
+.optionsList {
+  font-size: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s;
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  padding: 1rem 3rem;
+  background: var(--CLOUDS);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 100;
+
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.option {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.option:hover {
+  filter: brightness(50%);
+}
+
+.showOptions {
+  opacity: 1;
+  pointer-events: visible;
+  visibility: visible;
+}
+
+.optionsList:hover {
+  opacity: 1;
+  pointer-events: visible;
+  visibility: visible;
+}

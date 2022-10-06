@@ -1,0 +1,51 @@
+.overlay {
+  position: absolute;
+  top: 15vh;
+  left: 30%;
+  width: 40%;
+  background: var(--CLOUDS);
+  box-shadow: 0 2rem 8rem rgba(0, 0, 0, 0.5);
+
+  z-index: 100;
+
+  padding: 2rem;
+  border-radius: 5px;
+
+  animation: slide-up 0.2s;
+}
+
+.header {
+  background: var(--REEF);
+  color: #fff;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(10rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1900px) {
+  .overlay {
+    top: 10vh;
+    left: 20%;
+    width: 60%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .overlay {
+    top: 10vh;
+    left: 5%;
+    width: 90%;
+  }
+}

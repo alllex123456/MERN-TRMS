@@ -1,8 +1,9 @@
 import React from 'react';
+
 import { Header } from './Header';
+import { Navigation } from './Navigation';
 
 import styles from './MainLayout.module.css';
-import { Navigation } from './Navigation';
 
 export const MainLayout = (props) => {
   return (

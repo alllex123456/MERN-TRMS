@@ -1,7 +1,7 @@
 import React from 'react';
 
-import DashboardMain from '../components/dashboard/DashboardMain';
+import Dashboard from '../components/dashboard/Dashboard';
 
-export const Dashboard = () => {
-  return <DashboardMain />;
+export const DashboardMain = () => {
+  return <Dashboard />;
 };

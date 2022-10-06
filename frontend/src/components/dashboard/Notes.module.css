@@ -1,0 +1,53 @@
+.notes {
+  position: relative;
+  box-shadow: 0 0 3px rgb(0, 0, 0, 0.3);
+  padding: 2rem;
+  height: 40rem;
+  overflow-y: scroll;
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.notesForm input {
+  width: 100%;
+  font-size: 1.4rem;
+}
+
+.notesList {
+  border-top: 1px solid var(--REEF);
+  padding: 1rem 0;
+}
+
+.notesItem {
+  font-size: 1.4rem;
+  padding: 1rem;
+  border: 1px solid transparent;
+  transition: all 0.3s;
+  box-shadow: 0 2px 0 0 rgb(0, 0, 0, 0.1);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notesItem:hover {
+  border: 1px solid var(--REEF);
+}
+
+.removeNoteBtn {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  cursor: pointer;
+  font-size: 2rem;
+  transition: all 0.3s;
+}
+
+.notesItem:hover .removeNoteBtn {
+  opacity: 1;
+  pointer-events: visible;
+  visibility: visible;
+}

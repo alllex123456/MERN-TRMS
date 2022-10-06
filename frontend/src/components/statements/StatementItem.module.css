@@ -1,0 +1,32 @@
+.statementItem {
+  background: rgba(59, 61, 61, 0.05);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+
+  display: grid;
+  grid-template-columns: 8fr 2fr;
+  /* align-items: center; */
+  justify-content: space-between;
+}
+
+.statementItem:hover {
+  background: rgba(59, 61, 61, 0.07);
+}
+
+.clientName {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.clientDue {
+  font-weight: 500;
+  font-size: 1.4rem;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .statementItem {
+    grid-template-columns: 5fr 5fr;
+  }
+}

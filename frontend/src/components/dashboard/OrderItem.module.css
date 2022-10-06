@@ -1,0 +1,13 @@
+.orderItem {
+  background: rgb(18, 127, 181, 0.3);
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.orderItem span {
+  font-size: 1.2rem;
+}
+
+.orderItem p {
+  font-size: 1.4rem;
+}

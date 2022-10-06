@@ -1,7 +1,15 @@
 .clientsList {
   font-size: 1.6rem;
   padding: 1rem;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+
+  /* display: grid;
+  grid-gap: 2rem;
+  justify-content: start;
+  grid-template-columns: repeat(auto-fit, 30rem); */
 }
 
 .clientsHeader {
@@ -18,13 +26,8 @@
   font-size: 1.6rem;
 }
 
-@media (max-width: 800px) {
-  .clientsList > span:nth-of-type(3),
-  .clientsList > span:nth-of-type(4),
-  .clientsList > span:nth-of-type(5) {
-    display: none;
-  }
-  .head {
-    width: 33.33%;
+@media (max-width: 1150px) {
+  .clientsList {
+    justify-content: center;
   }
 }

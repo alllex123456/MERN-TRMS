@@ -1,0 +1,54 @@
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.profileBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem 0;
+  margin-top: 5rem;
+  border-top: 3px solid rgba(0, 0, 0, 0.3);
+}
+
+.legalData,
+.personalData,
+.invoicingData {
+  font-size: 1.4rem;
+  display: flex;
+  gap: 3rem;
+}
+
+.legalData h2,
+.personalData h2,
+.invoicingData h2 {
+  flex: 0 0 20rem;
+}
+
+.userData {
+  font-weight: 600;
+}
+
+.userActions {
+  display: flex;
+  gap: 1rem;
+
+  opacity: 0.5;
+  cursor: pointer;
+  align-self: start;
+  padding: 0 1rem 1rem;
+  font-weight: 700;
+  margin-left: auto;
+  transition: all 0.3s;
+}
+
+.userActionsIcon {
+  color: var(--REEF);
+  transition: all 0.3s;
+}
+
+.userActions:hover {
+  opacity: 1;
+}

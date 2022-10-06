@@ -1,19 +1,61 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Eye, PencilSimple, Trash } from 'phosphor-react';
+
+import { AuthContext } from '../../context/auth-context';
+import { getReadableUnit } from '../../utilities/get-units';
+import { translateServices } from '../../utilities/translate-units';
 
 import styles from './ClientItem.module.css';
 
-const ClientItem = (props) => {
-  const { clientData, onShowModal } = props;
+const ClientItem = ({ itno, clientData, onShowModal }) => {
+  const { units, services } = useContext(AuthContext);
+  const emailLink = `mailto:${clientData.email}`;
 
   return (
     <li className={styles.clientItem}>
-      <span className={styles.item}>{clientData.name}</span>
-      <span className={styles.item}>{clientData.phone}</span>
-      <span className={styles.item}>{clientData.email}</span>
-      <span className={styles.item}>{clientData.rate}</span>
-      <span className={styles.item}>{clientData.unit}</span>
-      <span className={styles.clientItemActions}>
+      <div className={styles.clientItemNo}>
+        <div>{itno}</div>
+        <div className={styles.clientPhotoContainer}>
+          {clientData.avatar ? (
+            <img
+              src={`http://localhost:8000/uploads/avatars/${clientData.avatar}`}
+              alt=""
+            />
+          ) : (
+            <div className="blankAvatar" />
+          )}
+        </div>
+      </div>
+
+      <div className={styles.clientItemName}>
+        <span>Nume</span>
+        <p>{clientData.name}</p>
+      </div>
+      <div className={styles.clientItemPhone}>
+        <span>Telefon</span>
+        <p>{clientData.phone}</p>
+      </div>
+      <div className={styles.clientItemEmail}>
+        <span>Email</span>
+        <p>
+          <a href={emailLink}>{clientData.email}</a>
+        </p>
+      </div>
+      <div className={styles.clientItemRate}>
+        <span>Tarif</span>
+        <div className={styles.rateGroup}>
+          {services.map((service) => (
+            <div key={service}>
+              <p>{service.displayedValue.toUpperCase()}</p>
+              <p>
+                {clientData[`${service.value}Rate`]} {clientData.currency}/
+                {getReadableUnit(units, clientData.unit)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className={styles.clientItemActions}>
         <Eye
           onClick={() => onShowModal('VIEW', clientData)}
           className={styles.clientItemIcon}
@@ -29,7 +71,7 @@ const ClientItem = (props) => {
           className={styles.clientItemIcon}
           size={24}
         />
-      </span>
+      </div>
     </li>
   );
 };

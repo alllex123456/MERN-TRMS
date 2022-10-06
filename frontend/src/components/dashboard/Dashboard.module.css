@@ -1,0 +1,21 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50rem, 60rem));
+  justify-content: center;
+  grid-gap: 2rem;
+}
+
+.dashboardOrders {
+  position: relative;
+}
+
+.dashboardOrdersList {
+  box-shadow: 0 0 3px rgb(0, 0, 0, 0.3);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 40rem;
+  border-radius: 5px;
+  overflow-y: scroll;
+}

@@ -17,7 +17,7 @@
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1400px) {
   .mainContent {
     grid-column: 1/-1;
   }
