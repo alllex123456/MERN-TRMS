@@ -45,6 +45,29 @@ exports.getOrders = async (req, res, next) => {
   });
 };
 
+exports.getClientCompletedOrders = async (req, res, next) => {
+  const { clientId } = req.params;
+
+  let client;
+  try {
+    client = await Client.findById(clientId).populate({
+      path: 'orders',
+      match: { status: 'completed' },
+    });
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la regasirea clientului. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  res.json({
+    message: client,
+  });
+};
+
 exports.getQueueList = async (req, res, next) => {
   const { userId } = req.userData;
 
@@ -285,4 +308,43 @@ exports.deleteOrder = async (req, res, next) => {
   }
 
   res.json({ message: 'Comanda a fost stearsa cu succes!' });
+};
+
+exports.cleanUpOrders = async (req, res, next) => {
+  const { userId } = req.userData;
+
+  let user;
+  try {
+    user = await User.findById(userId).populate('orders');
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la gasirea utilizatorului în baza de date. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  user.orders = user.orders.filter(
+    (order) =>
+      order.status === 'queue' || order.deliveredDate > Date.now() - 31536000000
+  );
+  await user.save();
+
+  const clients = await Client.find({ userId }).populate('orders');
+  clients.forEach(async (client) => {
+    client.orders = client.orders.filter(
+      (order) =>
+        order.status === 'queue' ||
+        order.deliveredDate > Date.now() - 31536000000
+    );
+    await client.save();
+  });
+
+  await Order.deleteMany({
+    userId,
+    deliveredDate: { $lte: Date.now() - 31536000000 },
+  });
+
+  next();
 };

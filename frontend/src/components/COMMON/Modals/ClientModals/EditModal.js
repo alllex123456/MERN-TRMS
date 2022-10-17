@@ -45,6 +45,8 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
       bank: { value: '', isValid: true },
       iban: { value: '', isValid: true },
       notes: { value: '', isValid: true },
+      invoiceDue: { value: '', isValid: true },
+      decimalPoints: { value: '', isValid: true },
     },
     true
   );
@@ -90,6 +92,8 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
           bank: { value: loadedData.bank, isValid: true },
           iban: { value: loadedData.iban, isValid: true },
           notes: { value: loadedData.notes, isValid: true },
+          invoiceDue: { value: '', isValid: true },
+          decimalPoints: { value: '', isValid: true },
         },
         true
       );
@@ -159,6 +163,14 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
             bank: { value: responseData.message.bank, isValid: true },
             iban: { value: responseData.message.iban, isValid: true },
             notes: { value: responseData.message.notes, isValid: true },
+            invoiceDue: {
+              value: responseData.message.invoiceDue,
+              isValid: true,
+            },
+            decimalPoints: {
+              value: responseData.message.decimalPoints,
+              isValid: true,
+            },
           },
           true
         );
@@ -211,17 +223,18 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
       {!error && !successMessage && loadedData && (
         <Modal
+          medium
           form
           header={header}
           show={show}
-          close={onCloseModal}
+          close={closeModalHandler}
           onSubmit={editHandler}
         >
           {isLoading && <LoadingSpinner asOverlay />}
 
           {!isLoading && loadedData && (
-            <div>
-              <div className="formGroup flex">
+            <div className="editClient">
+              <div className="formGroup flexColumn">
                 <div className="clientAvatar">
                   {avatarPreview || formState.inputs.avatar.value ? (
                     <img
@@ -242,7 +255,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                     onChange={filePickerHandler}
                   />
                   <FileImage
-                    className="changeProfileAvatar"
+                    className="changeClientAvatar"
                     size={48}
                     onClick={getFilePicker}
                   />
@@ -281,92 +294,93 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                   validators={[]}
                   onInput={inputHandler}
                 />
+                <div className="formGroup flexRow">
+                  <Input
+                    className="input"
+                    label="Tarif traducere"
+                    element="input"
+                    id="translationRate"
+                    type="number"
+                    step="0.01"
+                    defaultValue={formState.inputs.translationRate.value}
+                    defaultValidity={formState.inputs.translationRate.isValid}
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText="Nu a fost specificat un tarif"
+                    onInput={inputHandler}
+                  />
+                  <Input
+                    className="input"
+                    label="Tarif corectura"
+                    element="input"
+                    id="proofreadingRate"
+                    type="number"
+                    step="0.01"
+                    defaultValue={formState.inputs.proofreadingRate.value}
+                    defaultValidity={formState.inputs.proofreadingRate.isValid}
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText="Nu a fost specificat un tarif"
+                    onInput={inputHandler}
+                  />
+                  <Input
+                    className="input"
+                    label="Tarif post-editare"
+                    element="input"
+                    id="posteditingRate"
+                    type="number"
+                    step="0.01"
+                    defaultValue={formState.inputs.posteditingRate.value}
+                    defaultValidity={formState.inputs.posteditingRate.isValid}
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText="Nu a fost specificat un tarif"
+                    onInput={inputHandler}
+                  />
+                </div>
+                <div className="formGroup flexRow">
+                  <Input
+                    disabled
+                    className="input"
+                    label="Monedă:"
+                    element="input"
+                    id="currency"
+                    defaultValue={formState.inputs.currency.value}
+                    defaultValidity={formState.inputs.currency.isValid}
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText="Nu a fost selectă moneda"
+                    onInput={inputHandler}
+                  >
+                    <option value={clientData.currency}>
+                      {clientData.currency}
+                    </option>
+                  </Input>
+
+                  <Input
+                    className="input"
+                    label="Unitate:"
+                    element="select"
+                    id="unit"
+                    defaultValue={formState.inputs.unit.value}
+                    defaultValidity={formState.inputs.unit.isValid}
+                    validators={[VALIDATOR_REQUIRE()]}
+                    errorText="Nu a fost selectată o unitate de tarifare"
+                    onInput={inputHandler}
+                  >
+                    <option value={formState.inputs.unit.value}>
+                      {getReadableUnit(units, formState.inputs.unit.value)}
+                    </option>
+                    {units
+                      .filter(
+                        (unit) => unit.value !== formState.inputs.unit.value
+                      )
+                      .map((unit) => (
+                        <option key={unit.value} value={unit.value}>
+                          {unit.displayedValue}
+                        </option>
+                      ))}
+                  </Input>
+                </div>
               </div>
 
-              <div className="formGroup flex">
-                <Input
-                  className="input"
-                  label="Tarif traducere"
-                  element="input"
-                  id="translationRate"
-                  type="number"
-                  step="0.01"
-                  defaultValue={formState.inputs.translationRate.value}
-                  defaultValidity={formState.inputs.translationRate.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost specificat un tarif"
-                  onInput={inputHandler}
-                />
-                <Input
-                  className="input"
-                  label="Tarif corectura"
-                  element="input"
-                  id="proofreadingRate"
-                  type="number"
-                  step="0.01"
-                  defaultValue={formState.inputs.proofreadingRate.value}
-                  defaultValidity={formState.inputs.proofreadingRate.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost specificat un tarif"
-                  onInput={inputHandler}
-                />
-                <Input
-                  className="input"
-                  label="Tarif post-editare"
-                  element="input"
-                  id="posteditingRate"
-                  type="number"
-                  step="0.01"
-                  defaultValue={formState.inputs.posteditingRate.value}
-                  defaultValidity={formState.inputs.posteditingRate.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost specificat un tarif"
-                  onInput={inputHandler}
-                />
-
-                <Input
-                  disabled
-                  className="input"
-                  label="Monedă:"
-                  element="input"
-                  id="currency"
-                  defaultValue={formState.inputs.currency.value}
-                  defaultValidity={formState.inputs.currency.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectă moneda"
-                  onInput={inputHandler}
-                >
-                  <option value={clientData.currency}>
-                    {clientData.currency}
-                  </option>
-                </Input>
-
-                <Input
-                  className="input"
-                  label="Unitate:"
-                  element="select"
-                  id="unit"
-                  defaultValue={formState.inputs.unit.value}
-                  defaultValidity={formState.inputs.unit.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectată o unitate de tarifare"
-                  onInput={inputHandler}
-                >
-                  <option value={formState.inputs.unit.value}>
-                    {getReadableUnit(units, formState.inputs.unit.value)}
-                  </option>
-                  {units
-                    .filter(
-                      (unit) => unit.value !== formState.inputs.unit.value
-                    )
-                    .map((unit) => (
-                      <option key={unit.value} value={unit.value}>
-                        {unit.displayedValue}
-                      </option>
-                    ))}
-                </Input>
-              </div>
-              <div className="formGroup flex">
+              <div className="formGroup flexColumn">
                 <Input
                   className="input"
                   label="Sediul:"
@@ -402,8 +416,35 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                   validators={[]}
                   onInput={inputHandler}
                 />
-              </div>
-              <div className="formGroup flex">
+
+                <div className="formGroup flexRow">
+                  <Input
+                    className="input"
+                    label="Termen de plata facturi:"
+                    element="input"
+                    id="invoiceDue"
+                    type="number"
+                    validators={[]}
+                    defaultValue={formState.inputs.invoiceDue.value}
+                    defaultValidity={formState.inputs.invoiceDue.isValid}
+                    onInput={inputHandler}
+                  />
+                  <Input
+                    className="input"
+                    label="Zecimale facturi:"
+                    element="select"
+                    id="decimalPoints"
+                    type="number"
+                    validators={[]}
+                    defaultValue={formState.inputs.decimalPoints.value}
+                    defaultValidity={formState.inputs.decimalPoints.isValid}
+                    onInput={inputHandler}
+                  >
+                    <option value="0">0</option>
+                    <option value="2">2</option>
+                  </Input>
+                </div>
+
                 <Input
                   className="input"
                   label="Banca:"
@@ -427,8 +468,6 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                   validators={[]}
                   onInput={inputHandler}
                 />
-              </div>
-              <div className="formGroup">
                 <Input
                   className="textarea"
                   label="Note:"
@@ -442,11 +481,8 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
               </div>
 
               <div className="formActions">
-                <Button type="submit" disabled={!formState.isValid}>
+                <Button primary type="submit" disabled={!formState.isValid}>
                   SALVEAZĂ
-                </Button>
-                <Button type="button" danger onClick={closeModalHandler}>
-                  ÎNCHIDE
                 </Button>
               </div>
             </div>

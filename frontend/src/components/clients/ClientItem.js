@@ -44,8 +44,8 @@ const ClientItem = ({ itno, clientData, onShowModal }) => {
       <div className={styles.clientItemRate}>
         <span>Tarif</span>
         <div className={styles.rateGroup}>
-          {services.map((service) => (
-            <div key={service}>
+          {services.map((service, index) => (
+            <div key={index}>
               <p>{service.displayedValue.toUpperCase()}</p>
               <p>
                 {clientData[`${service.value}Rate`]} {clientData.currency}/

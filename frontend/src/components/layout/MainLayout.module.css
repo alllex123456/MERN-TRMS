@@ -1,24 +1,33 @@
 .mainLayout {
   display: grid;
-  grid-template-columns: 1.5fr 8.5fr;
+  grid-template-columns: 15vw 85vw;
+  position: fixed;
 }
 
 .mainContent {
-  background: var(--CLOUDS);
-
   height: calc(100vh - 5rem);
   padding: 1rem;
   overflow-y: scroll;
-}
-
-@media (max-width: 1300px) {
-  .mainLayout {
-    grid-template-columns: 2fr 8fr;
-  }
 }
 
 @media (max-width: 1400px) {
   .mainContent {
     grid-column: 1/-1;
   }
+}
+
+/* THEMING */
+.defaultMainContent {
+  background: var(--BACKGROUNDS-PRIMARY);
+  color: var(--FONT-COLOR-DARK);
+}
+
+.lightMainContent {
+  background: var(--BACKGROUNDS-PRIMARY);
+  color: var(--FONT-COLOR-DARK);
+}
+
+.darkMainContent {
+  background: var(--BACKGROUNDS-SECONDARY);
+  color: var(--FONT-COLOR-LIGHT);
 }

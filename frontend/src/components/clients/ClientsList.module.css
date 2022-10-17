@@ -2,14 +2,9 @@
   font-size: 1.6rem;
   padding: 1rem;
 
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-
-  /* display: grid;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));
   grid-gap: 2rem;
-  justify-content: start;
-  grid-template-columns: repeat(auto-fit, 30rem); */
 }
 
 .clientsHeader {
@@ -17,13 +12,6 @@
   align-items: center;
   gap: 2rem;
   margin-bottom: 3rem;
-}
-
-.head {
-  display: inline-block;
-  border-bottom: 2px solid var(--REEF);
-  width: 16.66%;
-  font-size: 1.6rem;
 }
 
 @media (max-width: 1150px) {

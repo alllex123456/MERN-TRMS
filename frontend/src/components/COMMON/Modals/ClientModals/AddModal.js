@@ -13,6 +13,7 @@ import { useHttpClient } from '../../../../hooks/useHttpClient';
 import { AuthContext } from '../../../../context/auth-context';
 
 import '../../CSS/modals-form.css';
+import { CloudArrowDown } from 'phosphor-react';
 
 const AddModal = (props) => {
   const { token, units, currencies } = useContext(AuthContext);
@@ -37,6 +38,7 @@ const AddModal = (props) => {
       phone: { value: '', isValid: true },
       notes: { value: '', isValid: true },
       invoiceDue: { value: '', isValid: true },
+      decimalPoints: { value: 0, isValid: true },
     },
     false
   );
@@ -83,9 +85,9 @@ const AddModal = (props) => {
         JSON.stringify({
           avatar: formState.inputs.avatar.value,
           name: formState.inputs.name.value,
-          translationRate: formState.inputs.translationRate.value || 0,
-          proofreadingRate: formState.inputs.proofreadingRate.value || 0,
-          posteditingRate: formState.inputs.posteditingRate.value || 0,
+          translationRate: formState.inputs.translationRate.value,
+          proofreadingRate: formState.inputs.proofreadingRate.value,
+          posteditingRate: formState.inputs.posteditingRate.value,
           unit: formState.inputs.unit.value,
           currency: formState.inputs.currency.value,
           email: formState.inputs.email.value,
@@ -99,6 +101,7 @@ const AddModal = (props) => {
           representative: formState.inputs.representative.value,
           notes: formState.inputs.notes.value,
           invoiceDue: formState.inputs.invoiceDue.value,
+          decimalPoints: formState.inputs.decimalPoints.value,
         }),
         { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
       );
@@ -129,6 +132,7 @@ const AddModal = (props) => {
           phone: { value: '', isValid: true },
           notes: { value: '', isValid: true },
           invoiceDue: { value: '', isValid: true },
+          decimalPoints: { value: '', isValid: true },
         },
         false
       );
@@ -136,7 +140,7 @@ const AddModal = (props) => {
     } catch (error) {}
     props.refreshClients();
   };
-
+  console.log(formState.inputs.decimalPoints.value);
   const closeModalHandler = () => {
     props.onCloseModal();
     setSuccessMessage(null);
@@ -151,29 +155,35 @@ const AddModal = (props) => {
         form
         header={header}
         show={props.show}
-        close={props.onCloseModal}
+        close={closeModalHandler}
         onSubmit={addHandler}
       >
         {isLoading && <LoadingSpinner asOverlay />}
 
         {!isLoading && (
-          <div>
-            <div className="formGroup center">
+          <div className="addClient">
+            <div className="formGroup flexColumn">
+              <div className="getCompanyData">
+                <Input
+                  className="input taxNumberInput"
+                  label="Cod fiscal*"
+                  element="input"
+                  id="taxNumber"
+                  type="text"
+                  validators={[]}
+                  defaultValue={formState.inputs.taxNumber.value}
+                  defaultValidity={formState.inputs.taxNumber.isValid}
+                  onInput={inputHandler}
+                />
+                <CloudArrowDown
+                  className="getCompanyDataBtn"
+                  onClick={getCompanyData}
+                  size={32}
+                />
+              </div>
               <Input
                 className="input"
-                label="Cod fiscal:"
-                element="input"
-                id="taxNumber"
-                type="text"
-                validators={[]}
-                onInput={inputHandler}
-              />
-              <Button onClick={getCompanyData}>Obține datele automat</Button>
-            </div>
-            <div className="formGroup flex">
-              <Input
-                className="input"
-                label="Nume:"
+                label="Nume*"
                 element="input"
                 id="name"
                 defaultValue={formState.inputs.name.value}
@@ -183,6 +193,148 @@ const AddModal = (props) => {
                 onInput={inputHandler}
               />
 
+              <Input
+                className="input"
+                label="Email"
+                element="input"
+                id="email"
+                type="email"
+                validators={[]}
+                defaultValue={formState.inputs.email.value}
+                defaultValidity={formState.inputs.email.isValid}
+                onInput={inputHandler}
+              />
+              <Input
+                className="input"
+                label="Telefon"
+                element="input"
+                id="phone"
+                type="phone"
+                validators={[]}
+                defaultValue={formState.inputs.phone.value}
+                defaultValidity={formState.inputs.phone.isValid}
+                onInput={inputHandler}
+              />
+
+              <Input
+                className="input"
+                label="Moneda*"
+                element="select"
+                id="currency"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Nu a fost selectată moneda"
+                defaultValidity={formState.inputs.currency.isValid}
+                onInput={inputHandler}
+              >
+                <option>selectează moneda...</option>
+                {currencies.map((currency, index) => (
+                  <option key={index} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </Input>
+
+              <Input
+                className="input"
+                label="Unitatea de măsură*"
+                element="select"
+                id="unit"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Nu a fost selectată unitatea de măsură"
+                defaultValue={formState.inputs.unit.value}
+                defaultValidity={formState.inputs.unit.isValid}
+                onInput={inputHandler}
+              >
+                <option>selectează unitatea...</option>
+                {units.map((unit, index) => (
+                  <option key={index} value={unit.value}>
+                    {unit.displayedValue}
+                  </option>
+                ))}
+              </Input>
+            </div>
+
+            <div className="formGroup flexColumn">
+              <Input
+                className="input"
+                label="Sediul"
+                element="input"
+                id="registeredOffice"
+                type="text"
+                validators={[]}
+                defaultValue={formState.inputs.registeredOffice.value}
+                defaultValidity={formState.inputs.registeredOffice.isValid}
+                onInput={inputHandler}
+              />
+              <Input
+                className="input"
+                label="Nr. de înregistrare"
+                element="input"
+                id="registrationNumber"
+                type="text"
+                validators={[]}
+                defaultValue={formState.inputs.registrationNumber.value}
+                defaultValidity={formState.inputs.registrationNumber.isValid}
+                onInput={inputHandler}
+              />
+              <Input
+                className="input"
+                label="Banca"
+                element="input"
+                id="bank"
+                type="text"
+                validators={[]}
+                defaultValidity={formState.inputs.bank.isValid}
+                onInput={inputHandler}
+              />
+              <Input
+                className="input"
+                label="IBAN"
+                element="input"
+                id="iban"
+                type="text"
+                validators={[]}
+                defaultValidity={formState.inputs.iban.isValid}
+                onInput={inputHandler}
+              />
+              <Input
+                className="input"
+                label="Reprezentant legal"
+                element="input"
+                id="representative"
+                type="text"
+                validators={[]}
+                defaultValidity={formState.inputs.bank.isValid}
+                onInput={inputHandler}
+              />
+            </div>
+
+            <div className="formGroup flexColumn">
+              <Input
+                className="input"
+                label="Termen de plata facturi (zile)"
+                element="input"
+                id="invoiceDue"
+                type="number"
+                validators={[]}
+                defaultValue={formState.inputs.invoiceDue.value}
+                defaultValidity={formState.inputs.invoiceDue.isValid}
+                onInput={inputHandler}
+              />
+              <Input
+                className="input"
+                label="Zecimale facturi"
+                element="select"
+                type="number"
+                id="decimalPoints"
+                validators={[]}
+                defaultValue={formState.inputs.decimalPoints.value}
+                defaultValidity={formState.inputs.decimalPoints.isValid}
+                onInput={inputHandler}
+              >
+                <option value="0">0</option>
+                <option value="2">2</option>
+              </Input>
               <Input
                 className="input"
                 label="Tarif traducere"
@@ -195,7 +347,6 @@ const AddModal = (props) => {
                 defaultValidity={formState.inputs.translationRate.isValid}
                 onInput={inputHandler}
               />
-
               <Input
                 className="input"
                 label="Tarif corectura"
@@ -220,150 +371,10 @@ const AddModal = (props) => {
                 defaultValidity={formState.inputs.posteditingRate.isValid}
                 onInput={inputHandler}
               />
-            </div>
-
-            <div className="formGroup flex">
               <Input
                 className="input"
-                label="Moneda:"
-                element="select"
-                id="currency"
-                validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectată moneda"
-                defaultValidity={formState.inputs.currency.isValid}
-                onInput={inputHandler}
-              >
-                <option>selectează moneda...</option>
-                {currencies.map((currency, index) => (
-                  <option key={index} value={currency}>
-                    {currency}
-                  </option>
-                ))}
-              </Input>
-              <Input
-                className="input"
-                label="Unitatea de măsură:"
-                element="select"
-                id="unit"
-                validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectată unitatea de măsură"
-                defaultValue={formState.inputs.unit.value}
-                defaultValidity={formState.inputs.unit.isValid}
-                onInput={inputHandler}
-              >
-                <option>selectează unitatea...</option>
-                {units.map((unit, index) => (
-                  <option key={index} value={unit.value}>
-                    {unit.displayedValue}
-                  </option>
-                ))}
-              </Input>
-              <Input
-                className="input"
-                label="Termen de plata facturi:"
+                label="Note"
                 element="input"
-                id="number"
-                type="invoiceDue"
-                validators={[]}
-                defaultValue={formState.inputs.invoiceDue.value}
-                defaultValidity={formState.inputs.invoiceDue.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="input"
-                label="Email:"
-                element="input"
-                id="email"
-                type="email"
-                validators={[]}
-                defaultValue={formState.inputs.email.value}
-                defaultValidity={formState.inputs.email.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="input"
-                label="Telefon:"
-                element="input"
-                id="phone"
-                type="phone"
-                validators={[]}
-                defaultValue={formState.inputs.phone.value}
-                defaultValidity={formState.inputs.phone.isValid}
-                onInput={inputHandler}
-              />
-            </div>
-            <div className="formGroup flex">
-              <Input
-                className="input"
-                label="Cod fiscal:"
-                element="input"
-                id="taxNumber"
-                type="text"
-                validators={[]}
-                defaultValue={formState.inputs.taxNumber.value}
-                defaultValidity={formState.inputs.taxNumber.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="input"
-                label="Sediul:"
-                element="input"
-                id="registeredOffice"
-                type="text"
-                validators={[]}
-                defaultValue={formState.inputs.registeredOffice.value}
-                defaultValidity={formState.inputs.registeredOffice.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="input"
-                label="Nr. de înregistrare:"
-                element="input"
-                id="registrationNumber"
-                type="text"
-                validators={[]}
-                defaultValue={formState.inputs.registrationNumber.value}
-                defaultValidity={formState.inputs.registrationNumber.isValid}
-                onInput={inputHandler}
-              />
-            </div>
-            <div className="formGroup flex">
-              <Input
-                className="input"
-                label="Banca:"
-                element="input"
-                id="bank"
-                type="text"
-                validators={[]}
-                defaultValidity={formState.inputs.bank.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="input"
-                label="IBAN:"
-                element="input"
-                id="iban"
-                type="text"
-                validators={[]}
-                defaultValidity={formState.inputs.iban.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="input"
-                label="Reprezentant legal:"
-                element="input"
-                id="representative"
-                type="text"
-                validators={[]}
-                defaultValidity={formState.inputs.bank.isValid}
-                onInput={inputHandler}
-              />
-            </div>
-            <div className="formGroup">
-              <Input
-                className="input"
-                label="Note:"
-                element="textarea"
                 id="notes"
                 validators={[]}
                 defaultValidity={formState.inputs.notes.isValid}
@@ -372,11 +383,8 @@ const AddModal = (props) => {
             </div>
 
             <div className="formActions">
-              <Button type="submit" disabled={!formState.isValid}>
+              <Button primary type="submit" disabled={!formState.isValid}>
                 SALVEAZĂ
-              </Button>
-              <Button type="button" danger onClick={closeModalHandler}>
-                ÎNCHIDE
               </Button>
               {successMessage && <p className="successPar">{successMessage}</p>}
             </div>

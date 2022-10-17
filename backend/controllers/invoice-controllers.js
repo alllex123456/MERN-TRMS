@@ -30,6 +30,30 @@ exports.getAllInvoices = async (req, res, next) => {
   res.json({ message: user });
 };
 
+exports.getClientInvoices = async (req, res, next) => {
+  const { clientId } = req.params;
+
+  let client;
+  try {
+    client = await Client.findById(clientId).populate('invoices');
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la interogarea bazei de clienti. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  if (client.userId.toString() !== req.userData.userId) {
+    return next(
+      new HttpError('Nu există autorizație pentru această operațiune.', 401)
+    );
+  }
+
+  res.json({ message: client });
+};
+
 exports.getInvoice = async (req, res, next) => {
   const { invoiceId } = req.params;
 
@@ -107,6 +131,8 @@ exports.createInvoice = async (req, res, next) => {
   client.invoices.push(newInvoice);
   client.remainder += req.body.remainder;
   user.invoiceStartNumber += 1;
+
+  if (req.body.remainder === 0) client.remainder = 0;
 
   try {
     const session = await mongoose.startSession();
@@ -238,7 +264,7 @@ exports.sendInvoice = async (req, res, next) => {
   const body = {
     message,
     series: invoice.series,
-    number: invoiceNumber,
+    number: invoice.number,
     totalInvoice: invoice.totalInvoice,
     dueDate: invoice.dueDate,
   };
@@ -373,6 +399,10 @@ exports.deleteInvoice = async (req, res, next) => {
     );
   }
 
+  if (invoice.cashed) {
+    return next(new HttpError('Eroare server: factura este incasata.', 401));
+  }
+
   invoice.userId.invoices.pull(invoice);
   invoice.clientId.invoices.pull(invoice);
   invoice.userId.invoiceStartNumber -= 1;
@@ -409,7 +439,6 @@ exports.deleteInvoice = async (req, res, next) => {
 
     session.commitTransaction();
   } catch (error) {
-    console.log(error);
     return next(
       new HttpError(
         'A survenit o problemă la anularea facturii. Vă rugăm să reîncercați.',
@@ -419,4 +448,111 @@ exports.deleteInvoice = async (req, res, next) => {
   }
 
   res.json({ message: 'Factura a fost anulata!' });
+};
+
+exports.cashInvoice = async (req, res, next) => {
+  let invoice;
+  try {
+    invoice = await Invoice.findById(req.body.invoiceId).populate('clientId');
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la regasirea facturii. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  invoice.cashedAmount = req.body.cashedAmount;
+  invoice.dateCashed = req.body.dateCashed;
+  invoice.remainder = invoice.totalInvoice - req.body.cashedAmount;
+  invoice.receipt = req.body.receipt;
+  invoice.clientId.remainder += invoice.remainder;
+
+  if (invoice.remainder <= 0) {
+    invoice.cashed = true;
+  }
+
+  if (invoice.remainder > 1) {
+    invoice.totalInvoice = invoice.remainder;
+  }
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await invoice.save({ session });
+    await invoice.clientId.save({ session });
+    session.commitTransaction();
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la salvarea facturii. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  res.json({ message: 'Factura fost incasata cu succes!' });
+};
+
+exports.reverseInvoice = async (req, res, next) => {
+  let invoice;
+  try {
+    invoice = await Invoice.findById(req.body.invoiceId).populate(
+      'userId clientId'
+    );
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la regasirea facturii. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  if (invoice.userId.id.toString() !== req.userData.userId) {
+    return next(
+      new HttpError('Nu există autorizație pentru această operațiune.', 401)
+    );
+  }
+
+  invoice.reversed = true;
+  invoice.clientId.remainder -= invoice.remainder;
+
+  const newInvoice = new Invoice({
+    userId: invoice.userId.id,
+    clientId: invoice.clientId.id,
+    series: invoice.userId.invoiceSeries,
+    number: invoice.userId.invoiceStartNumber,
+    orders: [],
+    dueDate: req.body.dueDate,
+    issuedDate: req.body.issuedDate,
+    totalInvoice: req.body.totalInvoice,
+    remainder: req.body.remainder,
+    cashed: false,
+  });
+
+  invoice.userId.invoices.push(newInvoice);
+  invoice.clientId.invoices.push(newInvoice);
+  invoice.clientId.remainder += req.body.remainder;
+  invoice.userId.invoiceStartNumber += 1;
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await invoice.save({ session });
+    await newInvoice.save({ session });
+    await invoice.userId.save({ session });
+    await invoice.clientId.save({ session });
+    session.commitTransaction();
+  } catch (error) {
+    return next(
+      new HttpError(
+        'A survenit o problemă la stornarea facturii. Vă rugăm să reîncercați.',
+        500
+      )
+    );
+  }
+
+  res.json({ message: 'Factura fost stornata cu succes!' });
 };

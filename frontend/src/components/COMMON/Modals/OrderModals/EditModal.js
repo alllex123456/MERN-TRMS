@@ -117,29 +117,28 @@ const EditModal = (props) => {
     props.onCloseModal();
     setSuccessMessage(null);
   };
-
   const header = `Editeaza comanda`;
 
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
-      {!error && !successMessage && loadedData && (
+      {!error && !successMessage && (
         <Modal
           form
           header={header}
           show={props.show}
-          close={props.onCloseModal}
+          close={closeModalHandler}
           onSubmit={editHandler}
         >
           {isLoading && <LoadingSpinner asOverlay />}
           {!isLoading && loadedData && (
-            <div>
-              <div className="formGroup">
+            <div className="editOrder">
+              <div className="formGroup flexColumn">
                 <Input
                   disabled
                   className="input"
-                  label="Client:"
+                  label="Client"
                   element="input"
                   id="editClient"
                   defaultValue={formState.inputs.editClient.value}
@@ -147,8 +146,45 @@ const EditModal = (props) => {
                   validators={[VALIDATOR_REQUIRE()]}
                   onInput={inputHandler}
                 />
+                <Input
+                  className="input"
+                  label="Editează referința"
+                  element="input"
+                  id="editReference"
+                  defaultValue={formState.inputs.editReference.value}
+                  defaultValidity={formState.inputs.editReference.isValid}
+                  validators={[]}
+                  onInput={inputHandler}
+                />
+                <Input
+                  className="input"
+                  label="Editează tariful"
+                  element="input"
+                  id="editRate"
+                  type="number"
+                  step="0.01"
+                  defaultValue={formState.inputs.editRate.value}
+                  defaultValidity={formState.inputs.editRate.isValid}
+                  validators={[VALIDATOR_REQUIRE()]}
+                  errorText="Nu a fost selectat un tarif"
+                  onInput={inputHandler}
+                />
+
+                <Input
+                  className="input"
+                  label="Editează volumul estimat"
+                  element="input"
+                  id="editCount"
+                  type="number"
+                  step="0.01"
+                  defaultValue={formState.inputs.editCount.value}
+                  defaultValidity={formState.inputs.editCount.isValid}
+                  validators={[VALIDATOR_REQUIRE()]}
+                  errorText="Nu a fost selectat volumul final"
+                  onInput={inputHandler}
+                />
               </div>
-              <div className="formGroup flex">
+              <div className="formGroup flexColumn">
                 <Input
                   disabled
                   className="input"
@@ -191,52 +227,10 @@ const EditModal = (props) => {
                   defaultValidity={formState.inputs.editDeadline.isValid}
                   onInput={inputHandler}
                 />
-              </div>
-              <div className="formGroup flex">
-                <Input
-                  className="input"
-                  label="Editează tariful:"
-                  element="input"
-                  id="editRate"
-                  type="number"
-                  step="0.01"
-                  defaultValue={formState.inputs.editRate.value}
-                  defaultValidity={formState.inputs.editRate.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectat un tarif"
-                  onInput={inputHandler}
-                />
-
-                <Input
-                  className="input"
-                  label="Editează volumul estimat:"
-                  element="input"
-                  id="editCount"
-                  type="number"
-                  step="0.01"
-                  defaultValue={formState.inputs.editCount.value}
-                  defaultValidity={formState.inputs.editCount.isValid}
-                  validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectat volumul final"
-                  onInput={inputHandler}
-                />
-
-                <Input
-                  className="input"
-                  label="Editează referința:"
-                  element="input"
-                  id="editReference"
-                  defaultValue={formState.inputs.editReference.value}
-                  defaultValidity={formState.inputs.editReference.isValid}
-                  validators={[]}
-                  onInput={inputHandler}
-                />
-              </div>
-              <div className="formGroup">
                 <Input
                   className="textarea"
                   label="Note:"
-                  element="textarea"
+                  element="input"
                   id="editNotes"
                   defaultValue={formState.inputs.editNotes.value}
                   defaultValidity={formState.inputs.editNotes.isValid}
@@ -244,12 +238,10 @@ const EditModal = (props) => {
                   onInput={inputHandler}
                 />
               </div>
+
               <div className="formActions">
-                <Button type="submit" disabled={!formState.isValid}>
+                <Button primary type="submit" disabled={!formState.isValid}>
                   SALVEAZĂ
-                </Button>
-                <Button type="button" danger onClick={closeModalHandler}>
-                  ÎNCHIDE
                 </Button>
               </div>
             </div>

@@ -16,12 +16,14 @@ import { translateServices } from '../../utilities/translate-units';
 import { useForm } from '../../hooks/useForm';
 import { VALIDATOR_REQUIRE } from '../../utilities/form-validator';
 import { blobAnchor } from '../../utilities/blob-anchor';
+import { formatCurrency } from '../../utilities/format-currency';
 
-import styles from './CreateInvoice.module.css';
+import styles from './InvoiceTemplate.module.css';
 
-const CreateInvoice = ({ back, client, clientOrders }) => {
+const InvoiceTemplate = ({ view, invoice, back, client, clientOrders }) => {
   const navigator = useNavigate();
-  const { token, units } = useContext(AuthContext);
+
+  const { token, units, language } = useContext(AuthContext);
   const [userData, setUserData] = useState({});
   const [invoiceId, setInvoiceId] = useState();
   const [successMessage, setSuccessMessage] = useState();
@@ -29,7 +31,9 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
   const [invoiceIssued, setInvoiceIssued] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const totalInvoice = clientOrders.reduce((acc, val) => (acc += val.total), 0);
+  const totalInvoice = +clientOrders
+    .reduce((acc, val) => (acc += val.total), 0)
+    .toFixed(client.decimalPoints);
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -37,12 +41,19 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
         value: '',
         isValid: true,
       },
-      totalInvoice: { value: totalInvoice, isValid: true },
+      totalInvoice: {
+        value: (totalInvoice + client.remainder).toFixed(client.decimalPoints),
+        isValid: true,
+      },
     },
     true
   );
 
-  const remainder = totalInvoice - formState.inputs.totalInvoice.value;
+  const remainder = +(
+    totalInvoice +
+    client.remainder -
+    formState.inputs.totalInvoice.value
+  ).toFixed(client.decimalPoints);
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
@@ -65,7 +76,12 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
                 : addDays(new Date(), responseData.message.invoiceDefaultDue),
               isValid: true,
             },
-            totalInvoice: { value: totalInvoice, isValid: true },
+            totalInvoice: {
+              value: (totalInvoice + client.remainder).toFixed(
+                client.decimalPoints
+              ),
+              isValid: true,
+            },
           },
           true
         );
@@ -73,7 +89,14 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
     };
 
     getUserData();
-  }, [sendRequest, token, client.invoiceDue, setFormData, totalInvoice]);
+  }, [
+    sendRequest,
+    token,
+    client.invoiceDue,
+    client.remainder,
+    setFormData,
+    totalInvoice,
+  ]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -148,17 +171,19 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
 
       <form className={`${styles.invoice}`} onSubmit={submitHandler}>
         <div className={styles.invoiceControls}>
-          <Button
-            className={styles.back}
-            type="button"
-            onClick={() =>
-              !invoiceIssued
-                ? back()
-                : navigator('/statements', { replace: true })
-            }
-          >
-            <ArrowLeft size={24} /> Înapoi
-          </Button>
+          {view ? null : (
+            <Button
+              className={styles.back}
+              type="button"
+              onClick={() =>
+                !invoiceIssued
+                  ? back()
+                  : navigator('/statements', { replace: true })
+              }
+            >
+              <ArrowLeft size={24} /> Înapoi
+            </Button>
+          )}
         </div>
         {isLoading && <LoadingSpinner asOverlay />}
         {isProcessing && <LoadingSpinner asOverlay />}
@@ -167,14 +192,17 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
             <div className={styles.invoiceTitle}>
               <h1>FACTURA</h1>
               <h2>
-                {userData.invoiceSeries}/{userData.invoiceStartNumber}
+                <span>serie</span>{' '}
+                {view ? invoice.series : userData.invoiceSeries}/
+                <span>nr. </span>
+                {view ? invoice.number : userData.invoiceStartNumber}
               </h2>
 
               <div className={styles.invoiceDates}>
-                <p>Data emiterii {new Date().toLocaleDateString()}</p>
+                <p>Data emiterii {new Date().toLocaleDateString(language)}</p>
                 <div>
-                  Data scadenta
-                  {formState.inputs.dueDate.value && (
+                  Data scadenta{' '}
+                  {formState.inputs.dueDate.value && !view && (
                     <Input
                       disabled={invoiceIssued}
                       element="input"
@@ -186,6 +214,8 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
                         .slice(0, 10)}
                     />
                   )}
+                  {view &&
+                    new Date(invoice.issuedDate).toLocaleDateString(language)}
                 </div>
               </div>
             </div>
@@ -277,29 +307,35 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
               <tr>
                 <th>Nr.</th>
                 <th>Tip serviciu/Referinta client</th>
-                <th>Primit/predat</th>
                 <th>Cantitate</th>
                 <th>Unitate de masura</th>
-                <th>
-                  Tarif <p>({client.currency}/unitate de tarifare)</p>
-                </th>
-                <th>
-                  Valoare <p>({client.currency})</p>
-                </th>
+                <th>Tarif*</th>
+                <th>Valoare ({client.currency})</th>
               </tr>
             </thead>
 
             <tbody className={styles.invoiceTableBody}>
+              <tr>
+                <td>0</td>
+                <td>Sold client</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  {formatCurrency(
+                    language,
+                    client.currency,
+                    client.remainder,
+                    client.decimalPoints
+                  )}
+                </td>
+              </tr>
               {clientOrders.map((order, index) => (
                 <tr key={order.id}>
                   <td>{index + 1}</td>
                   <td>
                     {translateServices([order.service]).displayedValue}/
                     {order.reference}
-                  </td>
-                  <td>
-                    <p>{new Date(order.receivedDate).toLocaleDateString()}</p>
-                    <p>{new Date(order.deliveredDate).toLocaleDateString()}</p>
                   </td>
 
                   <td>
@@ -312,37 +348,22 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
                     {order.rate} / {getReadableUnit(units, order.unit)}
                   </td>
 
-                  <td>{order.total.toLocaleString()}</td>
+                  <td>
+                    {order.total
+                      .toFixed(client.decimalPoints)
+                      .toLocaleString(language)}
+                  </td>
                 </tr>
               ))}
             </tbody>
 
-            <tfoot className={styles.invoiceTableFooter}>
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'right' }}>
-                  Report{' '}
-                  {remainder.toLocaleString(userData.language, {
-                    style: 'currency',
-                    currency: client.currency,
-                  })}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="7" style={{ textAlign: 'right' }}>
-                  Sold client la zi{' '}
-                  {client.remainder.toLocaleString(userData.language, {
-                    style: 'currency',
-                    currency: client.currency,
-                  })}
-                </td>
-              </tr>
-            </tfoot>
+            <tfoot className={styles.invoiceTableFooter}></tfoot>
           </table>
         </div>
-
+        <p>*{client.currency}/unitate de tarifare</p>
         <div className={styles.invoiceTotals}>
           <Input
-            disabled={invoiceIssued}
+            disabled={invoiceIssued || view}
             element="input"
             label="DE PLATA:"
             type="number"
@@ -351,13 +372,14 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
             validators={[VALIDATOR_REQUIRE]}
             defaultValue={formState.inputs.totalInvoice.value}
           />
-
           <p>
             Rest de plata:{' '}
-            {remainder.toLocaleString(userData.language, {
-              style: 'currency',
-              currency: client.currency,
-            })}
+            {formatCurrency(
+              language,
+              client.currency,
+              remainder,
+              client.decimalPoints
+            )}
           </p>
           <div className={styles.invoiceActions}>
             {!error && successMessage && (
@@ -366,24 +388,23 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
             {errorMessage && (
               <p className={styles.errorMessage}>{errorMessage}</p>
             )}
-            {!invoiceIssued && (
-              <Button className={styles.issue} type="submit">
+            {!invoiceIssued && !view && (
+              <Button primary className={styles.issue} type="submit">
                 Emite
               </Button>
             )}
             {!error && invoiceIssued && (
               <div className={styles.exportSendGroup}>
-                <Button type="button" onClick={exportInvoice}>
+                <Button primary type="button" onClick={exportInvoice}>
                   Exporta PDF
                 </Button>
-                <Button type="button" onClick={sendInvoice}>
+                <Button primary type="button" onClick={sendInvoice}>
                   Trimite catre client
                 </Button>
               </div>
             )}
           </div>
         </div>
-
         <div className={styles.invoiceNotes}>
           <div>
             <p>
@@ -403,4 +424,4 @@ const CreateInvoice = ({ back, client, clientOrders }) => {
   );
 };
 
-export default CreateInvoice;
+export default InvoiceTemplate;

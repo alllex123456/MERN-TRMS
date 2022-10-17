@@ -11,7 +11,11 @@ const ErrorModal = (props) => {
       className={styles.errorModal}
       show={!!props.error}
       header="Eroare"
-      footer={<Button onClick={props.onClear}>Închide</Button>}
+      footer={
+        <Button primary onClick={props.onClear}>
+          Închide
+        </Button>
+      }
       close={props.onClear}
     >
       <p className={styles.error}>{props.error}</p>

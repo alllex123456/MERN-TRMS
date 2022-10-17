@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { CheckCircle, PencilSimple, Trash } from 'phosphor-react';
 
 import { AuthContext } from '../../../../context/auth-context';
+import { formatCurrency } from '../../../../utilities/format-currency';
 
 const CALCULATE_TOTALS = (unit, count, rate) => {
   let total;
@@ -20,7 +21,12 @@ const CALCULATE_TOTALS = (unit, count, rate) => {
   return total;
 };
 
-const EditInvoiceOrders = ({ order, onUpdateOrders, totalInvoiceTouched }) => {
+const EditInvoiceOrders = ({
+  client,
+  order,
+  onUpdateOrders,
+  totalInvoiceTouched,
+}) => {
   const { language } = useContext(AuthContext);
   const [editMode, setEditMode] = useState(false);
 
@@ -59,10 +65,7 @@ const EditInvoiceOrders = ({ order, onUpdateOrders, totalInvoiceTouched }) => {
           `${order.service}/${order.reference}`
         )}
       </td>
-      <td>
-        {new Date(order.receivedDate).toLocaleDateString(language)}/
-        {new Date(order.deliveredDate).toLocaleDateString(language)}
-      </td>
+
       <td>
         {editMode ? (
           <input
@@ -112,17 +115,21 @@ const EditInvoiceOrders = ({ order, onUpdateOrders, totalInvoiceTouched }) => {
             }}
           />
         ) : (
-          order.rate.toLocaleString(language, {
-            style: 'currency',
-            currency: order.currency,
-          })
+          formatCurrency(
+            language,
+            client.currency,
+            order.rate,
+            client.decimalPoints
+          )
         )}
       </td>
       <td>
-        {orderTotal.toLocaleString(language, {
-          style: 'currency',
-          currency: order.currency,
-        })}
+        {formatCurrency(
+          language,
+          client.currency,
+          order.total,
+          client.decimalPoints
+        )}
       </td>
       <td>
         {editMode ? (

@@ -6,14 +6,13 @@
 .select,
 .textarea {
   padding: 0.5rem;
-  background: rgba(0, 0, 0, 0.03);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .input:focus,
 .textarea:focus,
 .select:focus {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
 .input:disabled,
@@ -25,4 +24,21 @@
 .select > * {
   font: inherit;
   height: auto;
+}
+
+/* THEMING */
+.defaultInput {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.lightInput {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.darkInput {
+  background: var(--GREY-LIGHT);
+}
+
+.darkInput:focus {
+  box-shadow: 0 0 2px 2px rgba(var(--BLUE-MEDIUM-RGB), 0.5);
 }

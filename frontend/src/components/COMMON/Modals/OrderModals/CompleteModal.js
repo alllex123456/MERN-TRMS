@@ -127,8 +127,8 @@ const CompleteModal = (props) => {
         >
           {isLoading && <LoadingSpinner asOverlay />}
           {!isLoading && (
-            <div>
-              <div className="formGroup flex">
+            <div className="completeOrder">
+              <div className="formGroup flexColumn">
                 <Input
                   disabled
                   className="input"
@@ -151,9 +151,7 @@ const CompleteModal = (props) => {
                   validators={[]}
                   onInput={inputHandler}
                 />
-              </div>
 
-              <div className="formGroup flex">
                 <Input
                   disabled
                   className="input"
@@ -184,9 +182,9 @@ const CompleteModal = (props) => {
                   onInput={inputHandler}
                 />
               </div>
-              <div className="modalGroup flex">
+              <div className="formGroup modalGroup flexColumn">
                 <Input
-                  className="input"
+                  className="input required"
                   label="Tarif*"
                   element="input"
                   id="completeRate"
@@ -199,7 +197,7 @@ const CompleteModal = (props) => {
                   onInput={inputHandler}
                 />
                 <Input
-                  className="input"
+                  className="input required"
                   label="Volum final*"
                   element="input"
                   id="completeCount"
@@ -211,12 +209,10 @@ const CompleteModal = (props) => {
                   errorText="Nu a fost introdus volumul final"
                   onInput={inputHandler}
                 />
-              </div>
-              <div className="formGroup">
                 <Input
-                  className="textarea"
+                  className="input"
                   label="Note"
-                  element="textarea"
+                  element="input"
                   id="completeNotes"
                   defaultValue={formState.inputs.completeNotes.value}
                   defaultValidity={true}
@@ -226,11 +222,8 @@ const CompleteModal = (props) => {
               </div>
 
               <div className="formActions">
-                <Button type="submit" disabled={!formState.isValid}>
+                <Button primary type="submit" disabled={!formState.isValid}>
                   FINALIZEAZĂ
-                </Button>
-                <Button type="button" danger onClick={props.onCloseModal}>
-                  ÎNCHIDE
                 </Button>
               </div>
             </div>

@@ -92,7 +92,7 @@ export const Queue = (props) => {
         <header className={styles.queueHeader}>
           <Hourglass size={32} className={styles.icon} />
           <h2>Organizator comenzi în lucru</h2>
-          <Button type="button" onClick={() => showModalHandler('ADD')}>
+          <Button primary type="button" onClick={() => showModalHandler('ADD')}>
             + Adaugă comandă nouă
           </Button>
         </header>

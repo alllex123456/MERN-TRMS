@@ -8,12 +8,12 @@ import { translateServices } from '../../utilities/translate-units';
 
 import styles from './ClientStatementItem.module.css';
 
-const ClientStatementItem = ({ order, index, onShowModal }) => {
-  const { language, units } = useContext(AuthContext);
+const ClientStatementItem = ({ client, order, index, onShowModal }) => {
+  const { units, language, theme } = useContext(AuthContext);
 
   return (
     <React.Fragment>
-      <li className={styles.orderItem}>
+      <li className={`${styles.orderItem} ${styles[`${theme}OrderItem`]}`}>
         <section className={styles.section}>
           <div className={styles.orderNo}>
             <p>{index + 1}</p>
@@ -55,7 +55,14 @@ const ClientStatementItem = ({ order, index, onShowModal }) => {
           </div>
           <div className={styles.orderTotal}>
             <span>Total:</span>
-            <p>{formatCurrency(language, order.currency, order.total)}</p>
+            <p>
+              {formatCurrency(
+                language,
+                order.currency,
+                order.total,
+                client.decimalPoints
+              )}
+            </p>
           </div>
         </section>
 

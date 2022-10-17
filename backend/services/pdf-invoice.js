@@ -2,6 +2,7 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit-table');
 
 const { quantity, shortMU } = require('../utils/generalFunc');
+const { translateServices } = require('../utils/translateUnits');
 
 exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
   const {
@@ -130,42 +131,19 @@ exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
       },
     ],
 
-    rows: [],
+    rows: [[0, 'Sold client', '', '', '', client.remainder]],
   };
 
   orders.forEach((order, index) => {
     table.rows.push([
       index + 1,
-      `${order.service} / ${order.reference}`,
+      `Servicii ${translateServices([order.service])} / ${order.reference}`,
       `${order.count.toLocaleString('ro')}`,
       `${quantity(order)}`,
       `${order.rate.toLocaleString('ro')}/${shortMU(order)}`,
       order.total.toLocaleString('ro'),
     ]);
   });
-
-  table.rows.push([
-    '',
-    '',
-    '',
-    '',
-    'Report',
-    `-${remainder.toLocaleString('ro', {
-      style: 'currency',
-      currency: client.currency,
-    })}`,
-  ]);
-  table.rows.push([
-    '',
-    '',
-    '',
-    '',
-    'Sold client la zi',
-    `${client.remainder.toLocaleString('ro', {
-      style: 'currency',
-      currency: client.currency,
-    })}`,
-  ]);
 
   invoice.table(table, {
     width: 560,
@@ -217,18 +195,25 @@ exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
 
   invoice.moveDown(3);
 
-  invoice.rect(invoice.x, invoice.y, 560, 22).stroke();
-  invoice.text(
-    `Plata se va face in contul: ${user.iban} deschis la: ${
-      user.bank
-    } pana cel tarziu la: ${new Date(dueDate).toLocaleDateString('ro')}`,
-    invoice.x + 10,
-    invoice.y + 5
-  );
+  invoice.rect(invoice.x, invoice.y, 560, 20).stroke();
+  invoice
+    .text(' Plata se va face in contul: ', { continued: true })
+    .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
+    .text(user.iban, { continued: true })
+    .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
+    .text(' deschis la banca: ', { continued: true })
+    .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
+    .text(user.bank, { continued: true })
+    .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
+    .text(', pana cel tarziu la: ', { continued: true })
+    .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
+    .text(new Date(dueDate).toLocaleDateString('ro'), { continued: false });
 
   invoice.moveDown(1);
 
-  invoice.text(user.invoiceNotes);
+  invoice
+    .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
+    .text(user.invoiceNotes);
 
   invoice.moveDown(2);
 

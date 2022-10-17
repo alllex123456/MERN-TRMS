@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ReactDOM from 'react-dom';
+import { X } from 'phosphor-react';
 import { CSSTransition } from 'react-transition-group';
+
+import { AuthContext } from '../../../context/auth-context';
 
 import Backdrop from './Backdrop';
 
 import styles from './Modal.module.css';
 
 const ModalOverlay = (props) => {
+  const { theme } = useContext(AuthContext);
   const content = (
-    <div className={`${styles.overlay} ${props.className}`}>
+    <div
+      className={`${styles.overlay} ${props.className} ${
+        props.small && styles.small
+      } ${props.medium && styles.medium} ${styles[`${theme}Overlay`]}`}
+    >
       <header className={`${styles.header} ${props.className}`}>
-        {props.header}
+        <div className={styles.title}>{props.header}</div>
+        <div>
+          <X size={32} className={styles.close} onClick={props.close} />
+        </div>
       </header>
       {props.form && (
         <form

@@ -1,4 +1,4 @@
-.statementsHeader {
+.invoicesHeader {
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -17,11 +17,39 @@
   width: 20rem;
 }
 
-.input {
-  margin-bottom: 2rem;
-}
-
 .flex {
   max-width: 130rem;
   margin: 0 auto;
+}
+
+.invoiceFilters {
+  font-size: 1.4rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.invoiceFilters label {
+  display: inline-block;
+  cursor: pointer;
+  font-weight: 600;
+  background: var(--SMARALD-LIGHTEST);
+  padding: 0.5rem 2rem;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.invoiceFilters label:hover {
+  box-shadow: 0 0 4px rgba(var(--BLUE-MEDIUM-RGB), 0.4);
+}
+
+.checkbox input:checked + label {
+  border: 2px solid var(--BLUE-LIGHT);
+}
+
+/* THEMING */
+.input,
+.select {
+  background: var(--GREY-LIGHT);
 }

@@ -20,6 +20,7 @@ import { useHttpClient } from './hooks/useHttpClient';
 import { InvoicingPage } from './pages/invoicing';
 import { ClientInvoicingPage } from './pages/clientInvoicing';
 import { translateServices, translateUnits } from './utilities/translate-units';
+import { ViewInvoicePage } from './pages/viewInvoice';
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -256,6 +257,10 @@ function App() {
           <Route path="/statements" element={<StatementsPage />} />
           <Route path="/invoicing" element={<InvoicingPage />} />
           <Route path="invoicing/:clientId" element={<ClientInvoicingPage />} />
+          <Route
+            path="invoicing/view/:clientId/:invoiceId"
+            element={<ViewInvoicePage />}
+          />
           <Route path="/metrics" element={<MetricsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />

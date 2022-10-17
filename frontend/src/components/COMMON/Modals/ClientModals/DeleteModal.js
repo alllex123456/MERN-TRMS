@@ -46,6 +46,7 @@ const DeleteModal = ({ show, clientData, onCloseModal, refreshClients }) => {
       <SuccessModal success={successMessage} onClear={closeModalHandler} />
       {!error && !successMessage && (
         <Modal
+          small
           form
           header={header}
           show={show}
@@ -55,9 +56,8 @@ const DeleteModal = ({ show, clientData, onCloseModal, refreshClients }) => {
           {isLoading && <LoadingSpinner asOverlay />}
           <h2 className="center">Sigur dorești să ștergi acest client?</h2>
           <div className="formActions">
-            {!successMessage && <Button type="submit">ȘTERGE</Button>}
-            <Button type="button" danger onClick={closeModalHandler}>
-              {successMessage ? 'ÎNCHIDE' : 'ANULEAZĂ'}
+            <Button primary type="submit">
+              ȘTERGE
             </Button>
           </div>
         </Modal>

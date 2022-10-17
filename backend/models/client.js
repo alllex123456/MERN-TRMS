@@ -15,6 +15,7 @@ const clientSchema = new Schema(
       required: true,
     },
     currency: { type: String, required: true },
+    decimalPoints: { type: Number, required: false },
     email: { type: String, required: false },
     phone: { type: String, required: false },
     registeredOffice: { type: String, required: false },

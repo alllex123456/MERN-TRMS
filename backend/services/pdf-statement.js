@@ -16,7 +16,7 @@ exports.StatementPDF = (res, client, user, time) => {
     new Date(order.deadline).toLocaleDateString(user.language),
     order.count.toLocaleString(user.language),
     order.rate.toLocaleString(user.language),
-    order.total.toLocaleString(user.language),
+    order.total.toFixed(client.decimalPoints).toLocaleString(user.language),
     order.notes,
   ]);
 
@@ -77,7 +77,9 @@ exports.StatementPDF = (res, client, user, time) => {
     '',
     '',
     'Total situatie:',
-    `${totalOrders.toLocaleString(user.language)} ${client.currency}`,
+    `${totalOrders
+      .toFixed(client.decimalPoints)
+      .toLocaleString(user.language)} ${client.currency}`,
   ]);
   table.rows.push([
     '',

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { FileImage } from 'phosphor-react';
 
 import Button from '../../UIElements/Button';
@@ -6,6 +6,7 @@ import Input from '../../FormElements/Input';
 import Modal from '../../UIElements/Modal';
 import LoadingSpinner from '../../UIElements/LoadingSpinner';
 import ErrorModal from '../MessageModals/ErrorModal';
+import SuccessModal from '../MessageModals/SuccessModal';
 
 import { useHttpClient } from '../../../../hooks/useHttpClient';
 import { useForm } from '../../../../hooks/useForm';
@@ -26,6 +27,8 @@ const SettingsModal = (props) => {
     currencies,
     changeContextItem,
   } = useContext(AuthContext);
+  const [userData, setUserData] = useState({});
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const imagePicker = useRef();
 
@@ -58,6 +61,7 @@ const SettingsModal = (props) => {
         null,
         { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
       );
+      setUserData(responseData.message);
       setFormData(
         {
           avatar: { value: responseData.message.avatar, isValid: true },
@@ -111,6 +115,13 @@ const SettingsModal = (props) => {
       formState.inputs.preferredCurrency.value
     );
 
+    changeContextItem('language', formState.inputs.language.value);
+    changeContextItem(
+      'preferredCurrency',
+      formState.inputs.preferredCurrency.value
+    );
+    changeContextItem('theme', formState.inputs.theme.value);
+
     try {
       const responseData = await sendRequest(
         `http://localhost:8000/user/update`,
@@ -118,144 +129,152 @@ const SettingsModal = (props) => {
         formData,
         { Authorization: 'Bearer ' + token }
       );
+      props.setShowSettings(false);
+      setSuccessMessage(responseData.confirmation);
       changeContextItem('avatar', responseData.message.filename);
     } catch (error) {}
+  };
+
+  const clearSuccessMessage = () => {
+    setSuccessMessage(null);
   };
 
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
+      <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
+      {!successMessage && (
+        <Modal
+          small
+          form
+          method="POST"
+          enctype="multipart/form-data"
+          show={props.show}
+          close={() => {
+            setFormData(
+              {
+                ...formState.inputs,
+                avatar: { value: avatar, isValid: true },
+              },
+              true
+            );
+            props.setShowSettings(false);
+            props.setPreview(null);
+          }}
+          header={'setari de profil'}
+          footer={`Profil modificat ultima dată la: ${new Date(
+            userData.updatedAt
+          ).toLocaleString(language)}`}
+          onSubmit={submitHandler}
+        >
+          {isLoading && <LoadingSpinner asOverlay />}
+          <div className="settings">
+            <div className="profileAvatar">
+              {props.preview || avatar ? (
+                <img
+                  src={
+                    props.preview
+                      ? props.preview
+                      : `http://localhost:8000/uploads/avatars/${formState.inputs.avatar.value}`
+                  }
+                  alt="PROFILE IMAGE"
+                />
+              ) : (
+                <div className="blankAvatar" />
+              )}
 
-      <Modal
-        form
-        method="POST"
-        enctype="multipart/form-data"
-        show={props.show}
-        close={() => {
-          setFormData(
-            {
-              ...formState.inputs,
-              avatar: { value: avatar, isValid: true },
-            },
-            true
-          );
-          props.setShowSettings(false);
-          props.setPreview(null);
-        }}
-        header={userAlias}
-        footer={`Profil modificat ultima dată la: ${new Date().toLocaleString()}`}
-        onSubmit={submitHandler}
-      >
-        {isLoading && <LoadingSpinner asOverlay />}
-        <div className="profileAvatar center">
-          {props.preview || avatar ? (
-            <img
-              src={
-                props.preview
-                  ? props.preview
-                  : `http://localhost:8000/uploads/avatars/${formState.inputs.avatar.value}`
-              }
-              alt="PROFILE IMAGE"
-            />
-          ) : (
-            <div className="blankAvatar" />
-          )}
-
-          <input
-            ref={imagePicker}
-            type="file"
-            id="avatar"
-            name="avatar"
-            accept=".png, .jpg, .jpeg"
-            style={{ display: 'none' }}
-            onChange={imagePickerHandler}
-          />
-          <FileImage
-            className="changeProfileAvatar"
-            size={48}
-            onClick={getImageInput}
-          />
-          <p>
-            <span>{userAlias}</span>
-          </p>
-        </div>
-        <div className="profileSettings">
-          <Input
-            className="profileInput"
-            id="language"
-            element="select"
-            label="Limba selectată"
-            onInput={inputHandler}
-            validators={[]}
-          >
-            <option value={formState.inputs.language.value}>
-              {formState.inputs.language.value}
-            </option>
-            {languages
-              ?.filter(
-                (language) => language !== formState.inputs.language.value
-              )
-              .map((language) => (
-                <option key={language} value={language}>
-                  {language}
+              <input
+                ref={imagePicker}
+                type="file"
+                id="avatar"
+                name="avatar"
+                accept=".png, .jpg, .jpeg"
+                style={{ display: 'none' }}
+                onChange={imagePickerHandler}
+              />
+              <FileImage
+                className="changeProfileAvatar"
+                size={48}
+                onClick={getImageInput}
+              />
+              <p>
+                <span>{userAlias}</span>
+              </p>
+            </div>
+            <div className="profileSettings">
+              <Input
+                className="profileInput"
+                id="language"
+                element="select"
+                label="Limba selectată"
+                onInput={inputHandler}
+                validators={[]}
+              >
+                <option value={formState.inputs.language.value}>
+                  {formState.inputs.language.value}
                 </option>
-              ))}
-          </Input>
+                {languages
+                  ?.filter(
+                    (language) => language !== formState.inputs.language.value
+                  )
+                  .map((language) => (
+                    <option key={language} value={language}>
+                      {language}
+                    </option>
+                  ))}
+              </Input>
 
-          <Input
-            className="profileInput"
-            id="preferredCurrency"
-            element="select"
-            label="Moneda preferată"
-            onInput={inputHandler}
-            validators={[]}
-          >
-            <option value={formState.inputs.preferredCurrency.value}>
-              {formState.inputs.preferredCurrency.value}
-            </option>
-            {currencies
-              ?.filter(
-                (currency) =>
-                  currency !== formState.inputs.preferredCurrency.value
-              )
-              .map((currency) => (
-                <option key={currency} value={currency}>
-                  {currency}
+              <Input
+                className="profileInput"
+                id="preferredCurrency"
+                element="select"
+                label="Moneda preferată"
+                onInput={inputHandler}
+                validators={[]}
+              >
+                <option value={formState.inputs.preferredCurrency.value}>
+                  {formState.inputs.preferredCurrency.value}
                 </option>
-              ))}
-          </Input>
+                {currencies
+                  ?.filter(
+                    (currency) =>
+                      currency !== formState.inputs.preferredCurrency.value
+                  )
+                  .map((currency) => (
+                    <option key={currency} value={currency}>
+                      {currency}
+                    </option>
+                  ))}
+              </Input>
 
-          <Input
-            className="profileInput"
-            id="theme"
-            element="select"
-            label="Temă"
-            onInput={inputHandler}
-            validators={[]}
-          >
-            <option value={formState.inputs.theme.value}>
-              {formState.inputs.theme.value.split('-')[1]}
-            </option>
-            {themes
-              ?.filter((theme) => theme !== formState.inputs.theme.value)
-              .map((theme, index) => (
-                <option key={theme} value={theme}>
-                  {theme.split('-')[1]}
+              <Input
+                className="profileInput"
+                id="theme"
+                element="select"
+                label="Temă"
+                onInput={inputHandler}
+                validators={[]}
+              >
+                <option value={formState.inputs.theme.value}>
+                  {formState.inputs.theme.value}
                 </option>
-              ))}
-          </Input>
-        </div>
-        <div className="profileActions">
-          <Button type="submit">Salvează</Button>
-          <Button
-            danger
-            type="button"
-            onClick={() => props.setShowSettings(false)}
-          >
-            Închide
-          </Button>
-        </div>
-      </Modal>
+                {themes
+                  ?.filter((theme) => theme !== formState.inputs.theme.value)
+                  .map((theme, index) => (
+                    <option key={theme} value={theme}>
+                      {theme}
+                    </option>
+                  ))}
+              </Input>
+            </div>
+          </div>
+          <div className="profileActions">
+            <Button primary type="submit">
+              Salvează
+            </Button>
+          </div>
+        </Modal>
+      )}
     </React.Fragment>
   );
 };

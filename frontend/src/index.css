@@ -1,19 +1,52 @@
 /* COLOR KEY FLAT UI v1 PALETTE */
 
 :root {
-  --ELECTROMAGNETIC: #2f3640;
-  --BLEU-FRANCE: #2e86de;
-  --BLEU-FRANCE-LIGHTER: #589ee5;
-  --BLEU-FRANCE-DARKER: #256bb2;
-  --REEF: #079992;
+  --BACKGROUNDS-PRIMARY: #ecf0f1;
+  --BACKGROUNDS-SECONDARY: #2f3640;
 
-  --CLOUDS: #ecf0f1;
-  --CONCRETE: #95a5a6;
+  --FONT-COLOR-LIGHT: #ecf0f1;
+  --FONT-COLOR-DARK: #2f3640;
 
-  --BUTTON-COLOR-MAIN: #2e86de;
-  --BUTTON-COLOR-DANGER: #ee5253;
+  --BUTTON-COLOR-PRIMARY: #2e86de;
+  --BUTTON-COLOR-SECONDARY: #079992;
+  --BUTTON-COLOR-DANGER: #fa0431;
 
-  --MODAL: #2c3e50;
+  --MODALS-BACKGROUND: #f6f8f8;
+
+  --INPUTS-BACKGROUND: #d4d8d9;
+
+  --BLUE-LIGHTEST: #abcff2;
+  --BLUE-LIGHT: #6daae8;
+  --BLUE-MEDIUM: #2e86de;
+  --BLUE-DARK: #205e9b;
+  --BLUE-DARKEST: #123659;
+
+  --GREY-LIGHTEST: #c1c3c6;
+  --GREY-LIGHT: #595e66;
+  --GREY-MEDIUM: #2f3640;
+  --GREY-DARK: #262b33;
+  --GREY-DARKEST: #13161a;
+
+  --SMARALD-LIGHTEST: #b5e0de;
+  --SMARALD-LIGHT: #51b8b3;
+  --SMARALD-MEDIUM: #079992;
+  --SMARALD-DARK: #056b66;
+  --SMARALD-DARKEST: #022e2c;
+
+  --RED-LIGHTEST: #fd9bad;
+  --RED-LIGHT: #fc4f6f;
+  --RED-MEDIUM: #fa0431;
+  --RED-DARK: #af0322;
+  --RED-DARKEST: #640214;
+
+  /* OTHER RGBA */
+  --ITEM-BACKGROUNDS-RGB: 59, 61, 61;
+
+  /* SHADOW USAGE */
+  --GREY-MEDIUM-RGB: 47, 54, 64;
+  --SMARALD-MEDIUM-RGB: 7, 153, 146;
+  --BLUE-MEDIUM-RGB: 46, 134, 222;
+  --RED-MEDIUM-RGB: 238, 82, 83;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,400;0,700;1,400&display=swap');
@@ -29,7 +62,6 @@
 html {
   font-family: 'Titillium Web', sans-serif;
   font-size: 62.5%;
-  color: rgb(72, 69, 84);
 }
 
 a {
@@ -50,6 +82,7 @@ input,
 select,
 textarea {
   font: inherit;
+  color: inherit;
   border-radius: 3px;
   border: none;
   outline: none;
@@ -178,7 +211,7 @@ button {
 
 /* BLANKS */
 .blankAvatar {
-  background: var(--REEF);
+  background: var(--SMARALD-LIGHT);
   height: 12rem;
   width: 12rem;
 }
@@ -203,14 +236,14 @@ button {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--REEF);
+  background: var(--GREY-LIGHTEST);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--BLEU-FRANCE);
+  background: var(--BLUE-LIGHT);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--BLEU-FRANCE-LIGHTER);
+  background: var(--BLUE-LIGHTEST);
 }
 
 /* QUERIES */

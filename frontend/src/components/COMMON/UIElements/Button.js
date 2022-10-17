@@ -9,7 +9,9 @@ const Button = (props) => {
       <a
         className={`${props.className} ${styles.button} ${styles.button}--${
           props.size || 'medium'
-        } ${props.inverse && styles.inverse} ${props.danger && styles.danger}`}
+        } ${props.inverse && styles.inverse} ${props.danger && styles.danger} ${
+          props.primary && styles.primary
+        } ${props.secondary && styles.secondary}`}
         href={props.href}
       >
         {props.children}{' '}
@@ -22,7 +24,9 @@ const Button = (props) => {
       <Link
         className={`${props.className} ${styles.button} ${styles.button}--${
           props.size || 'medium'
-        } ${props.inverse && styles.inverse} ${props.danger && styles.danger}`}
+        } ${props.inverse && styles.inverse} ${props.danger && styles.danger} ${
+          props.primary && styles.primary
+        } ${props.secondary && styles.secondary}`}
         href={props.href}
         to={props.to}
       >
@@ -35,7 +39,9 @@ const Button = (props) => {
     <button
       className={`${props.className} ${styles.button} ${
         props.inverse && styles.inverse
-      } ${props.danger && styles.danger}`}
+      } ${props.danger && styles.danger} ${props.primary && styles.primary} ${
+        props.secondary && styles.secondary
+      }`}
       type={props.type}
       disabled={props.disabled}
       onClick={props.onClick}

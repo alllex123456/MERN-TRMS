@@ -14,7 +14,7 @@ import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 
 const Activity = () => {
-  const { token, preferredCurrency } = useContext(AuthContext);
+  const { token, theme } = useContext(AuthContext);
   const [loadedOrders, setLoadedOrders] = useState([]);
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
@@ -51,7 +51,7 @@ const Activity = () => {
       pagesArray.push(value['1800cw/s'] / 1800);
     }
   }
-
+  console.log(theme);
   const chartDays = {
     labels: [],
     datasets: [
@@ -59,7 +59,10 @@ const Activity = () => {
         fill: true,
         label: 'Pagini',
         data: [],
-        borderColor: 'rgb(53, 162, 235)',
+        borderColor:
+          (theme === 'Light-Luminos' && 'rgb(53, 162, 235)') ||
+          (theme === 'Dark-Intunecat' && 'white') ||
+          (theme === 'Default-Implicit' && 'rgb(53, 162, 235)'),
         backgroundColor: 'rgba(0, 0, 150, 0.2)',
       },
     ],

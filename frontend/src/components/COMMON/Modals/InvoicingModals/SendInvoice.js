@@ -186,10 +186,10 @@ const SendInvoice = (props) => {
               />
             </div>
             <div className="formActions">
-              <Button type="submit" disabled={!formState.isValid}>
+              <Button primary type="submit" disabled={!formState.isValid}>
                 TRIMITE
               </Button>
-              <Button danger type="button" onClick={closeModalHandler}>
+              <Button secondary type="button" onClick={closeModalHandler}>
                 INCHIDE
               </Button>
             </div>

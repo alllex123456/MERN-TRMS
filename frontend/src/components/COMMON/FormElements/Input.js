@@ -1,4 +1,5 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useContext } from 'react';
+import { AuthContext } from '../../../context/auth-context';
 
 import { validator } from '../../../utilities/form-validator';
 
@@ -25,8 +26,10 @@ const inputReducer = (state, action) => {
 };
 
 const Input = (props) => {
+  const { theme } = useContext(AuthContext);
+
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: props.defaultValue || '',
+    value: props.defaultValue || props.noVal || '',
     isValid: props.defaultValidity || false,
     isTouched: false,
   });
@@ -54,7 +57,9 @@ const Input = (props) => {
   if (props.element === 'input') {
     element = (
       <input
-        className={`${styles.input} ${props.className}`}
+        className={`${styles.input} ${props.className} ${
+          styles[`${theme}Input`]
+        }`}
         id={props.id}
         type={props.type}
         step={props.step ? props.step : null}
@@ -69,7 +74,9 @@ const Input = (props) => {
   if (props.element === 'select') {
     element = (
       <select
-        className={`${styles.select} ${props.className}`}
+        className={`${styles.select} ${props.className} ${
+          styles[`${theme}Input`]
+        }`}
         id={props.id}
         value={inputState.value}
         onChange={inputChangeHandler}
@@ -82,7 +89,9 @@ const Input = (props) => {
   if (props.element === 'textarea') {
     element = (
       <textarea
-        className={`${styles.textarea} ${props.className}`}
+        className={`${styles.textarea} ${props.className} ${
+          styles[`${theme}Input`]
+        }`}
         id={props.id}
         rows={props.rows || 3}
         value={inputState.value}

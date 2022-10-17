@@ -20,27 +20,6 @@ exports.getMetrics = async (req, res, next) => {
     );
   }
 
-  user.orders = user.orders.filter(
-    (order) =>
-      order.status === 'queue' || order.deliveredDate > Date.now() - 31536000000
-  );
-  await user.save();
-
-  const clients = await Client.find({ userId }).populate('orders');
-  clients.forEach(async (client) => {
-    client.orders = client.orders.filter(
-      (order) =>
-        order.status === 'queue' ||
-        order.deliveredDate > Date.now() - 31536000000
-    );
-    await client.save();
-  });
-
-  await Order.deleteMany({
-    userId,
-    deliveredDate: { $lte: Date.now() - 31536000000 },
-  });
-
   pendingOrders = user.orders.filter((order) => order.status === 'queue');
   completedOrders = user.orders.filter(
     (order) => order.status === 'completed' || order.status === 'invoiced'

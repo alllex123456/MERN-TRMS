@@ -7,7 +7,7 @@ import { formatCurrency } from '../../utilities/format-currency';
 import { AuthContext } from '../../context/auth-context';
 
 const StatementItem = ({ data }) => {
-  const { language } = useContext(AuthContext);
+  const { language, theme } = useContext(AuthContext);
   const navigator = useNavigate();
 
   const totalDue = (orders) => {
@@ -17,7 +17,7 @@ const StatementItem = ({ data }) => {
 
   return (
     <li
-      className={styles.statementItem}
+      className={`${styles.statementItem} ${styles[`${theme}StatementItem`]}`}
       onClick={() => navigator(`${data.id}`, { replace: false })}
     >
       <h2 className={styles.name}>{data.name}</h2>
@@ -25,7 +25,7 @@ const StatementItem = ({ data }) => {
         {formatCurrency(language, data.currency, totalDue(data.orders))}
       </p>
       <p className={styles.invoiced}>
-        Ultima factură emisă la: {format(new Date(), 'dd.mm.yyyy')}
+        Ultima factură emisă la: {new Date().toLocaleDateString(language)}
       </p>
     </li>
   );

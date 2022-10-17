@@ -1,5 +1,4 @@
 .navigation {
-  background: var(--ELECTROMAGNETIC);
   border-right: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -32,6 +31,10 @@
   filter: brightness(300%);
 }
 
+.profileList {
+  padding: 0 3rem;
+}
+
 .profileItem {
   padding: 1rem;
 
@@ -40,7 +43,7 @@
 
 .profileItem:hover {
   border-radius: 3px;
-  box-shadow: 0 0 5px 3px var(--BLEU-FRANCE-LIGHTER);
+  box-shadow: 0 0 5px 3px var(--BLUE-LIGHT);
 }
 
 .icon {
@@ -55,7 +58,20 @@
 }
 
 .linkActive {
-  background: var(--BLEU-FRANCE);
+  background: var(--BLUE-MEDIUM);
+}
+
+.userAvatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.userAvatar img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: cover;
 }
 
 @media (max-width: 2000px) {
@@ -77,4 +93,17 @@
   .navigation {
     display: none;
   }
+}
+
+/* THEMING */
+.defaultNavigation {
+  background: var(--BACKGROUNDS-SECONDARY);
+}
+
+.lightNavigation {
+  background: var(--BACKGROUNDS-PRIMARY);
+}
+
+.darkNavigation {
+  background: var(--GREY-DARKEST);
 }

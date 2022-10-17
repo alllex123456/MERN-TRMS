@@ -9,7 +9,7 @@ import AddModal from '../COMMON/Modals/OrderModals/AddModal';
 import EditModal from '../COMMON/Modals/OrderModals/EditModal';
 import DeleteModal from '../COMMON/Modals/OrderModals/DeleteModal';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
-import CreateInvoice from '../invoicing/CreateInvoice';
+import CreateInvoice from '../invoicing/InvoiceTemplate';
 
 import { useHttpClient } from '../../hooks/useHttpClient';
 import { useModal } from '../../hooks/useModal';
@@ -28,15 +28,36 @@ const ClientStatement = () => {
   const [createInvoice, setCreateInvoice] = useState(false);
   const [clientOrders, setClientOrders] = useState([]);
   const [client, setClient] = useState();
+  const [lastInvoice, setLastInvoice] = useState({});
   const [blob, setBlob] = useState();
+
+  const { sendRequest, isLoading, error, clearError } = useHttpClient();
+
+  useEffect(() => {
+    const getInvoices = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:8000/invoicing/client/${clientId}`,
+          'GET',
+          null,
+          { Authorization: 'Bearer ' + token }
+        );
+        const clientInvoices = responseData.message.invoices;
+        const sortedInvoices = clientInvoices.sort(
+          (a, b) =>
+            new Date(b.issuedDate).getDate() - new Date(a.issuedDate).getDate()
+        );
+        setLastInvoice(sortedInvoices[0]);
+      } catch (error) {}
+    };
+    getInvoices();
+  }, [sendRequest]);
 
   const { modalState, closeModalHandler, showModalHandler } = useModal(
     '',
     '',
     false
   );
-
-  const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
   useEffect(() => {
     const getClientStatement = async () => {
@@ -151,8 +172,11 @@ const ClientStatement = () => {
           <h3 className={styles.clientName}>{client.name}</h3>
           <p>Unitate de măsură: {getReadableUnit(units, client.unit)}</p>
           <p className={styles.clientLastInvoice}>
-            Ultima facturare: {new Date().toLocaleDateString()} | Rest de la
-            ultima facturare:{' '}
+            Ultima facturare:{' '}
+            {lastInvoice
+              ? new Date(lastInvoice.issuedDate).toLocaleDateString(language)
+              : 'nu exista'}{' '}
+            | Sold anterior:{' '}
             {formatCurrency(language, client.currency, client.remainder)}
           </p>
           <ul className={styles.statementList}>
@@ -160,6 +184,7 @@ const ClientStatement = () => {
               <ClientStatementItem
                 key={order.id}
                 index={index}
+                client={client}
                 order={order}
                 currency={client.currency}
                 onShowModal={showModalHandler}
@@ -168,9 +193,21 @@ const ClientStatement = () => {
             ))}
           </ul>
           <div className={styles.statementActions}>
-            <Button onClick={invoicingHandler}>Facturare</Button>
+            <Button
+              disabled={clientOrders.length === 0}
+              primary
+              onClick={invoicingHandler}
+            >
+              Facturare
+            </Button>
 
-            <Button onClick={getPDFDocument}>Exportă PDF</Button>
+            <Button
+              disabled={clientOrders.length === 0}
+              primary
+              onClick={getPDFDocument}
+            >
+              Exportă PDF
+            </Button>
           </div>
         </main>
       )}

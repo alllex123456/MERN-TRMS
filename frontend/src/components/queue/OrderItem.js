@@ -9,7 +9,7 @@ import { translateServices } from '../../utilities/translate-units';
 import styles from './OrderItem.module.css';
 
 const OrderItem = ({ itno, orderData, onShowModal }) => {
-  const { language, units } = useContext(AuthContext);
+  const { language, units, theme } = useContext(AuthContext);
   const [time, setTime] = useState(new Date());
   const [exceededDeadline, setExceededDeadline] = useState();
   const [nearDeadline, setNearDeadline] = useState();
@@ -35,9 +35,11 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
     <li
       className={` ${exceededDeadline && styles.exceeded} ${
         nearDeadline && styles.urgent
-      } ${!exceededDeadline && !nearDeadline && styles.orderItemBackground} ${
-        styles.orderItem
-      } `}
+      } ${
+        !exceededDeadline &&
+        !nearDeadline &&
+        styles[`${theme}OrderItemBackground`]
+      } ${styles.orderItem}  `}
     >
       <section className={styles.section}>
         <div className={styles.orderService}>

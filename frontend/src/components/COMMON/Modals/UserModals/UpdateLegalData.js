@@ -79,6 +79,7 @@ const UpdateLegalData = (props) => {
         { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
       );
       setSuccessMessage('Utilizatorul a fost modificat cu succes');
+      props.onCloseModal();
     } catch (error) {}
   };
 
@@ -99,71 +100,73 @@ const UpdateLegalData = (props) => {
       <ErrorModal show={error} onClear={clearError} />
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
 
-      <Modal
-        form
-        header={header}
-        show={props.show}
-        close={closeModalReset}
-        onSubmit={updateHandler}
-      >
-        {isLoading && <LoadingSpinner asOverlay />}
-        {!isLoading && (
-          <div className="updateProfileBody">
-            <div className="formGroup">
-              <Input
-                className="input"
-                element="input"
-                id="name"
-                type="text"
-                label="Denumire PFA/Societate"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.name.value}
-                defaultValidity={formState.inputs.name.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="registeredOffice"
-                type="text"
-                label="Sediul"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.registeredOffice.value}
-                defaultValidity={formState.inputs.registeredOffice.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="registrationNumber"
-                type="text"
-                label="Numarul de inregistrare"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.registrationNumber.value}
-                defaultValidity={formState.inputs.registrationNumber.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="taxNumber"
-                type="text"
-                label="Cod fiscal"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.taxNumber.value}
-                defaultValidity={formState.inputs.taxNumber.isValid}
-              />
+      {!successMessage && (
+        <Modal
+          small
+          form
+          header={header}
+          show={props.show}
+          close={closeModalReset}
+          onSubmit={updateHandler}
+        >
+          {isLoading && <LoadingSpinner asOverlay />}
+          {!isLoading && (
+            <div className="updateProfileBody">
+              <div className="formGroup">
+                <Input
+                  className="input"
+                  element="input"
+                  id="name"
+                  type="text"
+                  label="Denumire PFA/Societate"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.name.value}
+                  defaultValidity={formState.inputs.name.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="registeredOffice"
+                  type="text"
+                  label="Sediul"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.registeredOffice.value}
+                  defaultValidity={formState.inputs.registeredOffice.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="registrationNumber"
+                  type="text"
+                  label="Numarul de inregistrare"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.registrationNumber.value}
+                  defaultValidity={formState.inputs.registrationNumber.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="taxNumber"
+                  type="text"
+                  label="Cod fiscal"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.taxNumber.value}
+                  defaultValidity={formState.inputs.taxNumber.isValid}
+                />
+              </div>
+              <div className="formActions">
+                <Button primary type="submit">
+                  SALVEAZA
+                </Button>
+              </div>
             </div>
-            <div className="formActions">
-              <Button type="submit">SALVEAZA</Button>
-              <Button type="button" danger onClick={closeModalReset}>
-                INCHIDE
-              </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
+          )}
+        </Modal>
+      )}
     </React.Fragment>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   AppWindow,
@@ -9,17 +9,19 @@ import {
   User,
   Money,
 } from 'phosphor-react';
+import { AuthContext } from '../../context/auth-context';
 
 import styles from './Navigation.module.css';
 
 export const Navigation = () => {
+  const { theme, avatar } = useContext(AuthContext);
   const activeLinks = ({ isActive }) =>
     isActive
       ? `${styles.linkActive} ${styles.navigationItem}`
       : styles.navigationItem;
 
   return (
-    <nav className={styles.navigation}>
+    <nav className={`${styles.navigation} ${styles[`${theme}Navigation`]}`}>
       <ul className={styles.navigationList}>
         <li>
           <NavLink className={activeLinks} to="/main">
@@ -62,7 +64,13 @@ export const Navigation = () => {
       <ul className={styles.profileList}>
         <li>
           <NavLink className={styles.profileItem} to="/profile">
-            <User size={32} className={styles.icon} />
+            <div className={styles.userAvatar}>
+              {avatar ? (
+                <img src={`http://localhost:8000/uploads/avatars/${avatar}`} />
+              ) : (
+                <div className="blankAvatar" />
+              )}
+            </div>
             <p className={styles.link}>PROFIL</p>
           </NavLink>
         </li>

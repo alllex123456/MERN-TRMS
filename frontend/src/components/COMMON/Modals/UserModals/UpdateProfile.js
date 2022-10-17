@@ -70,6 +70,7 @@ const UpdateProfile = (props) => {
         { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
       );
       setSuccessMessage('Utilizatorul a fost modificat cu succes');
+      props.onCloseModal();
     } catch (error) {}
   };
 
@@ -90,60 +91,62 @@ const UpdateProfile = (props) => {
       <ErrorModal show={error} onClear={clearError} />
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
 
-      <Modal
-        form
-        header={header}
-        show={props.show}
-        close={closeModalReset}
-        onSubmit={updateHandler}
-      >
-        {isLoading && <LoadingSpinner asOverlay />}
-        {!isLoading && (
-          <div className="updateProfileBody">
-            <div className="formGroup">
-              <Input
-                className="input"
-                element="input"
-                id="alias"
-                type="text"
-                label="Numele*"
-                onInput={inputHandler}
-                validators={[VALIDATOR_REQUIRE()]}
-                defaultValue={formState.inputs.alias.value}
-                defaultValidity={formState.inputs.alias.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="email"
-                type="email"
-                label="Adresa de email*"
-                onInput={inputHandler}
-                validators={[VALIDATOR_EMAIL()]}
-                defaultValue={formState.inputs.email.value}
-                defaultValidity={formState.inputs.email.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="phone"
-                type="phone"
-                label="Numarul de contact*"
-                onInput={inputHandler}
-                validators={[VALIDATOR_REQUIRE()]}
-                defaultValue={formState.inputs.phone.value}
-                defaultValidity={formState.inputs.phone.isValid}
-              />
+      {!successMessage && (
+        <Modal
+          small
+          form
+          header={header}
+          show={props.show}
+          close={closeModalReset}
+          onSubmit={updateHandler}
+        >
+          {isLoading && <LoadingSpinner asOverlay />}
+          {!isLoading && (
+            <div className="updateProfileBody">
+              <div className="formGroup">
+                <Input
+                  className="input"
+                  element="input"
+                  id="alias"
+                  type="text"
+                  label="Numele*"
+                  onInput={inputHandler}
+                  validators={[VALIDATOR_REQUIRE()]}
+                  defaultValue={formState.inputs.alias.value}
+                  defaultValidity={formState.inputs.alias.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="email"
+                  type="email"
+                  label="Adresa de email*"
+                  onInput={inputHandler}
+                  validators={[VALIDATOR_EMAIL()]}
+                  defaultValue={formState.inputs.email.value}
+                  defaultValidity={formState.inputs.email.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="phone"
+                  type="phone"
+                  label="Numarul de contact*"
+                  onInput={inputHandler}
+                  validators={[VALIDATOR_REQUIRE()]}
+                  defaultValue={formState.inputs.phone.value}
+                  defaultValidity={formState.inputs.phone.isValid}
+                />
+              </div>
+              <div className="formActions">
+                <Button primary type="submit">
+                  SALVEAZA
+                </Button>
+              </div>
             </div>
-            <div className="formActions">
-              <Button type="submit">SALVEAZA</Button>
-              <Button type="button" danger onClick={closeModalReset}>
-                INCHIDE
-              </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
+          )}
+        </Modal>
+      )}
     </React.Fragment>
   );
 };

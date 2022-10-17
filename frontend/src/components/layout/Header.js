@@ -56,14 +56,6 @@ export const Header = () => {
       />
 
       <div className={styles.userBar}>
-        <div className={styles.userAvatar}>
-          {avatar ? (
-            <img src={`http://localhost:8000/uploads/avatars/${avatar}`} />
-          ) : (
-            <div className="blankAvatar" />
-          )}
-        </div>
-        <div className={styles.userName}>{userAlias}</div>
         <div className={styles.userBarMenu}>
           <button
             className={styles.profileLink}

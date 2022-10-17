@@ -5,15 +5,21 @@
   border-radius: 3px;
   font-size: 1.4rem;
   padding: 0.5rem 1.5rem;
-  background: var(--BUTTON-COLOR-MAIN);
   font-weight: 500;
   color: #fff;
-  box-shadow: 0 0 5px rgba(0, 0, 255, 0.3);
   transition: all 0.3s;
 }
 
 .button:hover {
-  filter: brightness(120%);
+  filter: brightness(110%);
+}
+
+.primary {
+  background: var(--BUTTON-COLOR-PRIMARY);
+}
+
+.secondary {
+  background: var(--BUTTON-COLOR-SECONDARY);
 }
 
 .danger {
@@ -26,11 +32,11 @@
 
 .inverse {
   background: transparent;
-  color: var(--BUTTON-COLOR-MAIN);
+  color: var(--BUTTON-COLOR-PRIMARY);
   border: 1px solid currentColor;
 }
 .inverse:hover {
-  background: var(--BUTTON-COLOR-MAIN);
+  background: var(--BUTTON-COLOR-PRIMARY);
   color: #fff;
 }
 

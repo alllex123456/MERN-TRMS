@@ -226,7 +226,7 @@ const Auth = () => {
               </React.Fragment>
             )}
             <div className={styles.authActions}>
-              <Button onClick={inputHandler}>
+              <Button primary onClick={inputHandler}>
                 {!isLoggingIn ? 'REGISTER' : 'LOG IN'}
               </Button>
               <Button inverse type="button" onClick={switchModeHandler}>
@@ -255,7 +255,9 @@ const Auth = () => {
                 errorText="The email address you've entered is not valid"
                 onInput={inputHandler}
               />
-              <Button type="submit">Reset password</Button>
+              <Button secondary type="submit">
+                Reset password
+              </Button>
               {recoverPasswordMessage && (
                 <p className="center">{recoverPasswordMessage}</p>
               )}

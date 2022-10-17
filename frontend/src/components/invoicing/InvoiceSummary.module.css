@@ -6,9 +6,9 @@
   align-items: center;
 
   min-height: 10rem;
-  padding: 1rem 0;
+  padding: 1rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid var(--REEF);
+  border-bottom: 1px solid var(--SMARALD-LIGHT);
 }
 
 .title {
@@ -26,20 +26,19 @@
   letter-spacing: 0.5rem;
   padding: 0.5rem;
   font-weight: 700;
-  color: var(--CLOUDS);
+  color: var(--FONT-COLOR-LIGHT);
 }
 .status--issued {
-  background: var(--ELECTROMAGNETIC);
+  background: var(--GREY-MEDIUM);
 }
 .status--cashed {
-  background: var(--BLEU-FRANCE-LIGHTER);
+  background: var(--BLUE-LIGHT);
 }
 .status--delayed {
-  background: var(--BUTTON-COLOR-DANGER);
+  background: var(--RED-MEDIUM);
 }
 
 .actions {
-  color: var(--REEF);
   position: relative;
 }
 
@@ -49,23 +48,23 @@
   transition: all 0.3s;
 }
 .actionsIcon:hover {
-  filter: brightness(50%);
+  filter: brightness(190%);
 }
 
 .optionsList {
   font-size: 1.4rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-around;
+  gap: 2rem;
   transition: all 0.3s;
   position: absolute;
-  top: 3rem;
-  right: 0;
+  top: 0;
+  right: 4rem;
   padding: 1rem 3rem;
-  background: var(--CLOUDS);
+  background: var(--BACKGROUNDS-PRIMARY);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  z-index: 100;
 
   opacity: 0;
   pointer-events: none;
@@ -76,9 +75,6 @@
   margin-bottom: 1rem;
   cursor: pointer;
   transition: all 0.3s;
-}
-.option:hover {
-  filter: brightness(50%);
 }
 
 .showOptions {
@@ -91,4 +87,23 @@
   opacity: 1;
   pointer-events: visible;
   visibility: visible;
+}
+
+/* THEMING */
+.defaultActions {
+  color: var(--GREY-LIGHT);
+}
+.lightActions {
+  color: var(--GREY-LIGHT);
+}
+.darkActions {
+  color: var(--GREY-LIGHTEST);
+}
+
+.darkActions .option {
+  filter: brightness(50%);
+}
+
+.option:hover {
+  filter: brightness(20%);
 }

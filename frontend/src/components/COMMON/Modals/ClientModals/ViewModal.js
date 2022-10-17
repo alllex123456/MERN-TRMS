@@ -42,6 +42,7 @@ const ViewModal = ({ show, clientData, onCloseModal }) => {
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
       <Modal
+        medium
         card
         header={header}
         footer={footer}
@@ -62,19 +63,21 @@ const ViewModal = ({ show, clientData, onCloseModal }) => {
                   <div className="blankAvatar" />
                 )}
               </div>
-              <div>
-                <h2>{loadedData.name}</h2>
-                <span>
-                  Adresa de email: <a href={mailto}> {loadedData.email}</a>
-                </span>
-                <span>Telefon: {loadedData.phone}</span>
+              <div className="clientContacts">
+                <p>
+                  <strong>Adresa de email:</strong>{' '}
+                  <a href={mailto}> {loadedData.email}</a>
+                </p>
+                <p>
+                  <strong>Telefon:</strong> {loadedData.phone}
+                </p>
               </div>
             </header>
 
             <div className="section">
-              <span>
+              <p>
                 {services.map((service) => (
-                  <p key={service.value}>
+                  <p style={{ fontStyle: 'italic' }} key={service.value}>
                     Tarif {service.displayedValue}:{' '}
                     {formatCurrency(
                       language,
@@ -83,45 +86,38 @@ const ViewModal = ({ show, clientData, onCloseModal }) => {
                     )}
                   </p>
                 ))}
-              </span>
-              <span>
+              </p>
+              <p>
                 <strong>Unitate de măsură: </strong>
                 {getReadableUnit(units, loadedData.unit)}
-              </span>
+              </p>
             </div>
             <div className="section">
-              <span>
+              <p>
                 <strong>Sediul:</strong> {loadedData.registeredOffice}
-              </span>
-              <span>
+              </p>
+              <p>
                 <strong>Nr. de înregistrare:</strong>{' '}
                 {loadedData.registrationNumber}
-              </span>
-              <span>
+              </p>
+              <p>
                 <strong>Cod fiscal:</strong> {loadedData.taxNumber}
-              </span>
-              <span>
+              </p>
+              <p>
                 <strong>Banca:</strong> {loadedData.bank}
-              </span>
-              <span>
+              </p>
+              <p>
                 <strong>IBAN:</strong> {loadedData.iban}
-              </span>
+              </p>
             </div>
             <div className="section">
-              <span>
+              <p>
                 <strong>Note:</strong> {loadedData.notes}
-              </span>
-              <span>
+              </p>
+              <p>
                 Data adăugării:{' '}
-                {new Date(loadedData.createdAt)
-                  .toLocaleString('ro')
-                  .slice(0, 17)}
-              </span>
-            </div>
-            <div className="actions">
-              <Button type="button" onClick={() => onCloseModal()}>
-                Închide
-              </Button>
+                {new Date(loadedData.createdAt).toLocaleString(language)}
+              </p>
             </div>
           </div>
         )}

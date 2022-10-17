@@ -55,21 +55,10 @@ const DeleteModal = (props) => {
           <h2 className="center marbo-xl">
             Sigur dorești să ștergi această comandă?
           </h2>
-          <div className="modalGroup">
-            <span>Client: {props.orderId.clientId.name}</span>
-            <span>Referință: {props.orderId.reference}</span>
-            <span>Volum: {props.orderId.count}</span>
-            <span>
-              Termen:
-              {new Date(props.orderId.deadline)
-                .toLocaleString('ro')
-                .slice(0, 17)}
-            </span>
-          </div>
+
           <div className="formActions">
-            <Button type="submit">CONFIRM</Button>
-            <Button type="button" danger onClick={props.onCloseModal}>
-              ANULEAZĂ
+            <Button danger type="submit">
+              CONFIRM
             </Button>
           </div>
         </Modal>

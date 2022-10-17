@@ -232,7 +232,10 @@ exports.updateUser = async (req, res, next) => {
     );
   }
 
-  res.json({ message: req.file });
+  res.json({
+    confirmation: 'Utilizatorul a fost actualizat cu succes!',
+    message: req.file,
+  });
 };
 
 exports.getRecoverPassword = async (req, res, next) => {

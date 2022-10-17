@@ -10,15 +10,18 @@ const {
   modifyOrder,
   deleteOrder,
   getOrder,
+  getClientCompletedOrders,
+  cleanUpOrders,
 } = require('../controllers/order-controllers');
 
 router.use(authGuard);
 
 router.get('/', getOrders);
 router.get('/get-pending', getQueueList);
+router.get('/get-completed/:clientId', getClientCompletedOrders);
 router.get('/:orderId', getOrder);
 
-router.post('/add-order', addOrder);
+router.post('/add-order', cleanUpOrders, addOrder);
 router.post('/complete-order', completeOrder);
 
 router.patch('/modify-order', modifyOrder);

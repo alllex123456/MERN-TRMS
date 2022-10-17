@@ -74,6 +74,7 @@ exports.addClient = async (req, res, next) => {
     orders: [],
     invoices: [],
     remainder: 0,
+    decimalPoints: 0,
   });
   user.clients.push(newClient);
 
@@ -143,7 +144,7 @@ exports.modifyClient = async (req, res, next) => {
 
 exports.deleteClient = async (req, res, next) => {
   const { clientId } = req.params;
-  console.log(clientId);
+
   let client;
   try {
     client = await Client.findById(clientId).populate('userId');

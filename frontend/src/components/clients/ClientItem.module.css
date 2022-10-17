@@ -1,8 +1,7 @@
 .clientItem {
-  border-bottom: 2px solid var(--PETER-RIVER);
   border-radius: 3px;
   font-size: 1.6rem;
-  width: 30rem;
+  max-width: 60rem;
   flex-grow: 1;
 
   display: flex;
@@ -13,7 +12,6 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  background: rgba(59, 61, 61, 0.05);
   border-radius: 3px;
   margin: 0.1rem;
   padding: 0.1rem;
@@ -81,4 +79,17 @@
   display: flex;
   gap: 2rem;
   justify-content: center;
+}
+
+/* THEMING */
+.defaultClientItem {
+  border-bottom: 2px solid var(--BLUE-MEDIUM);
+}
+
+.lightClientItem {
+  border-bottom: 2px solid var(--BLUE-MEDIUM);
+}
+
+.darkClientItem {
+  border-bottom: 2px solid var(--BLUE-MEDIUM);
 }

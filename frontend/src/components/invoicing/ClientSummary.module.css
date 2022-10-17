@@ -1,12 +1,16 @@
 .clientSummary {
-  background: rgba(59, 61, 61, 0.05);
+  position: relative;
   padding: 1rem;
   margin-bottom: 1rem;
   cursor: pointer;
+
+  display: flex;
+  justify-content: space-between;
 }
 
-.clientSummary:hover {
-  background: rgba(59, 61, 61, 0.07);
+.clientInvoices {
+  max-height: 40rem;
+  overflow-y: scroll;
 }
 
 .clientName {
@@ -18,4 +22,30 @@
   font-weight: 500;
   font-size: 1.4rem;
   text-align: right;
+}
+
+.none {
+  color: #999;
+}
+
+/* THEMING */
+.defaultClientSummary {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
+}
+.defaultClientSummary:hover {
+  filter: brightness(20%);
+}
+
+.lightClientSummary {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
+}
+.lightClientSummary:hover {
+  filter: brightness(20%);
+}
+
+.darkClientSummary {
+  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.5);
+}
+.darkClientSummary:hover {
+  filter: brightness(90%);
 }

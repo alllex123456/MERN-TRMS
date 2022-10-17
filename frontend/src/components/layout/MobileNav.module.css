@@ -26,18 +26,18 @@
 }
 
 .icon {
-  color: var(--ELECTROMAGNETIC);
+  color: var(--BACKGROUNDS-SECONDARY);
   transition: all 0.2s;
 }
 
 .link {
-  color: var(--ELECTROMAGNETIC);
+  color: var(--BACKGROUNDS-SECONDARY);
   font-size: 1.4rem;
   transition: all 0.2s;
 }
 
 .linkActive {
-  background: var(--BLEU-FRANCE);
+  background: var(--BLUE-MEDIUM);
 }
 .linkActive .link {
   color: white;

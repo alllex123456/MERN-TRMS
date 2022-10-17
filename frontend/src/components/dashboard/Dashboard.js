@@ -22,7 +22,7 @@ const Main = () => {
   useEffect(() => {
     const getPendingOrders = async () => {
       const responseData = await sendRequest(
-        `http://localhost:8000/queue`,
+        `http://localhost:8000/orders/get-pending`,
         'GET',
         null,
         { Authorization: 'Bearer ' + token }

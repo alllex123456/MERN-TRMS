@@ -7,11 +7,16 @@ import styles from './SuccessModal.module.css';
 const SuccessModal = (props) => {
   return (
     <Modal
+      small
       className={styles.successModal}
       card
       show={!!props.success}
       header="Succes"
-      footer={<Button onClick={props.onClear}>Închide</Button>}
+      footer={
+        <Button primary onClick={props.onClear}>
+          OK
+        </Button>
+      }
       close={props.onClear}
     >
       <p className={styles.success}>{props.success}</p>

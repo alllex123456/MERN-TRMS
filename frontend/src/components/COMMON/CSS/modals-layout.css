@@ -1,8 +1,21 @@
+.grid2Col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 3rem;
+}
+.grid3Col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 3rem;
+}
+.gridFullCol {
+  grid-column: 1/-1;
+}
+
 /* user update profile */
 .updateProfileBody {
   margin: 0 auto;
 }
-/*  */
 
 .modalTitle {
   font-size: 1.8rem;
@@ -12,4 +25,32 @@
 .modalTitle span {
   font-size: 1.6rem;
   font-weight: 500;
+}
+
+/* in client ViewModal */
+.viewCard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 3rem;
+}
+
+.clientHeader {
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.clientContacts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.actions {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.section {
+  font-size: 1.4rem;
 }

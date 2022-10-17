@@ -93,6 +93,7 @@ const UpdateInvoicingData = (props) => {
         { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
       );
       setSuccessMessage('Utilizatorul a fost modificat cu succes');
+      props.onCloseModal();
     } catch (error) {}
   };
 
@@ -113,93 +114,95 @@ const UpdateInvoicingData = (props) => {
       <ErrorModal show={error} onClear={clearError} />
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
 
-      <Modal
-        form
-        header={header}
-        show={props.show}
-        close={closeModalReset}
-        onSubmit={updateHandler}
-      >
-        {isLoading && <LoadingSpinner asOverlay />}
-        {!isLoading && (
-          <div className="updateProfileBody">
-            <div className="formGroup flex">
-              <Input
-                className="input"
-                element="input"
-                id="invoiceSeries"
-                type="text"
-                label="Seria facturilor"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.invoiceSeries.value}
-                defaultValidity={formState.inputs.invoiceSeries.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="invoiceStartNumber"
-                type="text"
-                label="Numarul de la care incep facturile"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.invoiceStartNumber.value}
-                defaultValidity={formState.inputs.invoiceStartNumber.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="bank"
-                type="text"
-                label="Banca"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.bank.value}
-                defaultValidity={formState.inputs.bank.isValid}
-              />
-              <Input
-                className="input"
-                element="input"
-                id="iban"
-                type="text"
-                label="IBAN"
-                onInput={inputHandler}
-                validators={[]}
-                defaultValue={formState.inputs.iban.value}
-                defaultValidity={formState.inputs.iban.isValid}
-              />
+      {!successMessage && (
+        <Modal
+          medium
+          form
+          header={header}
+          show={props.show}
+          close={closeModalReset}
+          onSubmit={updateHandler}
+        >
+          {isLoading && <LoadingSpinner asOverlay />}
+          {!isLoading && (
+            <div className="updateProfileBody grid2Col">
+              <div className="formGroup flexColumn">
+                <Input
+                  className="input"
+                  element="input"
+                  id="invoiceSeries"
+                  type="text"
+                  label="Seria facturilor"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.invoiceSeries.value}
+                  defaultValidity={formState.inputs.invoiceSeries.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="invoiceStartNumber"
+                  type="text"
+                  label="Numarul de la care incep facturile"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.invoiceStartNumber.value}
+                  defaultValidity={formState.inputs.invoiceStartNumber.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="bank"
+                  type="text"
+                  label="Banca"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.bank.value}
+                  defaultValidity={formState.inputs.bank.isValid}
+                />
+                <Input
+                  className="input"
+                  element="input"
+                  id="iban"
+                  type="text"
+                  label="IBAN"
+                  onInput={inputHandler}
+                  validators={[]}
+                  defaultValue={formState.inputs.iban.value}
+                  defaultValidity={formState.inputs.iban.isValid}
+                />
+              </div>
+              <div className="formGroup flexColumn">
+                <Input
+                  className="textarea"
+                  element="textarea"
+                  id="invoiceTemplate"
+                  label="Formula de trimitere a facturilor"
+                  validators={[]}
+                  defaultValue={formState.inputs.invoiceTemplate.value}
+                  defaultValidity={formState.inputs.invoiceTemplate.isValid}
+                  onInput={inputHandler}
+                />
+                <Input
+                  className="textarea"
+                  element="textarea"
+                  id="invoiceNotes"
+                  label="Include urmatoarele mentiuni in facturi:"
+                  validators={[]}
+                  defaultValue={formState.inputs.invoiceNotes.value}
+                  defaultValidity={formState.inputs.invoiceNotes.isValid}
+                  onInput={inputHandler}
+                />
+              </div>
+              <div className="formActions">
+                <Button primary type="submit">
+                  SALVEAZA
+                </Button>
+              </div>
             </div>
-            <div className="formGroup">
-              <Input
-                className="textarea"
-                element="textarea"
-                id="invoiceTemplate"
-                label="Formula de trimitere a facturilor"
-                validators={[]}
-                defaultValue={formState.inputs.invoiceTemplate.value}
-                defaultValidity={formState.inputs.invoiceTemplate.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                className="textarea"
-                element="textarea"
-                id="invoiceNotes"
-                label="Include urmatoarele mentiuni in facturi:"
-                validators={[]}
-                defaultValue={formState.inputs.invoiceNotes.value}
-                defaultValidity={formState.inputs.invoiceNotes.isValid}
-                onInput={inputHandler}
-              />
-            </div>
-            <div className="formActions">
-              <Button type="submit">SALVEAZA</Button>
-              <Button type="button" danger onClick={closeModalReset}>
-                INCHIDE
-              </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
+          )}
+        </Modal>
+      )}
     </React.Fragment>
   );
 };

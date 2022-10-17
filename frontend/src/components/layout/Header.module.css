@@ -4,7 +4,7 @@
 }
 
 .zent sup {
-  color: var(--BLEU-FRANCE-LIGHTER);
+  color: var(--BLUE-LIGHT);
   letter-spacing: normal;
   font-size: 1rem;
   font-weight: 400;
@@ -32,7 +32,11 @@
 .header {
   grid-column: 1/-1;
 
-  background: linear-gradient(var(--ELECTROMAGNETIC) 70%, #000);
+  background: linear-gradient(
+    var(--GREY-MEDIUM) 35%,
+    var(--GREY-DARK) 60%,
+    var(--GREY-DARKEST)
+  );
   color: #fff;
 
   height: 5rem;
@@ -55,52 +59,12 @@
 }
 
 .userBarMenu {
-  position: absolute;
-  top: 4rem;
-  right: -2rem;
-
-  width: 30rem;
-  height: 10rem;
-  padding: 2rem;
-  border-radius: 5px;
-  box-shadow: 0 0 6px 4px rgba(0, 0, 0, 0.1);
-  background: #fff;
-  font-size: 1.4rem;
-
   display: flex;
-  align-items: center;
-  justify-content: space-around;
+  gap: 2rem;
 
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: all 0.3s;
+  font-size: 1.4rem;
 }
 
-.userBar:hover .userBarMenu {
-  opacity: 0.8;
-  visibility: visible;
-  pointer-events: all;
-}
-
-.userBarMenu:hover {
-  opacity: 0.8;
-  visibility: visible;
-  pointer-events: all;
-}
-
-.userAvatar {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-.userAvatar img {
-  width: 3rem;
-  height: 3rem;
-  object-fit: cover;
-}
 .headerName {
   display: flex;
   gap: 1rem;
@@ -128,10 +92,12 @@
 
 .logoutBtn {
   color: var(--BUTTON-COLOR-DANGER);
+  transition: all 0.3s;
 }
 
 .profileLink {
-  color: var(--BUTTON-COLOR-MAIN);
+  color: var(--BLUE-LIGHT);
+  transition: all 0.3s;
 }
 
 .profileLink,
@@ -143,17 +109,13 @@
 .logoutBtn span {
   font-weight: 700;
   opacity: 0.8;
-  transition: all 1s;
 }
 
-.profileLink:hover span,
-.logoutBtn:hover span {
-  opacity: 1;
+.profileLink:hover {
+  color: var(--BLUE-LIGHTEST);
 }
-
-.profileLink:hover,
 .logoutBtn:hover {
-  filter: brightness(80%);
+  color: var(--RED-LIGHTEST);
 }
 
 @media (max-width: 1400px) {

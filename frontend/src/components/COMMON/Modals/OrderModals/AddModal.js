@@ -71,7 +71,10 @@ const AddModal = (props) => {
                 value: localISOTime(Date.now()),
                 isValid: true,
               },
-              addRate: { value: userClient.message.rate, isValid: true },
+              addRate: {
+                value: userClient.message.rate,
+                isValid: true,
+              },
               addUnit: { value: userClient.message.unit, isValid: true },
               addCurrency: {
                 value: userClient.message.currency,
@@ -85,7 +88,18 @@ const AddModal = (props) => {
         };
         getFormData();
       } catch (error) {}
-    } else {
+    }
+  }, [
+    sendRequest,
+    props.addToStatement,
+    props.clientId,
+    setFormData,
+    services,
+    token,
+  ]);
+
+  useEffect(() => {
+    if (!props.addToStatement) {
       try {
         const getFormData = async () => {
           const userClients = await sendRequest(
@@ -99,7 +113,7 @@ const AddModal = (props) => {
         getFormData();
       } catch (error) {}
     }
-  }, [sendRequest, props.addToStatement, props.clientId, setFormData, token]);
+  }, [sendRequest, props.addToStatement, token]);
 
   const setRateHandler = async (clientId) => {
     try {
@@ -109,6 +123,7 @@ const AddModal = (props) => {
         null,
         { Authorization: 'Bearer ' + token }
       );
+
       setFormData(
         {
           ...formState.inputs,
@@ -142,7 +157,7 @@ const AddModal = (props) => {
           clientId: formState.inputs.addClient.value,
           receivedDate: localISOTime(Date.now()),
           deadline: formState.inputs.addDeadline.value,
-          rate: formState.inputs.addRate.value,
+          rate: +formState.inputs.addRate.value,
           unit: formState.inputs.addUnit.value,
           currency: formState.inputs.addCurrency.value,
           count: formState.inputs.addCount.value,
@@ -197,8 +212,6 @@ const AddModal = (props) => {
     setSuccessMessage(null);
   };
 
-  const header = `Adaugă comandă nouă`;
-
   const changeServiceHandler = async (service) => {
     if (!formState.inputs.addClient.value) return;
     try {
@@ -211,6 +224,7 @@ const AddModal = (props) => {
       setFormData(
         {
           ...formState.inputs,
+          addService: { value: service, isValid: true },
           addClient: { value: responseData.message.id, isValid: true },
           addRate: {
             value: responseData.message[`${service}Rate`],
@@ -227,6 +241,8 @@ const AddModal = (props) => {
     } catch (error) {}
   };
 
+  const header = `Adaugă comandă nouă`;
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -238,80 +254,80 @@ const AddModal = (props) => {
         onSubmit={addHandler}
       >
         {isLoading && <LoadingSpinner asOverlay />}
-        <div className="formGroup flex">
-          <Input
-            className="input"
-            element="select"
-            id="addService"
-            label="Tip serviciu"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Nu a fost selectat un serviciu"
-            defaultValue={services[0].value}
-            defaultValidity={formState.inputs.addService.isValid}
-            onInput={inputHandler}
-            onChangeService={changeServiceHandler}
-          >
-            {services.map((service) => (
-              <option key={service.value} value={service.value}>
-                {service.displayedValue}
-              </option>
-            ))}
-          </Input>
-          {!props.addToStatement && !isLoading && (
+        <div className="addOrder">
+          <div className="formGroup flexColumn">
             <Input
               className="input"
               element="select"
-              id="addClient"
-              label="Client"
+              id="addService"
+              label="Tip serviciu"
               validators={[VALIDATOR_REQUIRE()]}
-              errorText="Nu a fost selectat un client"
-              defaultValue={formState.inputs.addClient.value}
-              defaultValidity={formState.inputs.addClient.isValid}
+              errorText="Nu a fost selectat un serviciu"
+              defaultValue={services[0].value}
+              defaultValidity={formState.inputs.addService.isValid}
               onInput={inputHandler}
-              onSelectClient={setRateHandler}
+              onChangeService={changeServiceHandler}
             >
-              <option>selectează clientul...</option>
-              {!props.addToStatement &&
-                clients &&
-                clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.name}
-                  </option>
-                ))}
+              {services.map((service) => (
+                <option key={service.value} value={service.value}>
+                  {service.displayedValue}
+                </option>
+              ))}
             </Input>
-          )}
-          {props.addToStatement && client && (
-            <Input
-              className="input"
-              element="select"
-              id="addClient"
-              label="Client"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Nu a fost selectat un client"
-              defaultValue={formState.inputs.addClient.value}
-              defaultValidity={true}
-              onInput={inputHandler}
-              onSelectClient={setRateHandler}
-            >
-              <option>{client.name}</option>
-            </Input>
-          )}
+            {!props.addToStatement && !isLoading && (
+              <Input
+                className="input"
+                element="select"
+                id="addClient"
+                label="Client"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Nu a fost selectat un client"
+                defaultValue={formState.inputs.addClient.value}
+                defaultValidity={formState.inputs.addClient.isValid}
+                onInput={inputHandler}
+                onSelectClient={setRateHandler}
+              >
+                <option>selectează clientul...</option>
+                {!props.addToStatement &&
+                  clients &&
+                  clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.name}
+                    </option>
+                  ))}
+              </Input>
+            )}
+            {props.addToStatement && client && (
+              <Input
+                className="input"
+                element="select"
+                id="addClient"
+                label="Client"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Nu a fost selectat un client"
+                defaultValue={formState.inputs.addClient.value}
+                defaultValidity={true}
+                onInput={inputHandler}
+                onSelectClient={setRateHandler}
+              >
+                <option>{client.name}</option>
+              </Input>
+            )}
 
-          {!isLoading && (
-            <Input
-              className="input"
-              element="input"
-              id="addReference"
-              label="Referință"
-              type="text"
-              defaultValidity={formState.inputs.addReference.isValid}
-              validators={[]}
-              onInput={inputHandler}
-            />
-          )}
-        </div>
-        <div className="formGroup flex">
-          <section>
+            {!isLoading && (
+              <Input
+                className="input"
+                element="input"
+                id="addReference"
+                label="Referință"
+                type="text"
+                defaultValidity={formState.inputs.addReference.isValid}
+                validators={[]}
+                onInput={inputHandler}
+              />
+            )}
+          </div>
+          <div className="formGroup flexColumn">
             {!isLoading && (
               <Input
                 className="input"
@@ -326,9 +342,6 @@ const AddModal = (props) => {
                 onInput={inputHandler}
               />
             )}
-          </section>
-
-          <section>
             {!isLoading && (
               <Input
                 className="input"
@@ -343,89 +356,86 @@ const AddModal = (props) => {
                 onInput={inputHandler}
               />
             )}
-          </section>
-        </div>
-        <div className="formGroup flex">
-          {!isLoading && (
-            <Input
-              className="input"
-              element="input"
-              id="addRate"
-              label="Tarif"
-              type="number"
-              step="0.01"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Nu a fost selectat un tarif"
-              defaultValue={formState.inputs.addRate.value}
-              defaultValidity={formState.inputs.addRate.isValid}
-              onInput={inputHandler}
-            />
-          )}
-          {!isLoading && (
-            <Input
-              className="input"
-              element="select"
-              id="addUnit"
-              label="Unitate de măsură"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Nu a fost selectată unitatea de măsură"
-              defaultValue={formState.inputs.addUnit.value}
-              defaultValidity={formState.inputs.addUnit.isValid}
-              onInput={inputHandler}
-            >
-              <option value={formState.inputs.addUnit.value}>
-                {getReadableUnit(units, formState.inputs.addUnit.value)}
-              </option>
-              {units
-                .filter((unit) => unit.value !== formState.inputs.addUnit.value)
-                .map((unit) => (
-                  <option key={unit.value} value={unit.value}>
-                    {unit.displayedValue}
-                  </option>
-                ))}
-            </Input>
-          )}
-
-          <section>
             {!isLoading && (
               <Input
                 className="input"
                 element="input"
-                id="addCount"
-                label="Volum estimat"
+                id="addRate"
+                label="Tarif"
                 type="number"
                 step="0.01"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectat volumul estimat"
-                defaultValue={formState.inputs.addCount.value}
-                defaultValidity={formState.inputs.addCount.isValid}
+                errorText="Nu a fost selectat un tarif"
+                defaultValue={formState.inputs.addRate.value}
+                defaultValidity={formState.inputs.addRate.isValid}
                 onInput={inputHandler}
+                noVal="0"
               />
             )}
-          </section>
-        </div>
-        <div className="formGroup">
-          {!isLoading && (
+          </div>
+          <div className="formGroup flexColumn">
+            {!isLoading && (
+              <Input
+                className="input"
+                element="select"
+                id="addUnit"
+                label="Unitate de măsură"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Nu a fost selectată unitatea de măsură"
+                defaultValue={formState.inputs.addUnit.value}
+                defaultValidity={formState.inputs.addUnit.isValid}
+                onInput={inputHandler}
+              >
+                <option value={formState.inputs.addUnit.value}>
+                  {getReadableUnit(units, formState.inputs.addUnit.value)}
+                </option>
+                {units
+                  .filter(
+                    (unit) => unit.value !== formState.inputs.addUnit.value
+                  )
+                  .map((unit) => (
+                    <option key={unit.value} value={unit.value}>
+                      {unit.displayedValue}
+                    </option>
+                  ))}
+              </Input>
+            )}
+
+            <section>
+              {!isLoading && (
+                <Input
+                  className="input"
+                  element="input"
+                  id="addCount"
+                  label="Volum estimat"
+                  type="number"
+                  step="0.01"
+                  validators={[VALIDATOR_REQUIRE()]}
+                  errorText="Nu a fost selectat volumul estimat"
+                  defaultValue={formState.inputs.addCount.value}
+                  defaultValidity={formState.inputs.addCount.isValid}
+                  onInput={inputHandler}
+                />
+              )}
+            </section>
             <Input
               className="textarea"
-              element="textarea"
+              element="input"
               id="addNotes"
               label="Note"
               validators={[]}
               defaultValidity={formState.inputs.addNotes.isValid}
               onInput={inputHandler}
             />
-          )}
-        </div>
+          </div>
 
-        <div className="formActions">
-          <Button type="submit" disabled={!formState.isValid}>
-            SALVEAZĂ
-          </Button>
-          <Button type="button" danger onClick={closeModalHandler}>
-            ÎNCHIDE
-          </Button>
-          {successMessage && <p className="successPar">{successMessage}</p>}
+          <div className="formActions">
+            <Button primary type="submit" disabled={!formState.isValid}>
+              SALVEAZĂ
+            </Button>
+
+            {successMessage && <p className="successPar">{successMessage}</p>}
+          </div>
         </div>
       </Modal>
     </React.Fragment>

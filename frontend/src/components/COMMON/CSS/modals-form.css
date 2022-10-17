@@ -2,11 +2,11 @@
 .textarea {
   display: block;
   font: inherit;
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   outline: none;
   border: none;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .formGroup {
@@ -15,7 +15,7 @@
 
 .formGroup label {
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 .formActions {
@@ -24,7 +24,6 @@
 }
 
 .formActions > * {
-  margin-top: 3rem;
   margin-right: 2rem;
 }
 
@@ -43,33 +42,117 @@
   font-size: 1.4rem;
 }
 
-.modalGroup input {
-  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3);
-}
-.modalGroup label {
-  color: red;
-  font-weight: 700;
-  font-size: 1.4rem;
+.flexRow {
+  display: flex;
+  gap: 1rem;
 }
 
-.flex {
+.flexColumn {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .flex > * {
   width: 50%;
 }
 
-/* in client ViewModal */
-.actions {
-  font-size: 1.4rem;
-  text-align: center;
-  margin-top: 2rem;
+/* in SettingsModal */
+.settings {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
 }
-/*  */
+
+.grid2Col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 2rem;
+}
+
+.formActions {
+  grid-column: 1 / -1;
+}
+
+/* in queue AddOrder */
+.addOrder {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.addOrder .formActions {
+  grid-column: 1/-1;
+}
+
+/* in queue EditModal */
+.editOrder {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+}
+.editOrder .formActions {
+  grid-column: 1/-1;
+}
+
+/* in queue CompleteOrder */
+.completeOrder {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+}
+.completeOrder .formActions {
+  grid-column: 1/-1;
+}
+
+.required {
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.3);
+}
+
+/* in client Addmodal */
+.addClient {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.addClient .formActions {
+  grid-column: 1/-1;
+}
+.getCompanyData {
+  position: relative;
+}
+
+.getCompanyData .input {
+  width: 100%;
+  margin: 0;
+}
+
+.getCompanyDataBtn {
+  background: var(--BUTTON-COLOR-SECONDARY);
+  color: var(--FONT-COLOR-LIGHT);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+  transition: all 0.3s;
+
+  position: absolute;
+  top: 1.75rem;
+  right: 0;
+}
+
+.getCompanyDataBtn:hover {
+  filter: brightness(120%);
+}
 
 /* in client EditModal */
+.editClient {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 3rem;
+}
+
+.formActions {
+  grid-column: 1/-1;
+}
+
 .clientAvatar {
   position: relative;
   transform: translateX(calc(50% - 6rem));
@@ -94,8 +177,8 @@
 .profileAvatar {
   position: relative;
   display: flex;
+  flex-direction: column;
   gap: 2rem;
-  align-items: center;
   font-size: 1.6rem;
   margin-bottom: 3rem;
 }
@@ -106,24 +189,37 @@
   height: 12rem;
 }
 
-.changeProfileAvatar {
+.changeClientAvatar {
   position: absolute;
-  bottom: 5px;
-  left: 5px;
+  top: 0;
+  left: 0;
   color: #fff;
   padding: 1rem;
-  background: rgb(255 255 255 / 0.5);
+  background: var(--GREY-MEDIUM);
+  opacity: 0.5;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.changeClientAvatar:hover {
+  background: var(--GREY-LIGHT);
+}
+
+/* in user SettingsModal */
+.changeProfileAvatar {
+  position: absolute;
+  color: #fff;
+  padding: 1rem;
+  background: var(--GREY-MEDIUM);
+  opacity: 0.5;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s;
 }
 .changeProfileAvatar:hover {
-  background: rgb(255 255 255 / 0.6);
+  background: var(--GREY-LIGHT);
 }
-
-/* in user SettingsModal */
 .profileSettings {
-  width: 50%;
   font-size: 1.6rem;
 }
 
@@ -133,7 +229,7 @@
 }
 
 .profileInput {
-  width: 50%;
+  width: 100%;
   display: block;
   font-size: 1.6rem;
 }
@@ -147,3 +243,23 @@
   margin: 3rem;
 }
 /*  */
+
+/* cif */
+.taxNumberInput {
+  width: 20%;
+  margin: 1rem auto;
+}
+
+/* success/fail */
+.success,
+.error {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 2rem 0;
+}
+.success {
+  color: var(--BLEU-FRANCE-DARKER);
+}
+.error {
+  color: var(--BUTTON-COLOR-DANGER);
+}

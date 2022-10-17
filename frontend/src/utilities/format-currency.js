@@ -1,7 +1,7 @@
-export const formatCurrency = (language, currency, value) => {
+export const formatCurrency = (language, currency, value, decimalPoints) => {
   return new Intl.NumberFormat(language, {
     style: 'currency',
     currency: currency,
-    minimumFractionDigits: 0,
+    maximumFractionDigits: decimalPoints,
   }).format(value);
 };

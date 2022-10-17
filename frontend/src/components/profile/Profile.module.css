@@ -45,10 +45,14 @@
 }
 
 .userActionsIcon {
-  color: var(--REEF);
   transition: all 0.3s;
 }
 
 .userActions:hover {
   opacity: 1;
+}
+
+/* THEMING */
+.darkUserActions {
+  color: var(--FONT-COLOR-LIGHT);
 }

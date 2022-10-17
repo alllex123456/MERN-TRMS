@@ -91,7 +91,7 @@ const ClientsList = (props) => {
         <div className={styles.clientsHeader}>
           <AddressBook size={32} className={styles.icon} />
           <h2>Nomenclator clienți</h2>
-          <Button type="button" onClick={() => showModalHandler('ADD')}>
+          <Button primary type="button" onClick={() => showModalHandler('ADD')}>
             + Adaugă client nou
           </Button>
         </div>

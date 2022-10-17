@@ -14,7 +14,7 @@ import styles from './Profile.module.css';
 import UpdateInvoicingData from '../COMMON/Modals/UserModals/UpdateInvoicingData';
 
 const Profile = () => {
-  const { token } = useContext(AuthContext);
+  const { token, theme } = useContext(AuthContext);
   const [userData, setUserData] = useState({});
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
@@ -102,7 +102,9 @@ const Profile = () => {
               </p>
             </div>
             <button
-              className={styles.userActions}
+              className={`${styles.userActions} ${
+                styles[`${theme}UserActions`]
+              }`}
               onClick={() => showModalHandler('UPDATE_PERSONAL_DATA', userData)}
             >
               <Pen className={styles.userActionsIcon} size={32} />
@@ -134,7 +136,9 @@ const Profile = () => {
               </p>
             </div>
             <button
-              className={styles.userActions}
+              className={`${styles.userActions} ${
+                styles[`${theme}UserActions`]
+              }`}
               onClick={() => showModalHandler('UPDATE_LEGAL_DATA', userData)}
             >
               <Pen className={styles.userActionsIcon} size={32} />
@@ -174,7 +178,9 @@ const Profile = () => {
               </p>
             </div>
             <button
-              className={styles.userActions}
+              className={`${styles.userActions} ${
+                styles[`${theme}UserActions`]
+              }`}
               onClick={() =>
                 showModalHandler('UPDATE_INVOICING_DATA', userData)
               }

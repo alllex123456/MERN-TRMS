@@ -29,9 +29,8 @@
 }
 
 .numberMetricsGroup {
-  border-left: 2px solid var(--REEF);
-  border-right: 2px solid var(--REEF);
-  padding: 0 2rem;
+  border: 2px solid var(--SMARALD-LIGHTEST);
+  padding: 2rem;
 
   width: 30%;
 }
@@ -43,16 +42,6 @@
 
 .numberMetricsGroup p {
   font-size: 1.6rem;
-}
-
-.numberMetricsGroup:first-child h4 {
-  color: red;
-}
-.numberMetricsGroup:nth-child(2) h4 {
-  color: blue;
-}
-.numberMetricsGroup:nth-child(3) h4 {
-  color: green;
 }
 
 @media (max-width: 900px) {

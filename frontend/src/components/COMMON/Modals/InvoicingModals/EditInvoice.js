@@ -15,6 +15,7 @@ import '../../CSS/modals-layout.css';
 import '../../CSS/table.css';
 
 import EditInvoiceOrders from './EditInvoiceOrders';
+import { formatCurrency } from '../../../../utilities/format-currency';
 
 const EditInvoice = (props) => {
   const { token, language } = useContext(AuthContext);
@@ -169,13 +170,13 @@ const EditInvoice = (props) => {
       >
         {isLoading && <LoadingSpinner asOverlay />}
         {!successMessage && !isLoading && (
-          <React.Fragment>
+          <div className="editInvoice">
             <header>
               <p className="modalTitle">
                 Factura {series} / {number} <span>emisa catre</span> {name}
               </p>
             </header>
-            <div className="formGroup flex">
+            <div className="formGroup flexRow">
               <Input
                 className="input"
                 id="issuedDate"
@@ -209,7 +210,6 @@ const EditInvoice = (props) => {
                 <thead>
                   <tr style={{ textAlign: 'left' }}>
                     <th>Serviciu/Ref.</th>
-                    <th>Primit/predat</th>
                     <th>Cantitate</th>
                     <th>Tarif</th>
                     <th>Total</th>
@@ -221,6 +221,7 @@ const EditInvoice = (props) => {
                     <EditInvoiceOrders
                       key={order.id}
                       order={order}
+                      client={props.invoiceData.client}
                       onUpdateOrders={updateOrders}
                       totalInvoiceTouched={totalInvoiceTouched}
                     />
@@ -272,17 +273,19 @@ const EditInvoice = (props) => {
                       Rest de platit
                     </td>
                     <td>
-                      {remainder.toLocaleString(language, {
-                        style: 'currency',
-                        currency: currency,
-                      })}
+                      {formatCurrency(
+                        language,
+                        props.invoiceData.client.currency,
+                        remainder,
+                        props.invoiceData.client.decimalPoints
+                      )}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div>
+            <div style={{ marginBottom: '20px' }}>
               <h5>IMPORTANT</h5>
               <p>
                 - Modificarea articolelor individuale recalculeaza totalul, insa
@@ -295,12 +298,11 @@ const EditInvoice = (props) => {
             </div>
 
             <div className="formActions">
-              <Button type="submit">SALVEAZA</Button>
-              <Button danger type="button" onClick={closeModalHandler}>
-                ANULEAZA
+              <Button primary type="submit">
+                SALVEAZA
               </Button>
             </div>
-          </React.Fragment>
+          </div>
         )}
       </Modal>
     </React.Fragment>

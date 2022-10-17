@@ -3,11 +3,9 @@
   width: 100%;
   background: linear-gradient(
     -45deg,
-    var(--BLEU-FRANCE-LIGHTER),
-    var(--REEF),
-    var(--BLEU-FRANCE),
-    var(--CLOUDS),
-    var(--ELECTROMAGNETIC)
+    var(--BLUE-MEDIUM),
+    var(--GREY-MEDIUM),
+    var(--SMARALD-MEDIUM)
   );
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
@@ -57,12 +55,13 @@
   font-size: 1.4rem;
   font-weight: 700;
   background: transparent;
-  color: var(--REEF);
+  color: var(--SMARALD-MEDIUM);
 }
 
 .recoverPasswordField {
   padding: 1rem;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  box-shadow: 0 0 1px rgba(var(--SMARALD-MEDIUM-RGB), 0.9);
 }
 
 .recoverPasswordField button {
