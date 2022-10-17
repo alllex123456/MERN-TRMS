@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { format } from 'date-fns';
+
+import { AuthContext } from '../../context/auth-context';
 
 import styles from './OrderItem.module.css';
 
 const OrderItem = ({ order }) => {
+  const { theme } = useContext(AuthContext);
   return (
-    <li className={styles.orderItem}>
+    <li className={`${styles.orderItem} ${styles[`${theme}OrderItem`]}`}>
       <h4>
         <span>Client:</span> {order.clientId.name}
       </h4>

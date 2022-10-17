@@ -1,5 +1,4 @@
 .orderItem {
-  background: rgb(18, 127, 181, 0.3);
   padding: 1rem;
   border-radius: 5px;
 }
@@ -10,4 +9,15 @@
 
 .orderItem p {
   font-size: 1.4rem;
+}
+
+/* THEMING */
+.defaultOrderItem {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.5);
+}
+.defaultOrderItem {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.5);
+}
+.darkOrderItem {
+  background: rgba(var(--SMARALD-MEDIUIM-RGB), 0.5);
 }

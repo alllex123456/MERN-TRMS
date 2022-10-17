@@ -17,7 +17,7 @@ import { AuthContext } from '../../context/auth-context';
 import styles from './Queue.module.css';
 
 export const Queue = (props) => {
-  const { token } = useContext(AuthContext);
+  const { token, theme } = useContext(AuthContext);
   const [loadedOrders, setLoadedOrders] = useState([]);
   const { modalState, closeModalHandler, showModalHandler } = useModal(
     '',
@@ -100,7 +100,9 @@ export const Queue = (props) => {
         {!isLoading && (
           <ul className={styles.queueList}>
             {loadedOrders && loadedOrders.length === 0 && (
-              <li className="center noItems">Nu există comenzi în lucru</li>
+              <li className={`center noItems ${theme}NoItems`}>
+                Nu există comenzi în lucru
+              </li>
             )}
             {loadedOrders &&
               loadedOrders.map((order, index) => (

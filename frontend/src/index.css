@@ -227,7 +227,7 @@ button {
   width: 100%;
   padding: 3rem;
   font-weight: 700;
-  background: rgba(59, 61, 61, 0.05);
+  border-radius: 5px;
 }
 
 /* SCROLL */
@@ -254,4 +254,17 @@ button {
   h2 {
     font-size: 1.2rem;
   }
+}
+
+/* THEMING */
+.defaultNoItems {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
+}
+
+.lightNoItems {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
+}
+
+.darkNoItems {
+  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.5);
 }

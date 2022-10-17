@@ -23,7 +23,7 @@ import styles from './Metrics.module.css';
 import BarChart from '../COMMON/Charts/BarChart';
 
 const Metrics = () => {
-  const { token, language, preferredCurrency } = useContext(AuthContext);
+  const { token, language, preferredCurrency, theme } = useContext(AuthContext);
   const [loadedData, setLoadedData] = useState({
     pendingOrders: [],
     completedOrders: [],
@@ -47,7 +47,18 @@ const Metrics = () => {
       {
         label: [preferredCurrency],
         data: [],
-        backgroundColor: 'rgba(0, 0, 100, 0.2)',
+        color:
+          (theme === 'light' && 'rgba(53, 162, 235, 0.8)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235, 0.8)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
+        borderColor:
+          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'dark' && 'rgb(53, 162, 235)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
+        backgroundColor:
+          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235, 0.4)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
       },
     ],
   };
@@ -69,7 +80,18 @@ const Metrics = () => {
       {
         label: preferredCurrency,
         data: [],
-        backgroundColor: 'rgba(0, 0, 150, 0.2)',
+        color:
+          (theme === 'light' && 'rgba(53, 162, 235, 0.8)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235, 0.8)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
+        borderColor:
+          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'dark' && 'rgb(53, 162, 235)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
+        backgroundColor:
+          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235, 0.4)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
       },
     ],
   };

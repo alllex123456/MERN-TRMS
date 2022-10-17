@@ -34,7 +34,7 @@ const Activity = () => {
     };
     getOrders();
   }, [sendRequest, token]);
-
+  console.log(loadedOrders);
   const ordersLastMonth = getIntervalMetrics(30, loadedOrders);
   const pagesArray = [];
   for (const [key, value] of Object.entries(ordersLastMonth)) {
@@ -51,7 +51,6 @@ const Activity = () => {
       pagesArray.push(value['1800cw/s'] / 1800);
     }
   }
-  console.log(theme);
   const chartDays = {
     labels: [],
     datasets: [
@@ -59,11 +58,18 @@ const Activity = () => {
         fill: true,
         label: 'Pagini',
         data: [],
+        color:
+          (theme === 'light' && 'rgba(53, 162, 235, 0.8)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235, 0.8)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
         borderColor:
-          (theme === 'Light-Luminos' && 'rgb(53, 162, 235)') ||
-          (theme === 'Dark-Intunecat' && 'white') ||
-          (theme === 'Default-Implicit' && 'rgb(53, 162, 235)'),
-        backgroundColor: 'rgba(0, 0, 150, 0.2)',
+          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'dark' && 'rgb(53, 162, 235)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
+        backgroundColor:
+          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235, 0.4)') ||
+          (theme === 'default' && 'rgb(53, 162, 235)'),
       },
     ],
   };

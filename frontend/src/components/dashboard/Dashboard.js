@@ -14,7 +14,7 @@ import styles from './Dashboard.module.css';
 import { format } from 'date-fns';
 
 const Main = () => {
-  const { token } = useContext(AuthContext);
+  const { token, theme } = useContext(AuthContext);
   const [loadedOrders, setLoadedOrders] = useState([]);
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
@@ -47,7 +47,7 @@ const Main = () => {
           <h2>Comenzi de predat astăzi</h2>
           <ul className={styles.dashboardOrdersList}>
             {loadedOrders.length === 0 && (
-              <li className="center noItems">
+              <li className={`center noItems ${theme}NoItems`}>
                 Nu sunt comenzi de predat astazi
               </li>
             )}
