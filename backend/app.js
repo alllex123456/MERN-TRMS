@@ -6,9 +6,25 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const HttpError = require('./models/http-error');
 
+// i18NEXT
+const i18next = require('i18next');
+const backend = require('i18next-fs-backend');
+const middleware = require('i18next-http-middleware');
+
+i18next
+  .use(backend)
+  .use(middleware.LanguageDetector)
+  .init({
+    fallbackLng: 'en',
+    backend: {
+      loadPath: `./locales/{{lng}}/translation.json`,
+    },
+  });
+///////////////////////
 const app = express();
 
 app.use(bodyParser.json());
+app.use(middleware.handle(i18next));
 app.use('/uploads/avatars', express.static(path.join('uploads', 'avatars')));
 
 //CORS

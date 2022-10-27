@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-
-import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Input from '../../FormElements/Input';
@@ -12,13 +11,16 @@ import SuccessModal from '../../Modals/MessageModals/SuccessModal';
 import { useForm } from '../../../../hooks/useForm';
 import { useHttpClient } from '../../../../hooks/useHttpClient';
 import { AuthContext } from '../../../../context/auth-context';
+import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
 
 import '../../CSS/modals-form.css';
 
 const CompleteModal = (props) => {
-  const { token, userId } = useContext(AuthContext);
+  const { token, userId, language } = useContext(AuthContext);
   const [loadedData, setLoadedData] = useState();
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -42,10 +44,10 @@ const CompleteModal = (props) => {
     const getOrderData = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/orders/${props.orderId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/orders/${props.orderId}`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
 
         setFormData(
@@ -86,7 +88,7 @@ const CompleteModal = (props) => {
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/orders/complete-order',
+        `${process.env.REACT_APP_BACKEND_URL}/orders/complete-order`,
         'POST',
         JSON.stringify({
           userId,
@@ -97,7 +99,11 @@ const CompleteModal = (props) => {
           notes: formState.inputs.completeNotes.value,
           deliveredDate: new Date().toISOString(),
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setSuccessMessage(responseData.message);
       props.onCompleteOrder();
@@ -111,7 +117,7 @@ const CompleteModal = (props) => {
     setSuccessMessage(null);
   };
 
-  const header = `Finalizează comanda`;
+  const header = t('modals.orders.completeOrder.header');
 
   return (
     <React.Fragment>
@@ -119,6 +125,7 @@ const CompleteModal = (props) => {
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
       {!error && !successMessage && loadedData && (
         <Modal
+          medium
           form
           header={header}
           show={props.show}
@@ -132,7 +139,7 @@ const CompleteModal = (props) => {
                 <Input
                   disabled
                   className="input"
-                  label="Client*"
+                  label={t('orders.client')}
                   element="input"
                   id="completeClient"
                   defaultValue={loadedData.clientId.name}
@@ -143,7 +150,7 @@ const CompleteModal = (props) => {
                 <Input
                   disabled
                   className="input"
-                  label="Referință"
+                  label={t('orders.reference')}
                   element="input"
                   id="completeReference"
                   defaultValue={formState.inputs.completeReference.value}
@@ -155,7 +162,7 @@ const CompleteModal = (props) => {
                 <Input
                   disabled
                   className="input"
-                  label="Data primirii:"
+                  label={t('orders.receivedDate')}
                   element="input"
                   id="completeReceived"
                   type="datetime"
@@ -164,13 +171,13 @@ const CompleteModal = (props) => {
                     .slice(0, 17)}
                   defaultValidity={true}
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectată data primirii"
+                  errorText={t('modals.orders.addOrder.receivedDateErrorText')}
                   onInput={inputHandler}
                 />
                 <Input
                   disabled
                   className="input"
-                  label="Termen:"
+                  label={t('orders.deadline')}
                   element="input"
                   id="completeDeadline"
                   type="datetime"
@@ -185,7 +192,7 @@ const CompleteModal = (props) => {
               <div className="formGroup modalGroup flexColumn">
                 <Input
                   className="input required"
-                  label="Tarif*"
+                  label={t('orders.rate')}
                   element="input"
                   id="completeRate"
                   type="number"
@@ -193,12 +200,12 @@ const CompleteModal = (props) => {
                   defaultValue={loadedData.rate}
                   defaultValidity={formState.inputs.completeRate.isValid}
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectat un tarif"
+                  errorText={t('modals.orders.addOrder.rateErrorText')}
                   onInput={inputHandler}
                 />
                 <Input
                   className="input required"
-                  label="Volum final*"
+                  label={t('orders.finalCount')}
                   element="input"
                   id="completeCount"
                   type="number"
@@ -206,12 +213,14 @@ const CompleteModal = (props) => {
                   defaultValue={formState.inputs.completeCount.value}
                   defaultValidity={formState.inputs.completeCount.isValid}
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost introdus volumul final"
+                  errorText={t(
+                    'modals.orders.completeOrder.finalCountErrorText'
+                  )}
                   onInput={inputHandler}
                 />
                 <Input
                   className="input"
-                  label="Note"
+                  label={t('orders.notes')}
                   element="input"
                   id="completeNotes"
                   defaultValue={formState.inputs.completeNotes.value}
@@ -223,7 +232,7 @@ const CompleteModal = (props) => {
 
               <div className="formActions">
                 <Button primary type="submit" disabled={!formState.isValid}>
-                  FINALIZEAZĂ
+                  {t('buttons.completeBtn')}
                 </Button>
               </div>
             </div>

@@ -1,5 +1,4 @@
 .navigation {
-  border-right: 1px solid black;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -27,32 +26,27 @@
   transform: scale(1.1);
 }
 
-.navigationItem:hover .link {
-  filter: brightness(300%);
-}
-
 .profileList {
   padding: 0 3rem;
 }
 
 .profileItem {
   padding: 1rem;
+  overflow: hidden;
 
+  border-radius: 3px;
   transition: all 0.3s;
 }
 
 .profileItem:hover {
-  border-radius: 3px;
-  box-shadow: 0 0 5px 3px var(--BLUE-LIGHT);
+  box-shadow: 0 0 3px var(--BLUE-LIGHT);
 }
 
 .icon {
-  color: #fff;
   transition: all 0.2s;
 }
 
 .link {
-  color: #fff;
   font-size: 1.2rem;
   transition: all 0.2s;
 }
@@ -98,12 +92,19 @@
 /* THEMING */
 .defaultNavigation {
   background: var(--BACKGROUNDS-SECONDARY);
+  color: var(--FONT-COLOR-LIGHT);
 }
 
 .lightNavigation {
-  background: var(--BACKGROUNDS-PRIMARY);
+  background: var(--BLUE-LIGHTEST);
+  color: var(--FONT-COLOR-DARK);
+  font-weight: 700;
+}
+.lightNavigation .linkActive {
+  color: var(--FONT-COLOR-LIGHT);
 }
 
 .darkNavigation {
   background: var(--GREY-DARKEST);
+  color: var(--FONT-COLOR-LIGHT);
 }

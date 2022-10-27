@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Modal from '../../UIElements/Modal';
 import Button from '../../UIElements/Button';
@@ -13,10 +14,13 @@ import { AuthContext } from '../../../../context/auth-context';
 
 import '../../CSS/modals-form.css';
 import '../../CSS/modals-layout.css';
+import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
 
 const UpdateInvoicingData = (props) => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -36,10 +40,10 @@ const UpdateInvoicingData = (props) => {
     const getUserData = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/user',
+          `${process.env.REACT_APP_BACKEND_URL}/user`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
 
         setFormData(
@@ -79,8 +83,8 @@ const UpdateInvoicingData = (props) => {
   const updateHandler = async (e) => {
     e.preventDefault();
     try {
-      await sendRequest(
-        'http://localhost:8000/user/update',
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/user/update`,
         'POST',
         JSON.stringify({
           invoiceSeries: formState.inputs.invoiceSeries.value,
@@ -90,9 +94,13 @@ const UpdateInvoicingData = (props) => {
           invoiceTemplate: formState.inputs.invoiceTemplate.value,
           invoiceNotes: formState.inputs.invoiceNotes.value,
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
-      setSuccessMessage('Utilizatorul a fost modificat cu succes');
+      setSuccessMessage(responseData.confirmation);
       props.onCloseModal();
     } catch (error) {}
   };
@@ -107,7 +115,7 @@ const UpdateInvoicingData = (props) => {
     setSuccessMessage(null);
   };
 
-  const header = `Actualizeaza informatiile de facturare`;
+  const header = t('modals.user.invoicingData.header');
 
   return (
     <React.Fragment>
@@ -132,7 +140,7 @@ const UpdateInvoicingData = (props) => {
                   element="input"
                   id="invoiceSeries"
                   type="text"
-                  label="Seria facturilor"
+                  label={t('modals.user.invoicingData.series')}
                   onInput={inputHandler}
                   validators={[]}
                   defaultValue={formState.inputs.invoiceSeries.value}
@@ -143,7 +151,7 @@ const UpdateInvoicingData = (props) => {
                   element="input"
                   id="invoiceStartNumber"
                   type="text"
-                  label="Numarul de la care incep facturile"
+                  label={t('modals.user.invoicingData.number')}
                   onInput={inputHandler}
                   validators={[]}
                   defaultValue={formState.inputs.invoiceStartNumber.value}
@@ -154,7 +162,7 @@ const UpdateInvoicingData = (props) => {
                   element="input"
                   id="bank"
                   type="text"
-                  label="Banca"
+                  label={t('modals.user.invoicingData.bank')}
                   onInput={inputHandler}
                   validators={[]}
                   defaultValue={formState.inputs.bank.value}
@@ -165,7 +173,7 @@ const UpdateInvoicingData = (props) => {
                   element="input"
                   id="iban"
                   type="text"
-                  label="IBAN"
+                  label={t('modals.user.invoicingData.iban')}
                   onInput={inputHandler}
                   validators={[]}
                   defaultValue={formState.inputs.iban.value}
@@ -177,7 +185,7 @@ const UpdateInvoicingData = (props) => {
                   className="textarea"
                   element="textarea"
                   id="invoiceTemplate"
-                  label="Formula de trimitere a facturilor"
+                  label={t('modals.user.invoicingData.message')}
                   validators={[]}
                   defaultValue={formState.inputs.invoiceTemplate.value}
                   defaultValidity={formState.inputs.invoiceTemplate.isValid}
@@ -187,7 +195,7 @@ const UpdateInvoicingData = (props) => {
                   className="textarea"
                   element="textarea"
                   id="invoiceNotes"
-                  label="Include urmatoarele mentiuni in facturi:"
+                  label={t('modals.user.invoicingData.notes')}
                   validators={[]}
                   defaultValue={formState.inputs.invoiceNotes.value}
                   defaultValidity={formState.inputs.invoiceNotes.isValid}
@@ -196,7 +204,7 @@ const UpdateInvoicingData = (props) => {
               </div>
               <div className="formActions">
                 <Button primary type="submit">
-                  SALVEAZA
+                  {t('buttons.saveBtn')}
                 </Button>
               </div>
             </div>

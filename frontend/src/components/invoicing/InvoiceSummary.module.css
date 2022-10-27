@@ -7,8 +7,11 @@
 
   min-height: 10rem;
   padding: 1rem;
-  margin-bottom: 1rem;
   border-bottom: 1px solid var(--SMARALD-LIGHT);
+}
+
+.invoiceSummary:last-child {
+  margin-bottom: 12rem;
 }
 
 .title {
@@ -29,7 +32,7 @@
   color: var(--FONT-COLOR-LIGHT);
 }
 .status--issued {
-  background: var(--GREY-MEDIUM);
+  background: var(--SMARALD-MEDIUM);
 }
 .status--cashed {
   background: var(--BLUE-LIGHT);
@@ -47,16 +50,14 @@
   opacity: 0.5;
   transition: all 0.3s;
 }
-.actionsIcon:hover {
-  filter: brightness(190%);
-}
 
 .optionsList {
   font-size: 1.4rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  gap: 2rem;
+  gap: 1rem;
   transition: all 0.3s;
   position: absolute;
   top: 0;
@@ -69,10 +70,10 @@
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+  z-index: 1000;
 }
 
 .option {
-  margin-bottom: 1rem;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -93,17 +94,35 @@
 .defaultActions {
   color: var(--GREY-LIGHT);
 }
+.defaultActions .option:hover {
+  filter: brightness(20%);
+}
+.defaultActions .actionsIcon:hover {
+  filter: brightness(20%);
+}
+.defaultActions .actionsIcon:hover {
+  filter: brightness(20%);
+}
+
 .lightActions {
   color: var(--GREY-LIGHT);
 }
+.lightActions .option:hover {
+  filter: brightness(20%);
+}
+.lightActions .actionsIcon:hover {
+  filter: brightness(20%);
+}
+
 .darkActions {
   color: var(--GREY-LIGHTEST);
 }
-
 .darkActions .option {
   filter: brightness(50%);
 }
-
-.option:hover {
+.darkActions .option:hover {
   filter: brightness(20%);
+}
+.darkActions .actionsIcon:hover {
+  filter: brightness(120%);
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import ClientsList from '../components/clients/ClientsList';
 
-export const ClientsPage = () => {
+const ClientsPage = () => {
   return <ClientsList />;
 };
+
+export default ClientsPage;

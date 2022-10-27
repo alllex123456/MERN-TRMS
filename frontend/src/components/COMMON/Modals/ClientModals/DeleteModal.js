@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Modal from '../../UIElements/Modal';
@@ -12,22 +13,25 @@ import { AuthContext } from '../../../../context/auth-context';
 import '../../CSS/modals-form.css';
 
 const DeleteModal = ({ show, clientData, onCloseModal, refreshClients }) => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
+
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
   const deleteHandler = async (event) => {
     event.preventDefault();
 
     try {
-      await sendRequest(
-        `http://localhost:8000/clients/delete-client/${clientData.id}`,
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/clients/delete-client/${clientData.id}`,
         'DELETE',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       refreshClients();
-      setSuccessMessage('Clientul a fost șters cu succes');
+      setSuccessMessage(responseData.confirmation);
     } catch (error) {}
     onCloseModal();
   };
@@ -38,7 +42,9 @@ const DeleteModal = ({ show, clientData, onCloseModal, refreshClients }) => {
     setSuccessMessage(null);
   };
 
-  const header = `Șterge client: ${clientData.name}`;
+  const header = `${t('modals.clients.deleteClient.header')}: ${
+    clientData.name
+  }`;
 
   return (
     <React.Fragment>
@@ -54,10 +60,12 @@ const DeleteModal = ({ show, clientData, onCloseModal, refreshClients }) => {
           onSubmit={deleteHandler}
         >
           {isLoading && <LoadingSpinner asOverlay />}
-          <h2 className="center">Sigur dorești să ștergi acest client?</h2>
-          <div className="formActions">
+          <h2 className="center">
+            {t('modals.clients.deleteClient.confirmationMsg')}
+          </h2>
+          <div className="formActions" style={{ marginTop: '30px' }}>
             <Button primary type="submit">
-              ȘTERGE
+              {t('buttons.deleteBtn')}
             </Button>
           </div>
         </Modal>

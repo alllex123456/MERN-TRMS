@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
-import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
-import { localISOTime } from '../../../../utilities/ISO-offset';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Input from '../../FormElements/Input';
@@ -9,6 +7,9 @@ import Modal from '../../UIElements/Modal';
 import LoadingSpinner from '../../UIElements/LoadingSpinner';
 import ErrorModal from '../MessageModals/ErrorModal';
 
+import { useLocation } from 'react-router-dom';
+import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
+import { localISOTime } from '../../../../utilities/ISO-offset';
 import { useForm } from '../../../../hooks/useForm';
 import { useHttpClient } from '../../../../hooks/useHttpClient';
 import { AuthContext } from '../../../../context/auth-context';
@@ -17,11 +18,13 @@ import { getReadableUnit } from '../../../../utilities/get-units';
 import '../../CSS/modals-form.css';
 
 const AddModal = (props) => {
-  const { token, units, services } = useContext(AuthContext);
+  const { token, units, services, language } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
   const [clients, setClients] = useState();
   const [client, setClient] = useState();
   const location = useLocation();
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -52,10 +55,10 @@ const AddModal = (props) => {
       try {
         const getFormData = async () => {
           const userClient = await sendRequest(
-            `http://localhost:8000/clients/client/${props.clientId}`,
+            `${process.env.REACT_APP_BACKEND_URL}/clients/client/${props.clientId}`,
             'GET',
             null,
-            { Authorization: 'Bearer ' + token }
+            { Authorization: 'Bearer ' + token, 'Accept-Language': language }
           );
           setClient(userClient.message);
           setFormData(
@@ -72,7 +75,7 @@ const AddModal = (props) => {
                 isValid: true,
               },
               addRate: {
-                value: userClient.message.rate,
+                value: userClient.message[`${services[0].value}Rate`],
                 isValid: true,
               },
               addUnit: { value: userClient.message.unit, isValid: true },
@@ -103,10 +106,10 @@ const AddModal = (props) => {
       try {
         const getFormData = async () => {
           const userClients = await sendRequest(
-            `http://localhost:8000/clients`,
+            `${process.env.REACT_APP_BACKEND_URL}/clients`,
             'GET',
             null,
-            { Authorization: 'Bearer ' + token }
+            { Authorization: 'Bearer ' + token, 'Accept-Language': language }
           );
           setClients(userClients.message.clients);
         };
@@ -118,10 +121,10 @@ const AddModal = (props) => {
   const setRateHandler = async (clientId) => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/clients/client/${clientId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/clients/client/${clientId}`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
 
       setFormData(
@@ -145,8 +148,8 @@ const AddModal = (props) => {
     event.preventDefault();
     setSuccessMessage(null);
     try {
-      await sendRequest(
-        'http://localhost:8000/orders/add-order',
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/orders/add-order`,
         'POST',
         JSON.stringify({
           addToStatement:
@@ -163,9 +166,13 @@ const AddModal = (props) => {
           count: formState.inputs.addCount.value,
           notes: formState.inputs.addNotes.value,
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
-      setSuccessMessage('Comanda a fost adăugată cu succes');
+      setSuccessMessage(responseData.confirmation);
       setFormData(
         {
           ...formState.inputs,
@@ -216,10 +223,10 @@ const AddModal = (props) => {
     if (!formState.inputs.addClient.value) return;
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/clients/client/${formState.inputs.addClient.value}`,
+        `${process.env.REACT_APP_BACKEND_URL}/clients/client/${formState.inputs.addClient.value}`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setFormData(
         {
@@ -241,7 +248,7 @@ const AddModal = (props) => {
     } catch (error) {}
   };
 
-  const header = `Adaugă comandă nouă`;
+  const header = t('modals.orders.addOrder.header');
 
   return (
     <React.Fragment>
@@ -260,9 +267,9 @@ const AddModal = (props) => {
               className="input"
               element="select"
               id="addService"
-              label="Tip serviciu"
+              label={t('orders.service')}
               validators={[VALIDATOR_REQUIRE()]}
-              errorText="Nu a fost selectat un serviciu"
+              errorText={t('modals.orders.addOrder.serviceErrorText')}
               defaultValue={services[0].value}
               defaultValidity={formState.inputs.addService.isValid}
               onInput={inputHandler}
@@ -279,15 +286,15 @@ const AddModal = (props) => {
                 className="input"
                 element="select"
                 id="addClient"
-                label="Client"
+                label={t('orders.client')}
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectat un client"
+                errorText={t('modals.orders.addOrder.clientErrorText')}
                 defaultValue={formState.inputs.addClient.value}
                 defaultValidity={formState.inputs.addClient.isValid}
                 onInput={inputHandler}
                 onSelectClient={setRateHandler}
               >
-                <option>selectează clientul...</option>
+                <option>{t('modals.orders.addOrder.selectClient')}</option>
                 {!props.addToStatement &&
                   clients &&
                   clients.map((client) => (
@@ -302,9 +309,9 @@ const AddModal = (props) => {
                 className="input"
                 element="select"
                 id="addClient"
-                label="Client"
+                label={t('orders.client')}
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectat un client"
+                errorText={t('modals.orders.addOrder.clientErrorText')}
                 defaultValue={formState.inputs.addClient.value}
                 defaultValidity={true}
                 onInput={inputHandler}
@@ -319,7 +326,7 @@ const AddModal = (props) => {
                 className="input"
                 element="input"
                 id="addReference"
-                label="Referință"
+                label={t('orders.reference')}
                 type="text"
                 defaultValidity={formState.inputs.addReference.isValid}
                 validators={[]}
@@ -333,12 +340,12 @@ const AddModal = (props) => {
                 className="input"
                 element="input"
                 id="addReceived"
-                label="Data primirii"
+                label={t('orders.receivedDate')}
                 type="datetime-local"
                 defaultValue={formState.inputs.addReceived.value}
                 defaultValidity={true}
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectată data primirii"
+                errorText={t('modals.orders.addOrder.receivedDateErrorText')}
                 onInput={inputHandler}
               />
             )}
@@ -347,10 +354,10 @@ const AddModal = (props) => {
                 className="input"
                 element="input"
                 id="addDeadline"
-                label="Termen"
+                label={t('orders.deadline')}
                 type="datetime-local"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectat termenul de predare"
+                errorText={t('modals.orders.addOrder.deadlineErrorText')}
                 defaultValue={formState.inputs.addDeadline.value}
                 defaultValidity={true}
                 onInput={inputHandler}
@@ -361,11 +368,11 @@ const AddModal = (props) => {
                 className="input"
                 element="input"
                 id="addRate"
-                label="Tarif"
+                label={t('orders.rate')}
                 type="number"
                 step="0.01"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectat un tarif"
+                errorText={t('modals.orders.addOrder.rateErrorText')}
                 defaultValue={formState.inputs.addRate.value}
                 defaultValidity={formState.inputs.addRate.isValid}
                 onInput={inputHandler}
@@ -379,9 +386,9 @@ const AddModal = (props) => {
                 className="input"
                 element="select"
                 id="addUnit"
-                label="Unitate de măsură"
+                label={t('orders.mu')}
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectată unitatea de măsură"
+                errorText={t('modals.orders.addOrder.muErrorText')}
                 defaultValue={formState.inputs.addUnit.value}
                 defaultValidity={formState.inputs.addUnit.isValid}
                 onInput={inputHandler}
@@ -407,11 +414,13 @@ const AddModal = (props) => {
                   className="input"
                   element="input"
                   id="addCount"
-                  label="Volum estimat"
+                  label={t('orders.estimatedCount')}
                   type="number"
                   step="0.01"
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost selectat volumul estimat"
+                  errorText={t(
+                    'modals.orders.addOrder.estimatedCountErrorText'
+                  )}
                   defaultValue={formState.inputs.addCount.value}
                   defaultValidity={formState.inputs.addCount.isValid}
                   onInput={inputHandler}
@@ -422,7 +431,7 @@ const AddModal = (props) => {
               className="textarea"
               element="input"
               id="addNotes"
-              label="Note"
+              label={t('orders.notes')}
               validators={[]}
               defaultValidity={formState.inputs.addNotes.isValid}
               onInput={inputHandler}
@@ -431,10 +440,10 @@ const AddModal = (props) => {
 
           <div className="formActions">
             <Button primary type="submit" disabled={!formState.isValid}>
-              SALVEAZĂ
+              {t('buttons.saveBtn')}
             </Button>
 
-            {successMessage && <p className="successPar">{successMessage}</p>}
+            {successMessage && <p className="success">{successMessage}</p>}
           </div>
         </div>
       </Modal>

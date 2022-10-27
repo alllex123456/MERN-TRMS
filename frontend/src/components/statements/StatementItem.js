@@ -1,14 +1,17 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import format from 'date-fns/format';
+import { useTranslation } from 'react-i18next';
 
-import styles from './StatementItem.module.css';
 import { formatCurrency } from '../../utilities/format-currency';
 import { AuthContext } from '../../context/auth-context';
+
+import styles from './StatementItem.module.css';
 
 const StatementItem = ({ data }) => {
   const { language, theme } = useContext(AuthContext);
   const navigator = useNavigate();
+
+  const { t } = useTranslation();
 
   const totalDue = (orders) => {
     const total = orders?.reduce((acc, order) => acc + order.total, 0);
@@ -25,7 +28,8 @@ const StatementItem = ({ data }) => {
         {formatCurrency(language, data.currency, totalDue(data.orders))}
       </p>
       <p className={styles.invoiced}>
-        Ultima factură emisă la: {new Date().toLocaleDateString(language)}
+        {t('statements.lastInvoicing')}:{' '}
+        {new Date().toLocaleDateString(language)}
       </p>
     </li>
   );

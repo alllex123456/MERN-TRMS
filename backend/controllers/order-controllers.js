@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/order');
 const User = require('../models/user');
 const Client = require('../models/client');
+const Invoice = require('../models/invoice');
 
 const HttpError = require('../models/http-error');
 
@@ -32,12 +33,7 @@ exports.getOrders = async (req, res, next) => {
       _id: { $in: orderIds },
     });
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la regasirea comenzilor. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   res.json({
@@ -55,12 +51,7 @@ exports.getClientCompletedOrders = async (req, res, next) => {
       match: { status: 'completed' },
     });
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la regasirea clientului. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   res.json({
@@ -75,12 +66,7 @@ exports.getQueueList = async (req, res, next) => {
   try {
     orders = await Order.find({ userId, status: 'queue' }).populate('clientId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   res.json({
@@ -97,18 +83,11 @@ exports.getOrder = async (req, res, next) => {
   try {
     order = await Order.findById(orderId).populate('clientId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   if (order.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   res.json({ message: order.toObject({ getters: true }) });
@@ -151,12 +130,7 @@ exports.addOrder = async (req, res, next) => {
   } catch (error) {}
 
   if (!user || !client) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de comenzi. Utilizatorul sau clientul nu există. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.no_user_client'), 500));
   }
 
   user.orders.push(newOrder);
@@ -170,15 +144,12 @@ exports.addOrder = async (req, res, next) => {
     await client.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la salvarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.save_failed'), 500));
   }
 
-  res.json({ message: newOrder.toObject({ getters: true }) });
+  res.json({
+    confirmation: req.t('success.orders.added'),
+  });
 };
 
 exports.completeOrder = async (req, res, next) => {
@@ -188,18 +159,11 @@ exports.completeOrder = async (req, res, next) => {
   try {
     order = await Order.findById(orderId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   if (order.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.orders.no_authorization'), 401));
   }
 
   order.status = 'completed';
@@ -213,16 +177,10 @@ exports.completeOrder = async (req, res, next) => {
   try {
     await order.save();
   } catch (error) {
-    console.log(error);
-    return next(
-      new HttpError(
-        'A survenit o problemă la finalizarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.complete_failed'), 500));
   }
 
-  res.json({ message: 'Comanda a fost finalizata cu succes!' });
+  res.json({ message: req.t('success.orders.completed') });
 };
 
 exports.modifyOrder = async (req, res, next) => {
@@ -232,18 +190,11 @@ exports.modifyOrder = async (req, res, next) => {
   try {
     order = await Order.findById(orderId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   if (order.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.orders.no_authorization'), 401));
   }
 
   for (const [key, value] of Object.entries(req.body)) {
@@ -257,15 +208,10 @@ exports.modifyOrder = async (req, res, next) => {
   try {
     await order.save();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.modify_failed'), 500));
   }
 
-  res.json({ message: 'Comanda a fost modificata cu succes!' });
+  res.json({ message: req.t('success.orders.modified') });
 };
 
 exports.deleteOrder = async (req, res, next) => {
@@ -275,18 +221,11 @@ exports.deleteOrder = async (req, res, next) => {
   try {
     order = await Order.findById(orderId).populate('userId clientId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   if (order.userId.id.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   try {
@@ -299,15 +238,10 @@ exports.deleteOrder = async (req, res, next) => {
     await order.clientId.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la ștergerea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.delete_failed'), 500));
   }
 
-  res.json({ message: 'Comanda a fost stearsa cu succes!' });
+  res.json({ message: req.t('success.orders.deleted') });
 };
 
 exports.cleanUpOrders = async (req, res, next) => {
@@ -315,36 +249,57 @@ exports.cleanUpOrders = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findById(userId).populate('orders');
+    user = await User.findById(userId).populate('orders invoices');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la gasirea utilizatorului în baza de date. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   user.orders = user.orders.filter(
     (order) =>
       order.status === 'queue' || order.deliveredDate > Date.now() - 31536000000
   );
-  await user.save();
+  user.invoices = user.invoices.filter(
+    (invoice) => invoice.updatedAt > Date.now() - 31536000000
+  );
 
-  const clients = await Client.find({ userId }).populate('orders');
-  clients.forEach(async (client) => {
-    client.orders = client.orders.filter(
-      (order) =>
-        order.status === 'queue' ||
-        order.deliveredDate > Date.now() - 31536000000
+  const clients = await Client.find({ userId }).populate('orders invoices');
+
+  try {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    await user.save({ session });
+
+    clients.forEach(async (client) => {
+      client.orders = client.orders.filter(
+        (order) =>
+          order.status === 'queue' ||
+          order.deliveredDate > Date.now() - 31536000000
+      );
+      client.invoices = client.invoices.filter(
+        (invoice) => invoice.updatedAt > Date.now() - 31536000000
+      );
+      await client.save({ session });
+    });
+
+    await Invoice.deleteMany(
+      {
+        userId,
+        updatedAt: { $lte: Date.now() - 31536000000 },
+      },
+      { session }
     );
-    await client.save();
-  });
 
-  await Order.deleteMany({
-    userId,
-    deliveredDate: { $lte: Date.now() - 31536000000 },
-  });
+    await Order.deleteMany(
+      {
+        userId,
+        deliveredDate: { $lte: Date.now() - 31536000000 },
+      },
+      { session }
+    );
+    session.commitTransaction();
+  } catch (error) {
+    return next(new HttpError(req.t('database.connection_failed'), 500));
+  }
 
   next();
 };

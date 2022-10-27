@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { PencilSimple, Trash, Flag } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import { AuthContext } from '../../context/auth-context';
 import { getReadableUnit } from '../../utilities/get-units';
@@ -13,6 +14,8 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
   const [time, setTime] = useState(new Date());
   const [exceededDeadline, setExceededDeadline] = useState();
   const [nearDeadline, setNearDeadline] = useState();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -43,11 +46,15 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
     >
       <section className={styles.section}>
         <div className={styles.orderService}>
-          <div className={styles.orderServiceType}>
+          <div
+            className={`${styles.orderServiceType} ${
+              styles[`${theme}OrderServiceType`]
+            }`}
+          >
             {translateServices([orderData.service]).displayedValue}
           </div>
           <div className={styles.orderItemRef}>
-            <span>Referință </span>
+            <span>{t('orders.reference')} </span>
             <span>{orderData.reference}</span>
           </div>
         </div>
@@ -70,7 +77,7 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
           </div>
 
           <div className={styles.orderItemClient}>
-            <span>Client</span>
+            <span>{t('orders.client')}</span>
             <p>{orderData.clientId.name}</p>
           </div>
         </div>
@@ -78,13 +85,13 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
 
       <section className={styles.section}>
         <div className={styles.orderItemReceived}>
-          <span>Data primirii</span>
+          <span>{t('orders.receivedDate')}</span>
           <p>
             {new Date(orderData.receivedDate).toLocaleString('ro').slice(0, 17)}
           </p>
         </div>
         <div className={styles.orderItemDeadline}>
-          <span>Termen</span>
+          <span>{t('orders.deadline')}</span>
           <p>
             {new Date(orderData.deadline).toLocaleString('ro').slice(0, 17)}
           </p>
@@ -93,11 +100,11 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
 
       <section className={styles.section}>
         <div className={styles.orderItemCount}>
-          <span>Volum estimat</span>
+          <span>{t('orders.estimatedCount')}</span>
           <p>{orderData.count.toLocaleString('ro')}</p>
         </div>
         <div className={styles.orderItemRate}>
-          <span>Tarif</span>
+          <span>{t('orders.rate')}</span>
           <p>
             {formatCurrency(language, orderData.currency, orderData.rate)}/
             {getReadableUnit(units, orderData.unit)}
@@ -107,7 +114,7 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
 
       <section className={styles.section}>
         <div className={styles.orderItemNotes}>
-          <span>Note</span>
+          <span>{t('orders.notes')}</span>
           <p>{orderData.notes}</p>
         </div>
       </section>
@@ -116,17 +123,23 @@ const OrderItem = ({ itno, orderData, onShowModal }) => {
         <div className={styles.orderItemActions}>
           <Flag
             onClick={() => onShowModal('COMPLETE', orderData.id)}
-            className={styles.orderItemIcon}
+            className={`${styles.orderItemIcon} ${
+              styles[`${theme}OrderItemIcon`]
+            }`}
             size={24}
           />
           <PencilSimple
             onClick={() => onShowModal('EDIT', orderData.id)}
-            className={styles.orderItemIcon}
+            className={`${styles.orderItemIcon} ${
+              styles[`${theme}OrderItemIcon`]
+            }`}
             size={24}
           />
           <Trash
             onClick={() => onShowModal('DELETE', orderData)}
-            className={styles.orderItemIcon}
+            className={`${styles.orderItemIcon} ${
+              styles[`${theme}OrderItemIcon`]
+            }`}
             size={24}
           />
         </div>

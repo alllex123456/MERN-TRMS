@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import ErrorModal from '../MessageModals/ErrorModal';
 import SuccessModal from '../MessageModals/SuccessModal';
 import Modal from '../../UIElements/Modal';
@@ -16,10 +18,12 @@ import '../../CSS/table.css';
 import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
 
 const CashInvoice = (props) => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
 
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler] = useForm(
     {
@@ -37,7 +41,7 @@ const CashInvoice = (props) => {
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/invoicing/cash-invoice',
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/cash-invoice`,
         'PATCH',
         JSON.stringify({
           invoiceId: props.invoiceData.invoice.id,
@@ -45,7 +49,11 @@ const CashInvoice = (props) => {
           receipt: formState.inputs.receipt.value,
           dateCashed: new Date(formState.inputs.dateCashed.value).toISOString(),
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setSuccessMessage(responseData.message);
       props.onUpdate();
@@ -71,7 +79,7 @@ const CashInvoice = (props) => {
         form
         show={props.show}
         close={closeModalHandler}
-        header="Incaseaza factura"
+        header={t('modals.invoicing.cash.header')}
         onSubmit={submitHandler}
       >
         {isLoading && <LoadingSpinner asOverlay />}
@@ -79,8 +87,10 @@ const CashInvoice = (props) => {
           <div className="cashInvoice">
             <header>
               <p className="modalTitle">
-                Factura {props.invoiceData.invoice.series} /{' '}
-                {props.invoiceData.invoice.number} <span>emisa catre</span>{' '}
+                {t('invoicing.invoice.title')}{' '}
+                {props.invoiceData.invoice.series} /{' '}
+                {props.invoiceData.invoice.number}{' '}
+                <span>{t('modals.invoicing.cash.issuedTo')}</span>{' '}
                 {props.invoiceData.client.name}
               </p>
             </header>
@@ -89,23 +99,23 @@ const CashInvoice = (props) => {
                 className="input"
                 id="cashedAmount"
                 element="input"
-                label="Valoarea incasata*"
+                label={t('modals.invoicing.cash.cashedVal')}
                 validators={[VALIDATOR_REQUIRE()]}
                 defaultValue={props.invoiceData.invoice.totalInvoice.toFixed(
                   props.invoiceData.client.decimalPoints
                 )}
                 defaultValidity={true}
-                errorText="Nu ati introdus valoarea incasata"
+                errorText={t('modals.invoicing.cash.cashedValErrorText')}
                 onInput={inputHandler}
               />
               <Input
                 className="input"
                 id="receipt"
                 element="input"
-                label="Cu document tip/numar*"
+                label={t('modals.invoicing.cash.docType')}
                 validators={[VALIDATOR_REQUIRE()]}
                 defaultValidity={formState.inputs.receipt.isValid}
-                errorText="Nu ati introdus documentul de plata"
+                errorText={t('modals.invoicing.cash.docTypeErrorText')}
                 onInput={inputHandler}
               />
               <Input
@@ -113,17 +123,17 @@ const CashInvoice = (props) => {
                 id="dateCashed"
                 element="input"
                 type="date"
-                label="La data*"
+                label={t('modals.invoicing.cash.date')}
                 validators={[VALIDATOR_REQUIRE()]}
                 defaultValue={new Date().toISOString().slice(0, 10)}
                 defaultValidity={true}
-                errorText="Nu ati selectat data incasarii"
+                errorText={t('modals.invoicing.cash.dateErrorText')}
                 onInput={inputHandler}
               />
             </div>
             <div className="formActions">
               <Button primary type="submit" disabled={!formState.isValid}>
-                INCASEAZA
+                {t('buttons.cashBtn')}
               </Button>
             </div>
             <p className="center error">{errorMessage}</p>

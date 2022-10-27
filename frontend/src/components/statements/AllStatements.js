@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
-
 import { BookOpen } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import StatementItem from './StatementItem';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
+import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 
 import { useHttpClient } from '../../hooks/useHttpClient';
 import { AuthContext } from '../../context/auth-context';
 
 import styles from './AllStatements.module.css';
-import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 
 const AllStatements = () => {
-  const { token } = useContext(AuthContext);
+  const { token, theme, language } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState();
   const [loadedData, setLoadedData] = useState();
   const [selectedData, setSelectedData] = useState();
+
+  const { t } = useTranslation();
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
@@ -23,16 +25,16 @@ const AllStatements = () => {
     const getStatementData = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/statements`,
+          `${process.env.REACT_APP_BACKEND_URL}/statements`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setLoadedData(responseData.message);
       } catch (error) {}
     };
     getStatementData();
-  }, [token, sendRequest]);
+  }, [token, sendRequest, language]);
 
   let positiveBalance = [];
   let negativeBalance = [];
@@ -66,20 +68,19 @@ const AllStatements = () => {
       <div className="pageContainer">
         <div className={styles.statementsHeader}>
           <BookOpen size={32} />
-          <h2>Situații clienți</h2>
+          <h2>{t('statements.title')}</h2>
           <select
-            className={styles.select}
-            label="Tip sold"
+            className={`${styles.select} ${styles[`${theme}Select`]}`}
             onChange={switchStatementView}
           >
             <option className={styles.option} value="all">
-              Toti clienții
+              {t('statements.filterAll')}
             </option>
             <option className={styles.option} value="positive">
-              Cu sold pozitiv
+              {t('statements.filterPositiveBalance')}
             </option>
             <option className={styles.option} value="negative">
-              Cu sold negativ
+              {t('statements.filterNegativeBalance')}
             </option>
           </select>
         </div>
@@ -89,14 +90,16 @@ const AllStatements = () => {
           {!isLoading && loadedData && (
             <ul className={styles.statementList}>
               <input
-                className={styles.input}
+                className={`${styles.input} ${styles[`${theme}Input`]}`}
                 type="text"
-                placeholder="caută după nume client..."
+                placeholder={t('statements.searchPlaceholder')}
                 onChange={searchClientHandler}
                 onKeyDown={resetSearchHandler}
               />
               {loadedData.length === 0 && (
-                <li className="center noItems">Nu există rezultate</li>
+                <li className={`center noItems ${theme}NoItems`}>
+                  {t('statements.noResults')}
+                </li>
               )}
               {selectedData === 'positive' &&
                 positiveBalance

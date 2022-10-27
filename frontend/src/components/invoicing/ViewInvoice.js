@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import InvoiceTemplate from './InvoiceTemplate';
 
@@ -8,30 +9,34 @@ import { AuthContext } from '../../context/auth-context';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 
 const ViewInvoice = () => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
   const [invoice, setInvoice] = useState();
   const params = useParams();
 
-  const { sendRequest, isLoading, error, clearError } = useHttpClient();
+  const { t } = useTranslation();
+
+
+  const { sendRequest, error, clearError } = useHttpClient();
 
   useEffect(() => {
-    const getClientData = async () => {
+    const getInvoice = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/invoicing/${params.invoiceId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/invoicing/${params.invoiceId}`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setInvoice(responseData.message);
       } catch (error) {}
     };
-    getClientData();
+    getInvoice();
   }, []);
 
   return (
     <React.Fragment>
       <ErrorModal show={error} onClear={clearError} />
+
       {invoice && (
         <InvoiceTemplate
           view

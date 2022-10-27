@@ -25,3 +25,24 @@
   max-width: 130rem;
   margin: 0 auto;
 }
+
+/* THEMING */
+.lightInput,
+.defaultSelect,
+.defaultOption {
+  color: var(--FONT-COLOR-DARK);
+}
+
+.lightInput,
+.lightSelect,
+.lightOption {
+  color: var(--FONT-COLOR-DARK);
+}
+
+.darkInput,
+.darkSelect,
+.darkOption,
+.darkInput::placeholder {
+  color: var(--FONT-COLOR-LIGHT);
+  background: var(--SMARALD-DARK);
+}

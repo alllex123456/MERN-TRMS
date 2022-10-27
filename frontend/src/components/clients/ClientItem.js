@@ -3,22 +3,23 @@ import { Eye, PencilSimple, Trash } from 'phosphor-react';
 
 import { AuthContext } from '../../context/auth-context';
 import { getReadableUnit } from '../../utilities/get-units';
-import { translateServices } from '../../utilities/translate-units';
+import { useTranslation } from 'react-i18next';
 
 import styles from './ClientItem.module.css';
 
 const ClientItem = ({ itno, clientData, onShowModal }) => {
-  const { units, services } = useContext(AuthContext);
+  const { units, services, theme } = useContext(AuthContext);
+  const { t } = useTranslation();
   const emailLink = `mailto:${clientData.email}`;
 
   return (
-    <li className={styles.clientItem}>
+    <li className={`${styles.clientItem} ${styles[`${theme}ClientItem`]}`}>
       <div className={styles.clientItemNo}>
         <div>{itno}</div>
         <div className={styles.clientPhotoContainer}>
           {clientData.avatar ? (
             <img
-              src={`http://localhost:8000/uploads/avatars/${clientData.avatar}`}
+              src={`${process.env.REACT_APP_BACKEND_URL}/uploads/avatars/${clientData.avatar}`}
               alt=""
             />
           ) : (
@@ -28,21 +29,21 @@ const ClientItem = ({ itno, clientData, onShowModal }) => {
       </div>
 
       <div className={styles.clientItemName}>
-        <span>Nume</span>
+        <span>{t('client.name')}</span>
         <p>{clientData.name}</p>
       </div>
       <div className={styles.clientItemPhone}>
-        <span>Telefon</span>
+        <span>{t('client.phone')}</span>
         <p>{clientData.phone}</p>
       </div>
       <div className={styles.clientItemEmail}>
-        <span>Email</span>
+        <span>{t('client.email')}</span>
         <p>
           <a href={emailLink}>{clientData.email}</a>
         </p>
       </div>
       <div className={styles.clientItemRate}>
-        <span>Tarif</span>
+        <span>{t('client.rate')}</span>
         <div className={styles.rateGroup}>
           {services.map((service, index) => (
             <div key={index}>

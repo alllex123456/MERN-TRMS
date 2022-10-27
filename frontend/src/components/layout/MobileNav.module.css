@@ -3,10 +3,13 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 70%;
-  background: #fff;
+  width: 70vw;
 
   z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .navigationItem,
@@ -14,7 +17,7 @@
   display: flex;
   gap: 2rem;
   align-items: center;
-  padding-left: 2rem;
+  padding: 2rem;
 
   margin: 1rem;
 
@@ -26,12 +29,10 @@
 }
 
 .icon {
-  color: var(--BACKGROUNDS-SECONDARY);
   transition: all 0.2s;
 }
 
 .link {
-  color: var(--BACKGROUNDS-SECONDARY);
   font-size: 1.4rem;
   transition: all 0.2s;
 }
@@ -39,15 +40,23 @@
 .linkActive {
   background: var(--BLUE-MEDIUM);
 }
-.linkActive .link {
-  color: white;
-}
-.linkActive .icon {
-  color: white;
-}
 
 @media (max-width: 600px) {
   .mobileNavigation {
     width: 100%;
   }
+}
+
+/* THEMING */
+.defaultMobileNavigation {
+  background: var(--BACKGROUNDS-PRIMARY);
+}
+
+.lightMobileNavigation {
+  background: var(--BACKGROUNDS-PRIMARY);
+}
+
+.darkMobileNavigation {
+  background: var(--SMARALD-DARKEST);
+  color: var(--FONT-COLOR-LIGHT);
 }

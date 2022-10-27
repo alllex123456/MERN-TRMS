@@ -1,4 +1,5 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
+import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import { NavLink } from 'react-router-dom';
 import {
@@ -8,22 +9,27 @@ import {
   Activity,
   BookOpen,
   User,
-  Gear,
   Money,
 } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import Backdrop from '../COMMON/UIElements/Backdrop';
+import { AuthContext } from '../../context/auth-context';
 
 import styles from './MobileNav.module.css';
 import '../../index.css';
 
 export const MobileNav = (props) => {
+  const { theme } = useContext(AuthContext);
+
+  const { t } = useTranslation();
+
   const activeLinks = ({ isActive }) =>
     isActive
       ? `${styles.linkActive} ${styles.navigationItem}`
       : styles.navigationItem;
 
-  return (
+  const content = (
     <Fragment>
       {props.showMobileNav && <Backdrop onClick={props.onClick} />}
 
@@ -34,7 +40,11 @@ export const MobileNav = (props) => {
         mountOnEnter
         unmountOnExit
       >
-        <nav className={styles.mobileNavigation}>
+        <nav
+          className={`${styles.mobileNavigation} ${
+            styles[`${theme}MobileNavigation`]
+          }`}
+        >
           <ul className={styles.mobileNavigationList}>
             <li>
               <NavLink
@@ -43,7 +53,9 @@ export const MobileNav = (props) => {
                 to="/main"
               >
                 <AppWindow size={32} className={styles.icon} />
-                <p className={styles.link}>PANOU DE BORD</p>
+                <p className={styles.link}>
+                  {t('navigation.dashboard').toUpperCase()}
+                </p>
               </NavLink>
             </li>
             <li>
@@ -53,7 +65,9 @@ export const MobileNav = (props) => {
                 to="/queue"
               >
                 <Hourglass size={32} className={styles.icon} />
-                <p className={styles.link}>COMENZI ÎN LUCRU</p>
+                <p className={styles.link}>
+                  {t('navigation.pendingOrders').toUpperCase()}
+                </p>
               </NavLink>
             </li>
             <li>
@@ -63,7 +77,9 @@ export const MobileNav = (props) => {
                 to="/clients"
               >
                 <AddressBook size={32} className={styles.icon} />
-                <p className={styles.link}>CLIENȚI</p>
+                <p className={styles.link}>
+                  {t('navigation.clients').toUpperCase()}
+                </p>
               </NavLink>
             </li>
             <li>
@@ -73,13 +89,21 @@ export const MobileNav = (props) => {
                 to="/statements"
               >
                 <BookOpen size={32} className={styles.icon} />
-                <p className={styles.link}>SITUAȚII CLIENȚI</p>
+                <p className={styles.link}>
+                  {t('navigation.clientStatements').toUpperCase()}
+                </p>
               </NavLink>
             </li>
             <li>
-              <NavLink className={activeLinks} to="/invoicing">
+              <NavLink
+                onClick={props.onClick}
+                className={activeLinks}
+                to="/invoicing"
+              >
                 <Money size={32} className={styles.icon} />
-                <p className={styles.link}>FACTURI</p>
+                <p className={styles.link}>
+                  {t('navigation.invoicing').toUpperCase()}
+                </p>
               </NavLink>
             </li>
             <li>
@@ -89,7 +113,9 @@ export const MobileNav = (props) => {
                 to="/metrics"
               >
                 <Activity size={32} className={styles.icon} />
-                <p className={styles.link}>DATE DE LUCRU</p>
+                <p className={styles.link}>
+                  {t('navigation.metrics').toUpperCase()}
+                </p>
               </NavLink>
             </li>
           </ul>
@@ -102,17 +128,9 @@ export const MobileNav = (props) => {
                 to="/profile"
               >
                 <User size={32} className={styles.icon} />
-                <p className={styles.link}>PROFIL</p>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                onClick={props.onClick}
-                className={styles.profileItem}
-                to="/"
-              >
-                <Gear size={32} className={styles.icon} />
-                <p className={styles.link}>SETĂRI</p>
+                <p className={styles.link}>
+                  {t('navigation.profile').toUpperCase()}
+                </p>
               </NavLink>
             </li>
           </ul>
@@ -120,4 +138,6 @@ export const MobileNav = (props) => {
       </CSSTransition>
     </Fragment>
   );
+
+  return ReactDOM.createPortal(content, document.getElementById('root'));
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Button from '../../UIElements/Button';
+import { useTranslation } from 'react-i18next';
+
 import Modal from '../../UIElements/Modal';
 import ErrorModal from '../../Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../../UIElements/LoadingSpinner';
@@ -13,12 +14,13 @@ import '../../CSS/modals-form.css';
 
 const ViewModal = ({ show, clientData, onCloseModal }) => {
   const { token, units, services, language } = useContext(AuthContext);
-  const [loadedData, setLoadedData] = useState();
+  const [loadedData, setLoadedData] = useState({});
 
-  const header = `Date client ${clientData.name}`;
-  const footer =
-    'Ultima modificare la: ' +
-    new Date(clientData.updatedAt).toLocaleString('ro').slice(0, 17);
+  const { t } = useTranslation();
+
+  const header = `${t('modals.clients.viewClient.header')}: ${clientData.name}`;
+  const footer = `${t('modals.clients.viewClient.footer')}:
+                ${new Date(loadedData.createdAt).toLocaleDateString(language)}`;
   const mailto = 'mailto:' + clientData.email;
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
@@ -27,10 +29,10 @@ const ViewModal = ({ show, clientData, onCloseModal }) => {
     const getClientData = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/clients/client/${clientData.id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/clients/client/${clientData.id}`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setLoadedData(responseData.message);
       } catch (error) {}
@@ -56,7 +58,7 @@ const ViewModal = ({ show, clientData, onCloseModal }) => {
               <div className="clientPhotoContainer">
                 {clientData.avatar ? (
                   <img
-                    src={`http://localhost:8000/uploads/avatars/${clientData.avatar}`}
+                    src={`${process.env.REACT_APP_BACKEND_URL}/uploads/avatars/${clientData.avatar}`}
                     alt=""
                   />
                 ) : (
@@ -65,58 +67,55 @@ const ViewModal = ({ show, clientData, onCloseModal }) => {
               </div>
               <div className="clientContacts">
                 <p>
-                  <strong>Adresa de email:</strong>{' '}
+                  <strong>{t('client.email')}:</strong>{' '}
                   <a href={mailto}> {loadedData.email}</a>
                 </p>
                 <p>
-                  <strong>Telefon:</strong> {loadedData.phone}
+                  <strong>{t('client.phone')}:</strong> {loadedData.phone}
                 </p>
               </div>
             </header>
 
             <div className="section">
-              <p>
+              <div>
                 {services.map((service) => (
                   <p style={{ fontStyle: 'italic' }} key={service.value}>
-                    Tarif {service.displayedValue}:{' '}
+                    {t('client.rate')} - {service.displayedValue}:{' '}
                     {formatCurrency(
                       language,
-                      loadedData.currency,
-                      loadedData[`${service.value}Rate`]
+                      clientData.currency,
+                      clientData[`${service.value}Rate`]
                     )}
                   </p>
                 ))}
-              </p>
+              </div>
               <p>
-                <strong>Unitate de măsură: </strong>
+                <strong>{t('client.mu')}: </strong>
                 {getReadableUnit(units, loadedData.unit)}
               </p>
             </div>
             <div className="section">
               <p>
-                <strong>Sediul:</strong> {loadedData.registeredOffice}
+                <strong>{t('client.registeredOffice')}:</strong>{' '}
+                {loadedData.registeredOffice}
               </p>
               <p>
-                <strong>Nr. de înregistrare:</strong>{' '}
+                <strong>{t('client.registrationNumber')}:</strong>{' '}
                 {loadedData.registrationNumber}
               </p>
               <p>
-                <strong>Cod fiscal:</strong> {loadedData.taxNumber}
+                <strong>{t('client.taxNumber')}:</strong> {loadedData.taxNumber}
               </p>
               <p>
-                <strong>Banca:</strong> {loadedData.bank}
+                <strong>{t('client.bank')}:</strong> {loadedData.bank}
               </p>
               <p>
-                <strong>IBAN:</strong> {loadedData.iban}
+                <strong>{t('client.iban')}:</strong> {loadedData.iban}
               </p>
             </div>
             <div className="section">
               <p>
-                <strong>Note:</strong> {loadedData.notes}
-              </p>
-              <p>
-                Data adăugării:{' '}
-                {new Date(loadedData.createdAt).toLocaleString(language)}
+                <strong>{t('client.notes')}:</strong> {loadedData.notes}
               </p>
             </div>
           </div>

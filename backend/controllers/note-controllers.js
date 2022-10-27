@@ -11,12 +11,7 @@ exports.getNotes = async (req, res, next) => {
   try {
     notes = await Note.find({ userId });
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de date. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.notes.not_found'), 500));
   }
 
   res.json({ message: notes.map((note) => note.toObject({ getters: true })) });
@@ -30,16 +25,11 @@ exports.saveNote = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de date. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   if (!user) {
-    return next(new HttpError('Utilizatorul nu a putut fi găsit.', 500));
+    return next(new HttpError(req.t('errors.user.no_user'), 500));
   }
 
   const newNote = new Note({
@@ -55,12 +45,7 @@ exports.saveNote = async (req, res, next) => {
     await newNote.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la salvarea notelor. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.notes.save_failed'), 500));
   }
 
   res.json({ message: newNote.toObject({ getters: true }) });
@@ -73,12 +58,7 @@ exports.removeNote = async (req, res, next) => {
   try {
     note = await Note.findById(noteId).populate('userId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de date. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.notes.not_found'), 500));
   }
 
   try {
@@ -89,25 +69,14 @@ exports.removeNote = async (req, res, next) => {
     await note.userId.save({ session });
     session.commitTransaction();
   } catch (error) {
-    console.log(error);
-    return next(
-      new HttpError(
-        'A survenit o problemă la stergerea notelor. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.notes.delete_failed'), 500));
   }
 
   let notes;
   try {
     notes = await Note.find({ userId: note.userId._id });
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de date. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.notes.not_found'), 500));
   }
 
   res.json({ message: notes.map((note) => note.toObject({ getters: true })) });

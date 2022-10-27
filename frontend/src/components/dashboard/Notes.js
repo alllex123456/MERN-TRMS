@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Input from '../COMMON/FormElements/Input';
 import Button from '../COMMON/UIElements/Button';
@@ -14,7 +15,9 @@ import styles from './Notes.module.css';
 
 const Notes = () => {
   const [notes, setNotes] = useState();
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -29,10 +32,10 @@ const Notes = () => {
     const getNotes = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/notes/get-notes',
+          `${process.env.REACT_APP_BACKEND_URL}/notes/get-notes`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setNotes(responseData.message);
       } catch (error) {}
@@ -46,10 +49,14 @@ const Notes = () => {
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/notes/save-note',
+        `${process.env.REACT_APP_BACKEND_URL}/notes/save-note`,
         'POST',
         JSON.stringify({ note: formState.inputs.note.value }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setNotes((prev) => [...prev, { ...responseData.message }]);
       setFormData(
@@ -64,18 +71,18 @@ const Notes = () => {
   const removeNoteBtn = async (noteId) => {
     try {
       await sendRequest(
-        `http://localhost:8000/notes/remove-note/${noteId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/notes/remove-note/${noteId}`,
         'DELETE',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
     } catch (error) {}
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/notes/get-notes`,
+        `${process.env.REACT_APP_BACKEND_URL}/notes/get-notes`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setNotes(responseData.message);
     } catch (error) {}
@@ -88,7 +95,7 @@ const Notes = () => {
         {isLoading && <LoadingSpinner asOverlay className="center" />}
         <form className={styles.notesForm} onSubmit={submitHandler}>
           <Input
-            placeholder="Adaugă..."
+            placeholder={t('dashboard.add')}
             id="note"
             element="input"
             type="text"
@@ -98,7 +105,7 @@ const Notes = () => {
             onInput={inputHandler}
           />
           <Button disabled={!formState.isValid} type="submit">
-            Salvează
+            {t('buttons.saveBtn')}
           </Button>
         </form>
         <ul className={styles.notesList}>

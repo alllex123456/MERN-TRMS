@@ -32,13 +32,6 @@
 .header {
   grid-column: 1/-1;
 
-  background: linear-gradient(
-    var(--GREY-MEDIUM) 35%,
-    var(--GREY-DARK) 60%,
-    var(--GREY-DARKEST)
-  );
-  color: #fff;
-
   height: 5rem;
   padding: 2rem;
 
@@ -91,12 +84,12 @@
 }
 
 .logoutBtn {
-  color: var(--BUTTON-COLOR-DANGER);
+  color: var(--RED-DARK);
   transition: all 0.3s;
 }
 
 .profileLink {
-  color: var(--BLUE-LIGHT);
+  color: var(--BLUE-DARK);
   transition: all 0.3s;
 }
 
@@ -112,10 +105,10 @@
 }
 
 .profileLink:hover {
-  color: var(--BLUE-LIGHTEST);
+  color: var(--BLUE-MEDIUM);
 }
 .logoutBtn:hover {
-  color: var(--RED-LIGHTEST);
+  color: var(--RED-MEDIUM);
 }
 
 @media (max-width: 1400px) {
@@ -126,4 +119,49 @@
   .header {
     padding: 1rem;
   }
+}
+
+/* THEMING */
+.defaultHeader {
+  background: linear-gradient(
+    var(--GREY-MEDIUM) 35%,
+    var(--GREY-DARK) 60%,
+    var(--GREY-DARKEST)
+  );
+}
+.defaultHeader .zent {
+  color: var(--FONT-COLOR-LIGHT);
+}
+.defaultHeader .profileLink {
+  color: var(--BLUE-MEDIUM);
+}
+.defaultHeader .profileLink:hover {
+  color: var(--BLUE-LIGHT);
+}
+
+.lightHeader {
+  background: var(--SMARALD-LIGHT);
+}
+.lightHeader .zent {
+  color: var(--FONT-COLOR-DARK);
+}
+.lightHeader sup {
+  color: var(--FONT-COLOR-LIGHT);
+}
+
+.darkHeader {
+  background: linear-gradient(
+    var(--GREY-MEDIUM) 35%,
+    var(--GREY-DARK) 60%,
+    var(--GREY-DARKEST)
+  );
+}
+.darkHeader .zent {
+  color: var(--SMARALD-LIGHTEST);
+}
+.darkHeader .profileLink {
+  color: var(--BLUE-MEDIUM);
+}
+.darkHeader .profileLink:hover {
+  color: var(--BLUE-LIGHT);
 }

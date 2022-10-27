@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Hourglass } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import OrderItem from './OrderItem';
 import AddModal from '../COMMON/Modals/OrderModals/AddModal';
@@ -17,8 +18,11 @@ import { AuthContext } from '../../context/auth-context';
 import styles from './Queue.module.css';
 
 export const Queue = (props) => {
-  const { token, theme } = useContext(AuthContext);
+  const { token, theme, language } = useContext(AuthContext);
   const [loadedOrders, setLoadedOrders] = useState([]);
+
+  const { t } = useTranslation();
+
   const { modalState, closeModalHandler, showModalHandler } = useModal(
     '',
     '',
@@ -29,10 +33,10 @@ export const Queue = (props) => {
 
   const refreshOrders = async () => {
     const responseData = await sendRequest(
-      `http://localhost:8000/orders/get-pending`,
+      `${process.env.REACT_APP_BACKEND_URL}/orders/get-pending`,
       'GET',
       null,
-      { Authorization: 'Bearer ' + token }
+      { Authorization: 'Bearer ' + token, 'Accept-Language': language }
     );
     setLoadedOrders(responseData.message);
   };
@@ -40,15 +44,15 @@ export const Queue = (props) => {
   useEffect(() => {
     const getPendingOrders = async () => {
       const responseData = await sendRequest(
-        `http://localhost:8000/orders/get-pending`,
+        `${process.env.REACT_APP_BACKEND_URL}/orders/get-pending`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setLoadedOrders(responseData.message);
     };
     getPendingOrders();
-  }, [sendRequest, token]);
+  }, [sendRequest, token, language]);
 
   return (
     <React.Fragment>
@@ -91,9 +95,9 @@ export const Queue = (props) => {
       <div className="pageContainer">
         <header className={styles.queueHeader}>
           <Hourglass size={32} className={styles.icon} />
-          <h2>Organizator comenzi în lucru</h2>
+          <h2>{t('pending.title')}</h2>
           <Button primary type="button" onClick={() => showModalHandler('ADD')}>
-            + Adaugă comandă nouă
+            + {t('pending.addBtn')}
           </Button>
         </header>
         {isLoading && <LoadingSpinner className="center" />}
@@ -101,7 +105,7 @@ export const Queue = (props) => {
           <ul className={styles.queueList}>
             {loadedOrders && loadedOrders.length === 0 && (
               <li className={`center noItems ${theme}NoItems`}>
-                Nu există comenzi în lucru
+                {t('pending.noOrders')}
               </li>
             )}
             {loadedOrders &&

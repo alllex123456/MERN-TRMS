@@ -11,7 +11,7 @@ exports.getAppSettings = async (req, res, next) => {
   } catch (error) {
     return next(
       new HttpError(
-        'Eroare în baza de date la accesarea setărilor de aplicație sau baza de date este offline. Vă rugăm să reîncercați.',
+        req.t('database.connection_failed'),
         500
       )
     );

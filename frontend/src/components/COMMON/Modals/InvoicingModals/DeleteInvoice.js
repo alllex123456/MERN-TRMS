@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import ErrorModal from '../MessageModals/ErrorModal';
 import SuccessModal from '../MessageModals/SuccessModal';
 import Modal from '../../UIElements/Modal';
@@ -19,16 +21,19 @@ const DeleteInvoice = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [removeOrders, setRemoveOrders] = useState(true);
 
+  const { t } = useTranslation();
+
   const { sendRequest, error, clearError, isLoading } = useHttpClient();
 
   useEffect(() => {
     const getOrders = async () => {
       const responseData = await sendRequest(
-        'http://localhost:8000/orders',
-        'GET',
+        `${process.env.REACT_APP_BACKEND_URL}/orders',
+        'GET`,
         null,
         {
           Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
           Payload: JSON.stringify(props.invoiceData.invoice.orders),
         }
       );
@@ -42,10 +47,10 @@ const DeleteInvoice = (props) => {
 
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/invoicing/delete-invoice/${props.invoiceData.invoice._id}/?removeOrders=${removeOrders}`,
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/delete-invoice/${props.invoiceData.invoice._id}/?removeOrders=${removeOrders}`,
         'DELETE',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setSuccessMessage(responseData.message);
     } catch (error) {
@@ -72,25 +77,24 @@ const DeleteInvoice = (props) => {
         form
         show={props.show}
         close={closeModalHandler}
-        header="Anuleaza factura"
+        header={t('modals.invoicing.cancel.header')}
         onSubmit={submitHandler}
       >
         {isLoading && <LoadingSpinner asOverlay />}
         {!successMessage && !isLoading && (
           <div className="deleteInvoice">
             <h3 style={{ fontSize: '14px', marginBottom: '20px' }}>
-              Urmatoarele articole continute in factura pot si sterse sau
-              pastrate pentru facturare ulterioara:
+              {t('modals.invoicing.cancel.note')}:
             </h3>
             <div className="table-wrapper">
               <table className="table invoicingTable">
                 <thead>
                   <tr style={{ textAlign: 'left' }}>
-                    <th>Serviciu/Ref.</th>
-                    <th>Primit/predat</th>
-                    <th>Cantitate</th>
-                    <th>Tarif</th>
-                    <th>Total</th>
+                    <th>{t('invoicing.invoice.typeRef')}</th>
+                    <th>{t('statements.statement.receivedDelivered')}</th>
+                    <th>{t('invoicing.invoice.qty')}</th>
+                    <th>{t('orders.rate')}</th>
+                    <th>{t('orders.total')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -140,7 +144,7 @@ const DeleteInvoice = (props) => {
                   type="checkbox"
                   onChange={() => setRemoveOrders((prev) => !prev)}
                 />
-                <p>Doresc pastrarea articolelor</p>
+                <p>{t('modals.invoicing.cancel.keepNote')}</p>
               </div>
             </div>
             <div className="formActions">
@@ -149,13 +153,10 @@ const DeleteInvoice = (props) => {
                 // disabled={props.invoiceData.invoice.cashed}
                 type="submit"
               >
-                CONFIRM
+                {t('buttons.confirmBtn')}
               </Button>
             </div>
-            <p className="center error">
-              {props.invoiceData.invoice.cashed &&
-                'Nu puteti anula o factura deja incasata!'}
-            </p>
+
             <p className="center error">{errorMessage && errorMessage}</p>
           </div>
         )}

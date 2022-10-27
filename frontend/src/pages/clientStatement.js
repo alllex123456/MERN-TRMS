@@ -1,5 +1,7 @@
 import ClientStatement from '../components/statements/ClientStatement';
 
-export const ClientStatementPage = () => {
+const ClientStatementPage = () => {
   return <ClientStatement />;
 };
+
+export default ClientStatementPage;

@@ -30,10 +30,14 @@
 .modalGroup p,
 .modalGroup .input {
   padding: 1rem;
-  background: #fff;
   text-align: center;
   font-size: 1.8rem;
-  margin-bottom: 1rem;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.modalGroup {
+  text-align: center;
 }
 
 .modalGroup span {
@@ -45,6 +49,9 @@
 .flexRow {
   display: flex;
   gap: 1rem;
+}
+.flexRow > * {
+  flex-grow: 1;
 }
 
 .flexColumn {
@@ -224,6 +231,7 @@
 }
 
 .profileSettings > * {
+  font-size: 1.4rem;
   margin-bottom: 1rem;
   width: 100%;
 }
@@ -231,7 +239,6 @@
 .profileInput {
   width: 100%;
   display: block;
-  font-size: 1.6rem;
 }
 
 .profileActions {
@@ -258,8 +265,8 @@
   margin: 2rem 0;
 }
 .success {
-  color: var(--BLEU-FRANCE-DARKER);
+  color: var(--BLUE-DARK);
 }
 .error {
-  color: var(--BUTTON-COLOR-DANGER);
+  color: var(--RED-MEDIUM);
 }

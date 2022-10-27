@@ -5,12 +5,14 @@
   grid-gap: 2rem;
 }
 
-.dashboardOrders {
+.dashboard > * {
+  box-shadow: 0 0 5px rgba(var(--BLUE-MEDIUM-RGB), 0.3);
+  padding: 1rem;
   position: relative;
 }
 
-.dashboardOrdersList {
-  box-shadow: 0 0 3px rgb(0, 0, 0, 0.3);
+.dashboardOrdersList,
+.dashboardInvoiceList {
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -18,4 +20,11 @@
   height: 40rem;
   border-radius: 5px;
   overflow-y: scroll;
+}
+
+@media (max-width: 500px) {
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+  }
 }

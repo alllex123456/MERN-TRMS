@@ -1,26 +1,32 @@
-import React, { useState, useEffect, useReducer, useCallback } from 'react';
+import React, {
+  Suspense,
+  useState,
+  useEffect,
+  useReducer,
+  useCallback,
+} from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
-import { MainLayout } from './components/layout/MainLayout';
-import { QueuePage } from './pages/queue';
-import { ClientsPage } from './pages/clients';
-import { StatementsPage } from './pages/statements';
-import { ClientStatementPage } from './pages/clientStatement';
-import { MetricsPage } from './pages/metrics';
-import { ProfilePage } from './pages/profile';
-import { SettingsPage } from './pages/settings';
-import { DashboardMain } from './pages/dashboard.js';
-
-import { AuthContext } from './context/auth-context';
-
-import Auth from './components/auth/Auth';
 import LoadingSpinner from './components/COMMON/UIElements/LoadingSpinner';
-import { ResetPassword } from './pages/resetPassword';
-import { useHttpClient } from './hooks/useHttpClient';
-import { InvoicingPage } from './pages/invoicing';
-import { ClientInvoicingPage } from './pages/clientInvoicing';
+import { AuthContext } from './context/auth-context';
 import { translateServices, translateUnits } from './utilities/translate-units';
-import { ViewInvoicePage } from './pages/viewInvoice';
+import { useHttpClient } from './hooks/useHttpClient';
+import { MainLayout } from './components/layout/MainLayout';
+
+const Auth = React.lazy(() => import('./pages/auth'));
+const QueuePage = React.lazy(() => import('./pages/queue'));
+const StatementsPage = React.lazy(() => import('./pages/statements'));
+const ClientsPage = React.lazy(() => import('./pages/clients'));
+const ClientStatementPage = React.lazy(() => import('./pages/clientStatement'));
+const MetricsPage = React.lazy(() => import('./pages/metrics'));
+const ProfilePage = React.lazy(() => import('./pages/profile'));
+const SettingsPage = React.lazy(() => import('./pages/settings'));
+const DashboardMain = React.lazy(() => import('./pages/dashboard'));
+const ResetPassword = React.lazy(() => import('./pages/resetPassword'));
+const InvoicingPage = React.lazy(() => import('./pages/invoicing'));
+const ViewInvoicePage = React.lazy(() => import('./pages/viewInvoice'));
+const ReverseInvoicePage = React.lazy(() => import('./pages/reverseInvoice'));
+const ClientInvoicingPage = React.lazy(() => import('./pages/clientInvoicing'));
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -124,7 +130,7 @@ function App() {
       const getAppData = async () => {
         try {
           const responseData = await sendRequest(
-            'http://localhost:8000/app/app-settings'
+            `${process.env.REACT_APP_BACKEND_URL}/app/app-settings`
           );
 
           dispatch({ type: 'SET_APP_DATA', appData: responseData.message });
@@ -185,7 +191,7 @@ function App() {
     const getAppData = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/app/app-settings'
+          `${process.env.REACT_APP_BACKEND_URL}/app/app-settings`
         );
 
         dispatch({ type: 'SET_APP_DATA', appData: responseData.message });
@@ -215,11 +221,19 @@ function App() {
           logout,
         }}
       >
-        <Routes>
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="*" element={<Auth />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="center">
+              <LoadingSpinner asOverlay />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="*" element={<Auth />} />
+          </Routes>
+        </Suspense>
       </AuthContext.Provider>
     );
   }
@@ -246,27 +260,43 @@ function App() {
       }}
     >
       <MainLayout>
-        <Routes>
-          <Route path="/main" element={<DashboardMain />} />
-          <Route path="/queue" element={<QueuePage />} />
-          <Route path="/clients" element={<ClientsPage />} />
-          <Route
-            path="/statements/:clientId"
-            element={<ClientStatementPage />}
-          />
-          <Route path="/statements" element={<StatementsPage />} />
-          <Route path="/invoicing" element={<InvoicingPage />} />
-          <Route path="invoicing/:clientId" element={<ClientInvoicingPage />} />
-          <Route
-            path="invoicing/view/:clientId/:invoiceId"
-            element={<ViewInvoicePage />}
-          />
-          <Route path="/metrics" element={<MetricsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="*" element={<DashboardMain />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="center">
+              <LoadingSpinner asOverlay />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/main" element={<DashboardMain />} />
+            <Route path="/queue" element={<QueuePage />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route
+              path="/statements/:clientId"
+              element={<ClientStatementPage />}
+            />
+            <Route path="/statements" element={<StatementsPage />} />
+            <Route path="/invoicing" element={<InvoicingPage />} />
+            <Route
+              path="invoicing/:clientId"
+              element={<ClientInvoicingPage />}
+            />
+            <Route
+              path="invoicing/view/:clientId/:invoiceId"
+              element={<ViewInvoicePage />}
+            />
+            <Route
+              path="invoicing/reverse/:clientId/:invoiceId"
+              element={<ReverseInvoicePage />}
+            />
+
+            <Route path="/metrics" element={<MetricsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="*" element={<DashboardMain />} />
+          </Routes>
+        </Suspense>
       </MainLayout>
     </AuthContext.Provider>
   );

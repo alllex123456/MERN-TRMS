@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Money } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 import ClientSummary from './ClientSummary';
@@ -12,7 +13,8 @@ import styles from './Invoices.module.css';
 import { formatISO, sub } from 'date-fns';
 
 const Invoices = () => {
-  const { token } = useContext(AuthContext);
+  const { token, theme, language } = useContext(AuthContext);
+
   const [searchQuery, setSearchQuery] = useState();
   const [userClients, setUserClients] = useState([]);
   const [invoiceStatus, setInvoiceStatus] = useState('all');
@@ -21,15 +23,17 @@ const Invoices = () => {
   );
   const [filterTo, setFilterTo] = useState(formatISO(new Date()));
 
+  const { t } = useTranslation();
+
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
   const getUserClients = useCallback(async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/clients`,
+        `${process.env.REACT_APP_BACKEND_URL}/clients`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setUserClients(responseData.message.clients);
     } catch (error) {}
@@ -77,7 +81,7 @@ const Invoices = () => {
       <div className="pageContainer">
         <div className={styles.invoicesHeader}>
           <Money size={32} />
-          <h2>Facturi clienți</h2>
+          <h2>{t('invoicing.title')}</h2>
         </div>
 
         <div className={styles.flex}>
@@ -86,40 +90,47 @@ const Invoices = () => {
             <ul className={styles.invoiceList}>
               <div className={styles.invoiceFilters}>
                 <input
-                  className={styles.input}
+                  className={`${styles.input} ${styles[`${theme}Input`]}`}
                   type="text"
-                  placeholder="caută după nume client..."
+                  placeholder={t('invoicing.searchPlaceholder')}
                   onChange={searchClientHandler}
                   onKeyDown={resetSearchHandler}
                 />
 
                 <select
-                  className={styles.select}
+                  className={`${styles.select} ${styles[`${theme}Select`]}`}
                   onChange={filterInvoicesHandler}
                 >
-                  <option value="all">Toate</option>
-                  <option value="issued">Emise</option>
-                  <option value="cashed">Incasate</option>
-                  <option value="delayed">Restante</option>
+                  <option value="all">{t('invoicing.invFilter')}</option>
+                  <option value="issued">{t('invoicing.statusIssued')}</option>
+                  <option value="cashed">{t('invoicing.statusCashed')}</option>
+                  <option value="delayed">
+                    {t('invoicing.statusDelayed')}
+                  </option>
                 </select>
 
                 <div className={styles.dates}>
-                  <span>Perioada: </span>
+                  <span>{t('invoicing.period')}: </span>
                   <input
-                    className={styles.input}
+                    className={`${styles.input} ${styles[`${theme}Input`]}`}
                     type="date"
                     value={filterFrom.slice(0, 10)}
                     onChange={changeDateFromHandler}
                   />
                   <span> - </span>
                   <input
-                    className={styles.input}
+                    className={`${styles.input} ${styles[`${theme}Input`]}`}
                     type="date"
                     value={filterTo.slice(0, 10)}
                     onChange={changeDateToHandler}
                   />
                 </div>
               </div>
+              {userClients.length === 0 && (
+                <li className={`center noItems ${theme}NoItems`}>
+                  {t('statements.noResults')}
+                </li>
+              )}
               {userClients
                 .filter((client) => {
                   if (!searchQuery) return client.name;

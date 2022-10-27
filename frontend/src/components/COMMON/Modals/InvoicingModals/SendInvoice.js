@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import ErrorModal from '../MessageModals/ErrorModal';
 import SuccessModal from '../MessageModals/SuccessModal';
 import Modal from '../../UIElements/Modal';
@@ -18,10 +20,12 @@ import {
 } from '../../../../utilities/form-validator';
 
 const SendInvoice = (props) => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
   const { sendRequest, error, clearError, isLoading } = useHttpClient();
   const [dataLoaded, setDataLoaded] = useState(false);
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -40,10 +44,10 @@ const SendInvoice = (props) => {
     const getUserData = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/user',
+          `${process.env.REACT_APP_BACKEND_URL}/user`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
 
         setFormData(
@@ -79,16 +83,16 @@ const SendInvoice = (props) => {
 
     try {
       await sendRequest(
-        `http://localhost:8000/invoicing/pdf/${props.invoiceData.invoice._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/pdf/${props.invoiceData.invoice._id}`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
     } catch (error) {}
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/invoicing/send-invoice',
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/send-invoice`,
         'POST',
         JSON.stringify({
           invoiceId: props.invoiceData.invoice._id,
@@ -96,7 +100,11 @@ const SendInvoice = (props) => {
           email: formState.inputs.clientEmail.value,
           message: formState.inputs.message.value,
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setSuccessMessage(responseData.message);
     } catch (error) {}
@@ -116,24 +124,24 @@ const SendInvoice = (props) => {
       <ErrorModal show={error} onClear={clearError} />
       <SuccessModal success={successMessage} onClear={clearSuccessMessage} />
       <Modal
+        small
         form
         method="POST"
         show={props.show}
         close={closeModalHandler}
-        header="Trimite factura"
+        header={t('modals.invoicing.send.header')}
         onSubmit={submitHandler}
       >
         {isLoading && <LoadingSpinner asOverlay />}
         {!successMessage && dataLoaded && (
-          <React.Fragment>
-            {' '}
-            <div className="formGroup flex">
+          <div className="flexColumn">
+            <div className="formGroup flexColumn">
               <Input
                 disabled
                 className="input"
                 id="clientName"
                 element="input"
-                label="Client"
+                label={t('modals.invoicing.send.client')}
                 validators={[VALIDATOR_REQUIRE]}
                 defaultValue={formState.inputs.clientName.value}
                 defaultValidity={formState.inputs.clientName.isValid}
@@ -143,42 +151,21 @@ const SendInvoice = (props) => {
                 className="input"
                 id="clientEmail"
                 element="input"
-                label="E-mail"
+                label={t('client.email')}
                 validators={[VALIDATOR_EMAIL]}
                 defaultValue={formState.inputs.clientEmail.value}
                 defaultValidity={formState.inputs.clientEmail.validity}
-                errorText="Nu ati introdus o adresa de email valida"
-                onInput={inputHandler}
-              />
-              <Input
-                disabled
-                className="input"
-                id="invoiceSeries"
-                element="input"
-                label="Seria"
-                validators={[VALIDATOR_REQUIRE]}
-                defaultValue={formState.inputs.invoiceSeries.value}
-                defaultValidity={formState.inputs.invoiceSeries.isValid}
-                onInput={inputHandler}
-              />
-              <Input
-                disabled
-                className="input"
-                id="invoiceNumber"
-                element="input"
-                label="Numarul"
-                validators={[VALIDATOR_REQUIRE]}
-                defaultValue={formState.inputs.invoiceNumber.value}
-                defaultValidity={formState.inputs.invoiceNumber.isValid}
+                errorText={t('modals.invoicing.send.emailErrorText')}
                 onInput={inputHandler}
               />
             </div>
+
             <div className="formGroup">
               <Input
                 className="textarea"
                 id="message"
                 element="textarea"
-                label="Corpul mesajului"
+                label={t('modals.invoicing.send.bodyMsg')}
                 validators={[]}
                 defaultValue={formState.inputs.message.value}
                 defaultValidity={formState.inputs.message.isValid}
@@ -187,13 +174,10 @@ const SendInvoice = (props) => {
             </div>
             <div className="formActions">
               <Button primary type="submit" disabled={!formState.isValid}>
-                TRIMITE
-              </Button>
-              <Button secondary type="button" onClick={closeModalHandler}>
-                INCHIDE
+                {t('buttons.sendBtn')}
               </Button>
             </div>
-          </React.Fragment>
+          </div>
         )}
       </Modal>
     </React.Fragment>

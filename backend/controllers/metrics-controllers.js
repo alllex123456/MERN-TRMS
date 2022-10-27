@@ -12,12 +12,7 @@ exports.getMetrics = async (req, res, next) => {
   try {
     user = await User.findById(userId).populate('orders');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori (utilizatorul nu a putut fi accesat). Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   pendingOrders = user.orders.filter((order) => order.status === 'queue');

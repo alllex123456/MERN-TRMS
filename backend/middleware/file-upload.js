@@ -5,7 +5,6 @@ const MIME_TYPE_MAP = {
   'image/png': 'png',
   'image/jpeg': 'jpeg',
   'image/jpg': 'jpg',
-  'application/pdf': 'pdf',
 };
 
 const fileUploadImages = multer({
@@ -21,7 +20,9 @@ const fileUploadImages = multer({
   }),
   fileFilter: (req, file, cb) => {
     const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    let error = isValid ? null : new Error('Invalid mime type!');
+    let error = isValid
+      ? null
+      : new Error(req.t('errors.miscellaneous.mime_type_invalid'));
     cb(error, isValid);
   },
 });

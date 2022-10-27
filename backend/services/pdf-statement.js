@@ -36,7 +36,9 @@ exports.StatementPDF = (res, client, user, time) => {
   });
 
   statement.pipe(
-    fs.createWriteStream(`./uploads/statements/Situatie[${client.name}].pdf`)
+    fs.createWriteStream(
+      `./uploads/statements/Statement[${user.id}][${client.name}].pdf`
+    )
   );
 
   statement.rect(20, 20, 560, 70);

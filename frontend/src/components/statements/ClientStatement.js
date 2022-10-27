@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import ClientStatementItem from './ClientStatementItem';
 import Button from '../COMMON/UIElements/Button';
@@ -30,6 +31,9 @@ const ClientStatement = () => {
   const [client, setClient] = useState();
   const [lastInvoice, setLastInvoice] = useState({});
   const [blob, setBlob] = useState();
+  const [errorMessage, setErrorMessage] = useState();
+
+  const { t } = useTranslation();
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
@@ -37,10 +41,10 @@ const ClientStatement = () => {
     const getInvoices = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/invoicing/client/${clientId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/invoicing/client/${clientId}`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         const clientInvoices = responseData.message.invoices;
         const sortedInvoices = clientInvoices.sort(
@@ -51,7 +55,7 @@ const ClientStatement = () => {
       } catch (error) {}
     };
     getInvoices();
-  }, [sendRequest]);
+  }, [sendRequest, clientId, language, token]);
 
   const { modalState, closeModalHandler, showModalHandler } = useModal(
     '',
@@ -63,20 +67,20 @@ const ClientStatement = () => {
     const getClientStatement = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/statements/client/${clientId}`,
+          `${process.env.REACT_APP_BACKEND_URL}/statements/client/${clientId}`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setClientOrders(responseData.message.orders);
         setClient(responseData.message.client);
       } catch (error) {}
     };
     getClientStatement();
-  }, [token, sendRequest, clientId]);
+  }, [token, sendRequest, clientId, language]);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/statements/pdf/${clientId}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/statements/pdf/${clientId}`, {
       method: 'GET',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -93,22 +97,22 @@ const ClientStatement = () => {
         setBlob(blob);
       })
       .catch((error) => {
-        alert('Nu s-a putut genera situatia, va rugam sa reincercati');
+        setErrorMessage(error.message);
       });
   }, [clientId, token]);
 
   const refreshOrders = async () => {
     const responseData = await sendRequest(
-      `http://localhost:8000/statements/client/${clientId}`,
+      `${process.env.REACT_APP_BACKEND_URL}/statements/client/${clientId}`,
       'GET',
       null,
-      { Authorization: 'Bearer ' + token }
+      { Authorization: 'Bearer ' + token, 'Accept-Language': language }
     );
     setClientOrders(responseData.message.orders);
   };
 
   const getPDFDocument = () => {
-    blobAnchor(`Situatie[${client.name}].pdf`, blob);
+    blobAnchor(`${t('statements.statement.title')}[${client.name}].pdf`, blob);
   };
 
   const toggleCreateInvoice = () => setCreateInvoice(false);
@@ -118,6 +122,7 @@ const ClientStatement = () => {
   if (createInvoice) {
     return (
       <CreateInvoice
+        issue
         back={toggleCreateInvoice}
         client={client}
         clientOrders={clientOrders}
@@ -152,31 +157,33 @@ const ClientStatement = () => {
           onDeleteOrder={refreshOrders}
         />
       )}
-      <ErrorModal show={error} onClear={clearError} />
+      <ErrorModal show={error || errorMessage} onClear={clearError} />
 
       {isLoading && <LoadingSpinner className="center" />}
       {!isLoading && !error && clientOrders && client && (
         <main className={styles.statementContainer}>
           <div className={styles.statementControls}>
             <Button className={styles.back} onClick={() => navigator(-1)}>
-              <ArrowLeft size={24} /> Înapoi
+              <ArrowLeft size={24} /> {t('buttons.backBtn')}
             </Button>
             <Button
               className={styles.add}
               type="button"
               onClick={() => showModalHandler('ADD', clientId)}
             >
-              + Adaugă
+              + {t('buttons.addBtn')}
             </Button>
           </div>
           <h3 className={styles.clientName}>{client.name}</h3>
-          <p>Unitate de măsură: {getReadableUnit(units, client.unit)}</p>
+          <p>
+            {t('client.mu')}: {getReadableUnit(units, client.unit)}
+          </p>
           <p className={styles.clientLastInvoice}>
-            Ultima facturare:{' '}
+            {t('statements.lastInvoicing')}:{' '}
             {lastInvoice
               ? new Date(lastInvoice.issuedDate).toLocaleDateString(language)
               : 'nu exista'}{' '}
-            | Sold anterior:{' '}
+            | {t('statements.prevBalance')}:{' '}
             {formatCurrency(language, client.currency, client.remainder)}
           </p>
           <ul className={styles.statementList}>
@@ -198,7 +205,7 @@ const ClientStatement = () => {
               primary
               onClick={invoicingHandler}
             >
-              Facturare
+              {t('statements.statement.invoicing')}
             </Button>
 
             <Button
@@ -206,7 +213,7 @@ const ClientStatement = () => {
               primary
               onClick={getPDFDocument}
             >
-              Exportă PDF
+              {t('buttons.exportBtn')}
             </Button>
           </div>
         </main>

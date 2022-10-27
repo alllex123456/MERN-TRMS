@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { SignOut, Gear } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import SettingsModal from '../COMMON/Modals/UserModals/SettingsModal';
 
@@ -9,11 +10,13 @@ import { AuthContext } from '../../context/auth-context';
 import styles from './Header.module.css';
 
 export const Header = () => {
-  const { logout, avatar, userAlias } = useContext(AuthContext);
+  const { logout, theme } = useContext(AuthContext);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [file, setFile] = useState();
   const [preview, setPreview] = useState();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!file) {
@@ -27,7 +30,7 @@ export const Header = () => {
   }, [file]);
 
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${styles[`${theme}Header`]}`}>
       <SettingsModal
         show={showSettings}
         preview={preview}
@@ -62,11 +65,11 @@ export const Header = () => {
             onClick={() => setShowSettings(true)}
           >
             <Gear size={32} />
-            <span>setări</span>
+            <span>{t('header.settings')}</span>
           </button>
           <button className={styles.logoutBtn} onClick={logout}>
             <SignOut size={32} />
-            <span>deconectare</span>
+            <span>{t('header.logOut')}</span>
           </button>
         </div>
       </div>

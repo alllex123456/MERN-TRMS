@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
-
-import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Input from '../../FormElements/Input';
@@ -11,13 +10,17 @@ import ErrorModal from '../MessageModals/ErrorModal';
 import { useForm } from '../../../../hooks/useForm';
 import { useHttpClient } from '../../../../hooks/useHttpClient';
 import { AuthContext } from '../../../../context/auth-context';
-
-import '../../CSS/modals-form.css';
+import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
 import { CloudArrowDown } from 'phosphor-react';
 
+import '../../CSS/modals-form.css';
+
 const AddModal = (props) => {
-  const { token, units, currencies } = useContext(AuthContext);
+  const { token, units, currencies, language } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
+
   const [formState, inputHandler, setFormData] = useForm(
     {
       avatar: { value: '', isValid: true },
@@ -79,8 +82,8 @@ const AddModal = (props) => {
     event.preventDefault();
 
     try {
-      await sendRequest(
-        'http://localhost:8000/clients/add-client',
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/clients/add-client`,
         'POST',
         JSON.stringify({
           avatar: formState.inputs.avatar.value,
@@ -103,9 +106,13 @@ const AddModal = (props) => {
           invoiceDue: formState.inputs.invoiceDue.value,
           decimalPoints: formState.inputs.decimalPoints.value,
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
-      setSuccessMessage('Client adăugat cu succes');
+      setSuccessMessage(responseData.confirmation);
       setFormData(
         {
           avatar: { value: '', isValid: true },
@@ -140,13 +147,13 @@ const AddModal = (props) => {
     } catch (error) {}
     props.refreshClients();
   };
-  console.log(formState.inputs.decimalPoints.value);
+
   const closeModalHandler = () => {
     props.onCloseModal();
     setSuccessMessage(null);
   };
 
-  const header = `Adaugă client nou`;
+  const header = t('modals.clients.addClient.header');
 
   return (
     <React.Fragment>
@@ -166,13 +173,14 @@ const AddModal = (props) => {
               <div className="getCompanyData">
                 <Input
                   className="input taxNumberInput"
-                  label="Cod fiscal*"
+                  label={t('client.taxNumber')}
                   element="input"
                   id="taxNumber"
                   type="text"
-                  validators={[]}
+                  validators={[VALIDATOR_REQUIRE()]}
                   defaultValue={formState.inputs.taxNumber.value}
                   defaultValidity={formState.inputs.taxNumber.isValid}
+                  errorText={t('modals.clients.addClient.taxNumberErrorText')}
                   onInput={inputHandler}
                 />
                 <CloudArrowDown
@@ -183,19 +191,19 @@ const AddModal = (props) => {
               </div>
               <Input
                 className="input"
-                label="Nume*"
+                label={t('client.name')}
                 element="input"
                 id="name"
                 defaultValue={formState.inputs.name.value}
                 defaultValidity={formState.inputs.name.isValid}
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost introdus un nume"
+                errorText={t('modals.clients.addClient.nameErrorText')}
                 onInput={inputHandler}
               />
 
               <Input
                 className="input"
-                label="Email"
+                label={t('client.email')}
                 element="input"
                 id="email"
                 type="email"
@@ -206,7 +214,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Telefon"
+                label={t('client.phone')}
                 element="input"
                 id="phone"
                 type="phone"
@@ -218,15 +226,15 @@ const AddModal = (props) => {
 
               <Input
                 className="input"
-                label="Moneda*"
+                label={t('client.currency')}
                 element="select"
                 id="currency"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectată moneda"
+                errorText={t('modals.clients.addClient.currencyErrorText')}
                 defaultValidity={formState.inputs.currency.isValid}
                 onInput={inputHandler}
               >
-                <option>selectează moneda...</option>
+                <option>{t('client.selectCurrency')}</option>
                 {currencies.map((currency, index) => (
                   <option key={index} value={currency}>
                     {currency}
@@ -236,16 +244,16 @@ const AddModal = (props) => {
 
               <Input
                 className="input"
-                label="Unitatea de măsură*"
+                label={t('client.mu')}
                 element="select"
                 id="unit"
                 validators={[VALIDATOR_REQUIRE()]}
-                errorText="Nu a fost selectată unitatea de măsură"
+                errorText={t('modals.clients.addClient.muErrorText')}
                 defaultValue={formState.inputs.unit.value}
                 defaultValidity={formState.inputs.unit.isValid}
                 onInput={inputHandler}
               >
-                <option>selectează unitatea...</option>
+                <option>{t('client.selectUnit')}</option>
                 {units.map((unit, index) => (
                   <option key={index} value={unit.value}>
                     {unit.displayedValue}
@@ -257,7 +265,7 @@ const AddModal = (props) => {
             <div className="formGroup flexColumn">
               <Input
                 className="input"
-                label="Sediul"
+                label={t('client.registeredOffice')}
                 element="input"
                 id="registeredOffice"
                 type="text"
@@ -268,7 +276,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Nr. de înregistrare"
+                label={t('client.registrationNumber')}
                 element="input"
                 id="registrationNumber"
                 type="text"
@@ -279,7 +287,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Banca"
+                label={t('client.bank')}
                 element="input"
                 id="bank"
                 type="text"
@@ -289,7 +297,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="IBAN"
+                label={t('client.iban')}
                 element="input"
                 id="iban"
                 type="text"
@@ -299,7 +307,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Reprezentant legal"
+                label={t('client.legalrep')}
                 element="input"
                 id="representative"
                 type="text"
@@ -312,7 +320,7 @@ const AddModal = (props) => {
             <div className="formGroup flexColumn">
               <Input
                 className="input"
-                label="Termen de plata facturi (zile)"
+                label={t('client.invoiceMaturity')}
                 element="input"
                 id="invoiceDue"
                 type="number"
@@ -323,7 +331,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Zecimale facturi"
+                label={t('client.decimalPoints')}
                 element="select"
                 type="number"
                 id="decimalPoints"
@@ -337,7 +345,7 @@ const AddModal = (props) => {
               </Input>
               <Input
                 className="input"
-                label="Tarif traducere"
+                label={t('client.translationRate')}
                 element="input"
                 id="translationRate"
                 type="number"
@@ -349,7 +357,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Tarif corectura"
+                label={t('client.proofreadingRate')}
                 element="input"
                 id="proofreadingRate"
                 type="number"
@@ -361,7 +369,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Tarif post-editare"
+                label={t('client.posteditingRate')}
                 element="input"
                 id="posteditingRate"
                 type="number"
@@ -373,7 +381,7 @@ const AddModal = (props) => {
               />
               <Input
                 className="input"
-                label="Note"
+                label={t('client.notes')}
                 element="input"
                 id="notes"
                 validators={[]}
@@ -384,9 +392,9 @@ const AddModal = (props) => {
 
             <div className="formActions">
               <Button primary type="submit" disabled={!formState.isValid}>
-                SALVEAZĂ
+                {t('buttons.saveBtn')}
               </Button>
-              {successMessage && <p className="successPar">{successMessage}</p>}
+              {successMessage && <p className="success">{successMessage}</p>}
             </div>
           </div>
         )}

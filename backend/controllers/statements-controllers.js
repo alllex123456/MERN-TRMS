@@ -11,12 +11,7 @@ exports.getAllStatements = async (req, res, next) => {
   try {
     clients = await Client.find({ userId }).populate('orders');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   const clientStatement = clients.map((client) => ({
@@ -38,18 +33,11 @@ exports.getClientOrders = async (req, res, next) => {
   try {
     client = await Client.findById(clientId).populate('orders');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea clientului în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.client.not_found'), 500));
   }
 
   if (client.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   const orders = client.orders.filter((order) => order.status === 'completed');
@@ -70,34 +58,22 @@ exports.generateStatement = async (req, res, next) => {
   try {
     client = await Client.findById(clientId).populate('orders');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienți. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   let user;
   try {
     user = await User.findById(userId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   if (client.userId.toString() !== userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   if (!client) {
-    return next(new HttpError('Clientul nu există.', 500));
+    return next(new HttpError(req.t('errors.client.no_client'), 500));
   }
 
   StatementPDF(res, client, user, req.headers.payload);
@@ -110,18 +86,11 @@ exports.modifyStatementOrder = async (req, res, next) => {
   try {
     order = await Order.findById(orderId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   if (order.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   for (const [key, value] of Object.entries(req.body)) {
@@ -133,12 +102,7 @@ exports.modifyStatementOrder = async (req, res, next) => {
   try {
     await order.save();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   res.json({ message: order.toObject({ getters: true }) });
@@ -151,18 +115,11 @@ exports.deleteStatementOrder = async (req, res, next) => {
   try {
     order = await Order.findById(orderId).populate('userId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la accesarea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.not_found'), 500));
   }
 
   if (order.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   try {
@@ -173,12 +130,7 @@ exports.deleteStatementOrder = async (req, res, next) => {
     await order.userId.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la ștergerea comenzii în baza de comenzi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.orders.delete_failed'), 500));
   }
 
   res.json({ message: order.toObject({ getters: true }) });

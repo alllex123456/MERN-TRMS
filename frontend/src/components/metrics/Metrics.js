@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Activity } from 'phosphor-react';
-import {
-  isToday,
-  isThisWeek,
-  isThisMonth,
-  format,
-  startOfYear,
-} from 'date-fns';
+import { isToday, isThisWeek, isThisMonth } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 
@@ -21,6 +16,7 @@ import {
 
 import styles from './Metrics.module.css';
 import BarChart from '../COMMON/Charts/BarChart';
+import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 
 const Metrics = () => {
   const { token, language, preferredCurrency, theme } = useContext(AuthContext);
@@ -29,6 +25,8 @@ const Metrics = () => {
     completedOrders: [],
   });
   const [currencies, setCurrencies] = useState([]);
+
+  const { t } = useTranslation();
 
   const todayMetrics = getUnitMetrics(isToday, loadedData.completedOrders);
   const thisWeekMetrics = getUnitMetrics(
@@ -108,7 +106,7 @@ const Metrics = () => {
       },
       title: {
         display: true,
-        text: 'Venituri lunare',
+        text: t('charts.monthlyLabel'),
       },
     },
   };
@@ -121,7 +119,7 @@ const Metrics = () => {
       },
       title: {
         display: true,
-        text: 'Venituri pe ultimele 7 zile',
+        text: t('charts.per7DaysLabel'),
       },
     },
   };
@@ -132,10 +130,10 @@ const Metrics = () => {
     const getMetrics = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/metrics`,
+          `${process.env.REACT_APP_BACKEND_URL}/metrics`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setLoadedData({
           pendingOrders: responseData.pendingOrders,
@@ -146,26 +144,26 @@ const Metrics = () => {
     const getCurrencies = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/app/app-settings`,
+          `${process.env.REACT_APP_BACKEND_URL}/app/app-settings`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setCurrencies(responseData.message.currencies);
       } catch (error) {}
     };
     getMetrics();
     getCurrencies();
-  }, [token, sendRequest]);
+  }, [token, sendRequest, language]);
 
   return (
-    <React.Fragment>
+    <div className="pageContainer">
       <ErrorModal show={error} onClearError={clearError} />
-
+      {isLoading && <LoadingSpinner asOverlay />}
       <div className="pageContainer">
         <header className={styles.metricsHeader}>
           <Activity size={32} className={styles.icon} />
-          <h2>Date de lucru</h2>
+          <h2>{t('metrics.title')}</h2>
         </header>
         <main className={styles.chartMetrics}>
           <div className={styles.chart}>
@@ -185,7 +183,7 @@ const Metrics = () => {
         </main>
         <aside className={styles.numberMetrics}>
           <div className={styles.numberMetricsGroup}>
-            <h4>Astăzi</h4>
+            <h4>{t('metrics.today')}</h4>
             {currencies.map((currency) => {
               if (todayMetrics[currency])
                 return (
@@ -196,11 +194,11 @@ const Metrics = () => {
             })}
           </div>
           <div className={styles.numberMetricsGroup}>
-            <h4>Săptămâna curentă</h4>
+            <h4>{t('metrics.currentWeek')}</h4>
             {currencies.map((currency) => {
               if (thisWeekMetrics[currency])
                 return (
-                  <p>
+                  <p key={currency}>
                     {formatCurrency(
                       language,
                       currency,
@@ -211,11 +209,11 @@ const Metrics = () => {
             })}
           </div>
           <div className={styles.numberMetricsGroup}>
-            <h4>Luna curentă</h4>
+            <h4>{t('metrics.currentMonth')}</h4>
             {currencies.map((currency) => {
               if (thisMonthMetrics[currency])
                 return (
-                  <p>
+                  <p key={currency}>
                     {formatCurrency(
                       language,
                       currency,
@@ -227,7 +225,7 @@ const Metrics = () => {
           </div>
         </aside>
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

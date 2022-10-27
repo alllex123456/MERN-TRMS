@@ -27,7 +27,7 @@ const EditInvoiceOrders = ({
   onUpdateOrders,
   totalInvoiceTouched,
 }) => {
-  const { language } = useContext(AuthContext);
+  const { language, theme } = useContext(AuthContext);
   const [editMode, setEditMode] = useState(false);
 
   const [referenceValue, setReferenceValue] = useState(
@@ -49,6 +49,7 @@ const EditInvoiceOrders = ({
       <td>
         {editMode ? (
           <input
+            style={{ background: theme === 'dark' && 'black' }}
             value={referenceValue}
             onChange={(e) => {
               setReferenceValue(e.target.value);
@@ -69,6 +70,7 @@ const EditInvoiceOrders = ({
       <td>
         {editMode ? (
           <input
+            style={{ background: theme === 'dark' && 'black' }}
             type="number"
             step="0.01"
             value={countValue}
@@ -93,6 +95,7 @@ const EditInvoiceOrders = ({
       <td>
         {editMode ? (
           <input
+            style={{ background: theme === 'dark' && 'black' }}
             type="number"
             step="0.01"
             value={rateValue}

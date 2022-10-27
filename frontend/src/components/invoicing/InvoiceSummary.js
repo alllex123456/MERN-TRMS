@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Gear } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import SendInvoice from '../COMMON/Modals/InvoicingModals/SendInvoice';
 import EditInvoice from '../COMMON/Modals/InvoicingModals/EditInvoice';
@@ -7,8 +9,6 @@ import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 import DeleteInvoice from '../COMMON/Modals/InvoicingModals/DeleteInvoice';
 import CashInvoice from '../COMMON/Modals/InvoicingModals/CashInvoice';
-import ReverseInvoice from '../COMMON/Modals/InvoicingModals/ReverseInvoice';
-import CreateInvoice from './InvoiceTemplate';
 
 import { useHttpClient } from '../../hooks/useHttpClient';
 import { formatCurrency } from '../../utilities/format-currency';
@@ -19,10 +19,13 @@ import styles from './InvoiceSummary.module.css';
 
 const InvoiceSummary = (props) => {
   const { token, language, theme } = useContext(AuthContext);
+  const navigator = useNavigate();
   const [showOptions, setShowOptions] = useState(false);
   const [cashed, setCashed] = useState(false);
 
   const [invoiceData, setInvoiceData] = useState();
+
+  const { t } = useTranslation();
 
   const { modalState, closeModalHandler, showModalHandler } = useModal(
     '',
@@ -35,10 +38,10 @@ const InvoiceSummary = (props) => {
   const getInvoice = useCallback(async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/invoicing/${props.invoice._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/${props.invoice._id}`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setInvoiceData(responseData.message);
     } catch (error) {}
@@ -81,14 +84,7 @@ const InvoiceSummary = (props) => {
             onUpdate={getInvoice}
           />
         )}
-        {modalState.type === 'REVERSE_INVOICE' && (
-          <ReverseInvoice
-            show={modalState.show}
-            onCloseModal={closeModalHandler}
-            invoiceData={modalState.contents}
-            onUpdate={getInvoice}
-          />
-        )}
+
         {modalState.type === 'DELETE_INVOICE' && (
           <DeleteInvoice
             show={modalState.show}
@@ -108,17 +104,17 @@ const InvoiceSummary = (props) => {
                 {props.invoice.status}
               </span>
               <p className={styles.title}>
-                FACTURA{' '}
+                {t('invoicing.invoice.title')}{' '}
                 <span>
                   {invoiceData.series}/{invoiceData.number}
                 </span>
               </p>
               <p className={styles.specifics}>
-                Emisa la:{' '}
+                {t('invoicing.invoice.issuedDate')}:{' '}
                 {new Date(invoiceData.createdAt).toLocaleDateString(language)}
               </p>
               <p className={styles.specifics}>
-                Valoare:{' '}
+                {t('invoicing.invoice.value')}:{' '}
                 {formatCurrency(
                   language,
                   props.client.currency,
@@ -143,13 +139,13 @@ const InvoiceSummary = (props) => {
                 <li
                   className={styles.option}
                   onClick={() =>
-                    window.open(
-                      `invoicing/view/${invoiceData.clientId.id}/${invoiceData.id}`,
-                      '_blank'
+                    navigator(
+                      `view/${invoiceData.clientId.id}/${invoiceData.id}`,
+                      { replace: false }
                     )
                   }
                 >
-                  Vizualizeaza
+                  {t('invoicing.options.view')}
                 </li>
                 <li
                   className={styles.option}
@@ -160,9 +156,9 @@ const InvoiceSummary = (props) => {
                     })
                   }
                 >
-                  Trimite
+                  {t('invoicing.options.send')}
                 </li>
-                {!invoiceData.cashed && (
+                {!invoiceData.cashed && !invoiceData.reversed && (
                   <React.Fragment>
                     <li
                       className={styles.option}
@@ -173,7 +169,7 @@ const InvoiceSummary = (props) => {
                         })
                       }
                     >
-                      Incaseaza
+                      {t('invoicing.options.cash')}
                     </li>
                     <li
                       className={styles.option}
@@ -184,18 +180,18 @@ const InvoiceSummary = (props) => {
                         })
                       }
                     >
-                      Modifica
+                      {t('invoicing.options.edit')}
                     </li>
                     <li
                       className={styles.option}
                       onClick={() =>
-                        showModalHandler('REVERSE_INVOICE', {
-                          invoice: invoiceData,
-                          client: props.client,
-                        })
+                        navigator(
+                          `reverse/${invoiceData.clientId.id}/${invoiceData.id}`,
+                          { replace: false }
+                        )
                       }
                     >
-                      Storneaza
+                      {t('invoicing.options.reverse')}
                     </li>
                     <li
                       className={styles.option}
@@ -206,7 +202,7 @@ const InvoiceSummary = (props) => {
                         })
                       }
                     >
-                      Anuleaza
+                      {t('invoicing.options.cancel')}
                     </li>
                   </React.Fragment>
                 )}

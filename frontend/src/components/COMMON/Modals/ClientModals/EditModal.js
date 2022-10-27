@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { FileImage } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Input from '../../FormElements/Input';
@@ -17,11 +18,14 @@ import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
 import '../../CSS/modals-form.css';
 
 const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
-  const { token, units } = useContext(AuthContext);
+  const { token, units, language } = useContext(AuthContext);
   const [file, setFile] = useState();
   const [avatarPreview, setAvatarPreview] = useState();
   const [loadedData, setLoadedData] = useState();
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
+
   const [formState, inputHandler, setFormData] = useForm(
     {
       avatar: { value: '', isValid: true },
@@ -44,6 +48,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
       taxNumber: { value: '', isValid: true },
       bank: { value: '', isValid: true },
       iban: { value: '', isValid: true },
+      representative: { value: '', isValid: true },
       notes: { value: '', isValid: true },
       invoiceDue: { value: '', isValid: true },
       decimalPoints: { value: '', isValid: true },
@@ -92,6 +97,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
           bank: { value: loadedData.bank, isValid: true },
           iban: { value: loadedData.iban, isValid: true },
           notes: { value: loadedData.notes, isValid: true },
+          representative: { value: loadedData.representative, isValid: true },
           invoiceDue: { value: '', isValid: true },
           decimalPoints: { value: '', isValid: true },
         },
@@ -117,10 +123,10 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
     const getClientData = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:8000/clients/client/${clientData.id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/clients/client/${clientData.id}`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
 
         setLoadedData(responseData.message);
@@ -163,6 +169,10 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
             bank: { value: responseData.message.bank, isValid: true },
             iban: { value: responseData.message.iban, isValid: true },
             notes: { value: responseData.message.notes, isValid: true },
+            representative: {
+              value: responseData.message.representative,
+              isValid: true,
+            },
             invoiceDue: {
               value: responseData.message.invoiceDue,
               isValid: true,
@@ -192,13 +202,13 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
     }
 
     try {
-      await sendRequest(
-        'http://localhost:8000/clients/modify-client',
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/clients/modify-client`,
         'PATCH',
         formData,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
-      setSuccessMessage('Clientul a fost modificat cu succes');
+      setSuccessMessage(responseData.confirmation);
       refreshClients();
     } catch (error) {}
 
@@ -215,7 +225,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
     setSuccessMessage(null);
   };
 
-  const header = `Editează client: ${clientData.name}`;
+  const header = `${t('modals.clients.editClient.header')}: ${clientData.name}`;
 
   return (
     <React.Fragment>
@@ -262,18 +272,18 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                 </div>
                 <Input
                   className="input"
-                  label="Numele:"
+                  label={t('client.name')}
                   element="input"
                   id="name"
                   defaultValue={formState.inputs.name.value}
                   defaultValidity={formState.inputs.name.isValid}
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Nu a fost specificat un nume"
+                  errorText={t('modals.clients.addClient.nameErrorText')}
                   onInput={inputHandler}
                 />
                 <Input
                   className="input"
-                  label="Email:"
+                  label={t('client.email')}
                   element="input"
                   id="email"
                   type="email"
@@ -285,7 +295,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
                 <Input
                   className="input"
-                  label="Telefon:"
+                  label={t('client.phone')}
                   element="input"
                   id="phone"
                   type="phone"
@@ -297,41 +307,35 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                 <div className="formGroup flexRow">
                   <Input
                     className="input"
-                    label="Tarif traducere"
+                    label={t('client.translationRate')}
                     element="input"
                     id="translationRate"
                     type="number"
                     step="0.01"
                     defaultValue={formState.inputs.translationRate.value}
                     defaultValidity={formState.inputs.translationRate.isValid}
-                    validators={[VALIDATOR_REQUIRE()]}
-                    errorText="Nu a fost specificat un tarif"
                     onInput={inputHandler}
                   />
                   <Input
                     className="input"
-                    label="Tarif corectura"
+                    label={t('client.proofreadingRate')}
                     element="input"
                     id="proofreadingRate"
                     type="number"
                     step="0.01"
                     defaultValue={formState.inputs.proofreadingRate.value}
                     defaultValidity={formState.inputs.proofreadingRate.isValid}
-                    validators={[VALIDATOR_REQUIRE()]}
-                    errorText="Nu a fost specificat un tarif"
                     onInput={inputHandler}
                   />
                   <Input
                     className="input"
-                    label="Tarif post-editare"
+                    label={t('client.posteditingRate')}
                     element="input"
                     id="posteditingRate"
                     type="number"
                     step="0.01"
                     defaultValue={formState.inputs.posteditingRate.value}
                     defaultValidity={formState.inputs.posteditingRate.isValid}
-                    validators={[VALIDATOR_REQUIRE()]}
-                    errorText="Nu a fost specificat un tarif"
                     onInput={inputHandler}
                   />
                 </div>
@@ -339,13 +343,13 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                   <Input
                     disabled
                     className="input"
-                    label="Monedă:"
+                    label={t('client.currency')}
                     element="input"
                     id="currency"
                     defaultValue={formState.inputs.currency.value}
                     defaultValidity={formState.inputs.currency.isValid}
                     validators={[VALIDATOR_REQUIRE()]}
-                    errorText="Nu a fost selectă moneda"
+                    errorText={t('modals.clients.addClient.currencyErrorText')}
                     onInput={inputHandler}
                   >
                     <option value={clientData.currency}>
@@ -355,13 +359,13 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
                   <Input
                     className="input"
-                    label="Unitate:"
+                    label={t('client.mu')}
                     element="select"
                     id="unit"
                     defaultValue={formState.inputs.unit.value}
                     defaultValidity={formState.inputs.unit.isValid}
                     validators={[VALIDATOR_REQUIRE()]}
-                    errorText="Nu a fost selectată o unitate de tarifare"
+                    errorText={t('modals.clients.addClient.muErrorText')}
                     onInput={inputHandler}
                   >
                     <option value={formState.inputs.unit.value}>
@@ -383,7 +387,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
               <div className="formGroup flexColumn">
                 <Input
                   className="input"
-                  label="Sediul:"
+                  label={t('client.registeredOffice')}
                   element="input"
                   id="registeredOffice"
                   type="text"
@@ -395,7 +399,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
                 <Input
                   className="input"
-                  label="Nr. de înregistrare:"
+                  label={t('client.registrationNumber')}
                   element="input"
                   id="registrationNumber"
                   type="text"
@@ -407,7 +411,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
                 <Input
                   className="input"
-                  label="Cod fiscal:"
+                  label={t('client.taxNumber')}
                   element="input"
                   id="taxNumber"
                   type="text"
@@ -420,7 +424,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                 <div className="formGroup flexRow">
                   <Input
                     className="input"
-                    label="Termen de plata facturi:"
+                    label={t('client.invoiceMaturity')}
                     element="input"
                     id="invoiceDue"
                     type="number"
@@ -431,7 +435,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                   />
                   <Input
                     className="input"
-                    label="Zecimale facturi:"
+                    label={t('client.decimalPoints')}
                     element="select"
                     id="decimalPoints"
                     type="number"
@@ -447,7 +451,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
                 <Input
                   className="input"
-                  label="Banca:"
+                  label={t('client.bank')}
                   element="input"
                   id="bank"
                   type="text"
@@ -459,7 +463,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
                 <Input
                   className="input"
-                  label="IBAN:"
+                  label={t('client.iban')}
                   element="input"
                   id="iban"
                   type="text"
@@ -468,9 +472,22 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
                   validators={[]}
                   onInput={inputHandler}
                 />
+
+                <Input
+                  className="input"
+                  label={t('client.legalrep')}
+                  element="input"
+                  id="representative"
+                  type="text"
+                  defaultValue={formState.inputs.representative.value}
+                  defaultValidity={formState.inputs.representative.isValid}
+                  validators={[]}
+                  onInput={inputHandler}
+                />
+
                 <Input
                   className="textarea"
-                  label="Note:"
+                  label={t('client.notes')}
                   element="textarea"
                   id="notes"
                   defaultValue={formState.inputs.notes.value}
@@ -482,7 +499,7 @@ const EditModal = ({ show, clientData, onCloseModal, refreshClients }) => {
 
               <div className="formActions">
                 <Button primary type="submit" disabled={!formState.isValid}>
-                  SALVEAZĂ
+                  {t('buttons.saveBtn')}
                 </Button>
               </div>
             </div>

@@ -1,42 +1,59 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { isToday } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import OrderItem from './OrderItem';
 import Notes from './Notes';
 import Activity from './Activity';
-import Invoices from './Invoices';
+import InvoiceItem from './InvoiceItem';
 
 import { AuthContext } from '../../context/auth-context';
 import { useHttpClient } from '../../hooks/useHttpClient';
 
 import styles from './Dashboard.module.css';
-import { format } from 'date-fns';
 
 const Main = () => {
-  const { token, theme } = useContext(AuthContext);
+  const { token, theme, language } = useContext(AuthContext);
   const [loadedOrders, setLoadedOrders] = useState([]);
+  const [loadedInvoices, setLoadedInvoices] = useState([]);
+
+  const { t } = useTranslation();
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
   useEffect(() => {
     const getPendingOrders = async () => {
       const responseData = await sendRequest(
-        `http://localhost:8000/orders/get-pending`,
+        `${process.env.REACT_APP_BACKEND_URL}/orders/get-pending`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setLoadedOrders(
-        responseData.message.filter(
-          (order) =>
-            format(new Date(order.deadline), 'dd/LL/yyyy') ===
-            format(new Date(), 'dd/LL/yyy')
+        responseData.message.filter((order) =>
+          isToday(new Date(order.deadline))
         )
       );
     };
     getPendingOrders();
   }, [sendRequest, token]);
+
+  useEffect(() => {
+    const getInvoices = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${process.env.REACT_APP_BACKEND_URL}/invoicing`,
+          'GET',
+          null,
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
+        );
+        setLoadedInvoices(responseData.invoicesOnly);
+      } catch (error) {}
+    };
+    getInvoices();
+  }, [sendRequest, token, language]);
 
   return (
     <React.Fragment>
@@ -44,11 +61,11 @@ const Main = () => {
       <main className={`${styles.dashboard} pageContainer`}>
         <section className={styles.dashboardOrders}>
           {isLoading && <LoadingSpinner asOverlay />}
-          <h2>Comenzi de predat astăzi</h2>
+          <h2>{t('dashboard.ordersToday')}</h2>
           <ul className={styles.dashboardOrdersList}>
             {loadedOrders.length === 0 && (
               <li className={`center noItems ${theme}NoItems`}>
-                Nu sunt comenzi de predat astazi
+                {t('dashboard.noOrders')}
               </li>
             )}
             {!isLoading &&
@@ -58,17 +75,29 @@ const Main = () => {
               ))}
           </ul>
         </section>
+        <section className={styles.dashboardInvoices}>
+          {isLoading && <LoadingSpinner asOverlay />}
+          <h2>{t('dashboard.invoicesThisWeek')}</h2>
+          <ul className={styles.dashboardInvoiceList}>
+            {loadedInvoices.length === 0 && (
+              <li className={`center noItems ${theme}NoItems`}>
+                {t('dashboard.noInvoices')}
+              </li>
+            )}
+            {!isLoading &&
+              loadedInvoices &&
+              loadedInvoices.map((invoice) => (
+                <InvoiceItem key={invoice._id} invoice={invoice} />
+              ))}
+          </ul>
+        </section>
         <section className={styles.dashboardNotes}>
-          <h2>Notițe</h2>
+          <h2>{t('dashboard.notes')}</h2>
           <Notes />
         </section>
         <section className={styles.dashboardCharts}>
-          <h2>Activitate</h2>
+          <h2>{t('dashboard.activity')}</h2>
           <Activity />
-        </section>
-        <section className={styles.dashboardInvoices}>
-          <h2>Facturi</h2>
-          <Invoices />
         </section>
       </main>
     </React.Fragment>

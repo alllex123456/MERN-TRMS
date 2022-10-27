@@ -1,6 +1,5 @@
 .clientsList {
   font-size: 1.6rem;
-  padding: 1rem;
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(40rem, 1fr));

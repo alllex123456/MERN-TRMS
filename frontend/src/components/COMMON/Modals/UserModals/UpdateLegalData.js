@@ -1,26 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { CloudArrowDown } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import Modal from '../../UIElements/Modal';
 import Button from '../../UIElements/Button';
 import Input from '../../FormElements/Input';
-
-import { useForm } from '../../../../hooks/useForm';
-import { useHttpClient } from '../../../../hooks/useHttpClient';
-import {
-  VALIDATOR_EMAIL,
-  VALIDATOR_REQUIRE,
-} from '../../../../utilities/form-validator';
-
-import '../../CSS/modals-form.css';
-import '../../CSS/modals-layout.css';
-import { AuthContext } from '../../../../context/auth-context';
 import ErrorModal from '../MessageModals/ErrorModal';
 import LoadingSpinner from '../../UIElements/LoadingSpinner';
 import SuccessModal from '../MessageModals/SuccessModal';
 
+import { useForm } from '../../../../hooks/useForm';
+import { useHttpClient } from '../../../../hooks/useHttpClient';
+import { AuthContext } from '../../../../context/auth-context';
+
+import '../../CSS/modals-form.css';
+import '../../CSS/modals-layout.css';
+import { VALIDATOR_REQUIRE } from '../../../../utilities/form-validator';
+
 const UpdateLegalData = (props) => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -38,10 +39,10 @@ const UpdateLegalData = (props) => {
     const getUserData = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/user',
+          `${process.env.REACT_APP_BACKEND_URL}/user`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
 
         setFormData(
@@ -62,13 +63,43 @@ const UpdateLegalData = (props) => {
       } catch (error) {}
     };
     getUserData();
-  }, [sendRequest, setFormData, token]);
+  }, []);
+
+  const getCompanyData = async () => {
+    try {
+      const responseData = await sendRequest(
+        `https://infocui.ro/system/api/data/?key=92b5c3228259207f49fce773ed9694b0e3f985c8&cui=${formState.inputs.taxNumber.value}`
+      );
+
+      setFormData(
+        {
+          name: { value: responseData.data.nume, isValid: true },
+          registeredOffice: {
+            value:
+              responseData.data.adresa ||
+              `${responseData.data.str} nr. ${responseData.data.nr}, localitate ${responseData.data.loc}, județ ${responseData.data.judet}`,
+            isValid: true,
+          },
+          registrationNumber: {
+            value: responseData.data.cod_inmatriculare,
+            isValid: true,
+          },
+          taxNumber: { value: responseData.data.cod_fiscal, isValid: true },
+          vatPayer: {
+            value: responseData.data.tva === 'DA' ? true : false,
+            isValid: true,
+          },
+        },
+        false
+      );
+    } catch (error) {}
+  };
 
   const updateHandler = async (e) => {
     e.preventDefault();
     try {
-      await sendRequest(
-        'http://localhost:8000/user/update',
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/user/update`,
         'POST',
         JSON.stringify({
           name: formState.inputs.name.value,
@@ -76,9 +107,13 @@ const UpdateLegalData = (props) => {
           registrationNumber: formState.inputs.registrationNumber.value,
           taxNumber: formState.inputs.taxNumber.value,
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
-      setSuccessMessage('Utilizatorul a fost modificat cu succes');
+      setSuccessMessage(responseData.confirmation);
       props.onCloseModal();
     } catch (error) {}
   };
@@ -93,7 +128,7 @@ const UpdateLegalData = (props) => {
     setSuccessMessage(null);
   };
 
-  const header = `Actualizeaza informatiile personale`;
+  const header = t('modals.user.professionalData.header');
 
   return (
     <React.Fragment>
@@ -112,13 +147,47 @@ const UpdateLegalData = (props) => {
           {isLoading && <LoadingSpinner asOverlay />}
           {!isLoading && (
             <div className="updateProfileBody">
-              <div className="formGroup">
+              <div className="formGroup flexColumn">
+                <div className="flexRow">
+                  <div className="getCompanyData">
+                    <Input
+                      className="input"
+                      element="input"
+                      id="taxNumber"
+                      type="text"
+                      label={t('modals.user.professionalData.taxNumber')}
+                      onInput={inputHandler}
+                      validators={[VALIDATOR_REQUIRE()]}
+                      defaultValue={formState.inputs.taxNumber.value}
+                      defaultValidity={formState.inputs.taxNumber.isValid}
+                    />
+                    <CloudArrowDown
+                      className="getCompanyDataBtn"
+                      onClick={getCompanyData}
+                      size={32}
+                    />
+                  </div>
+                  <Input
+                    className="input"
+                    element="input"
+                    id="registrationNumber"
+                    type="text"
+                    label={t('modals.user.professionalData.registrationNumber')}
+                    onInput={inputHandler}
+                    validators={[]}
+                    defaultValue={formState.inputs.registrationNumber.value}
+                    defaultValidity={
+                      formState.inputs.registrationNumber.isValid
+                    }
+                  />
+                </div>
+
                 <Input
                   className="input"
                   element="input"
                   id="name"
                   type="text"
-                  label="Denumire PFA/Societate"
+                  label={t('modals.user.professionalData.name')}
                   onInput={inputHandler}
                   validators={[]}
                   defaultValue={formState.inputs.name.value}
@@ -129,38 +198,16 @@ const UpdateLegalData = (props) => {
                   element="input"
                   id="registeredOffice"
                   type="text"
-                  label="Sediul"
+                  label={t('modals.user.professionalData.registeredOffice')}
                   onInput={inputHandler}
                   validators={[]}
                   defaultValue={formState.inputs.registeredOffice.value}
                   defaultValidity={formState.inputs.registeredOffice.isValid}
                 />
-                <Input
-                  className="input"
-                  element="input"
-                  id="registrationNumber"
-                  type="text"
-                  label="Numarul de inregistrare"
-                  onInput={inputHandler}
-                  validators={[]}
-                  defaultValue={formState.inputs.registrationNumber.value}
-                  defaultValidity={formState.inputs.registrationNumber.isValid}
-                />
-                <Input
-                  className="input"
-                  element="input"
-                  id="taxNumber"
-                  type="text"
-                  label="Cod fiscal"
-                  onInput={inputHandler}
-                  validators={[]}
-                  defaultValue={formState.inputs.taxNumber.value}
-                  defaultValidity={formState.inputs.taxNumber.isValid}
-                />
               </div>
               <div className="formActions">
                 <Button primary type="submit">
-                  SALVEAZA
+                  {t('buttons.saveBtn')}
                 </Button>
               </div>
             </div>

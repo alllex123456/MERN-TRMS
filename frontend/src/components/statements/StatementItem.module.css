@@ -2,6 +2,7 @@
   padding: 1rem;
   margin-bottom: 1rem;
   cursor: pointer;
+  border-radius: 3px;
 
   display: grid;
   grid-template-columns: 8fr 2fr;
@@ -27,22 +28,22 @@
 
 /* THEMING */
 .defaultStatementItem {
-  background: rgb(var(--ITEM-BACKGROUNDS-RGB), 0.05);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 .defaultStatementItem:hover {
-  filter: brightness(20%);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.09);
 }
 
 .lightStatementItem {
-  background: rgb(var(--ITEM-BACKGROUNDS-RGB), 0.05);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 .lightStatementItem:hover {
-  filter: brightness(20%);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.09);
 }
 
 .darkStatementItem {
-  background: var(--SMARALD-DARK);
+  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.5);
 }
 .darkStatementItem:hover {
-  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.5);
+  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.6);
 }

@@ -1,21 +1,23 @@
 const fs = require('fs');
 const PDFDocument = require('pdfkit-table');
 
-const { quantity, shortMU } = require('../utils/generalFunc');
-const { translateServices } = require('../utils/translateUnits');
+const {
+  translateServices,
+  translateUnits,
+} = require('../utils/translateUnits');
 
-exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
+exports.InvoicePDF = (req, res, invoiceData, totalInvoice) => {
   const {
     clientId: client,
     userId: user,
     orders,
     dueDate,
-    remainder,
+    invoiceRemainder,
   } = invoiceData;
 
   const invoice = new PDFDocument({
     info: {
-      Title: `Factura`,
+      Title: req.t('invoice.title'),
     },
     size: 'A4',
     font: 'services/fonts/Titillium/TitilliumWeb-Regular.ttf',
@@ -24,124 +26,173 @@ exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
   });
 
   invoice.pipe(
-    fs.createWriteStream(`./uploads/invoices/Factura[${client.name}].pdf`)
+    fs.createWriteStream(
+      `./uploads/invoices/${req.t('invoice.title')}[${user.id}][${
+        client.name
+      }].pdf`
+    )
   );
 
+  // invoice.rect(25, 25, 560, 100);
+  // invoice.fill('#6daae8').stroke();
+  let gradient = invoice.linearGradient(25, 25, 560, 100);
+  gradient.stop(0.3, '#fff').stop(0.5, '#6daae8').stop(1, '#2e86de');
   invoice.rect(25, 25, 560, 100);
-  invoice.fill('#589ee5').stroke();
+  invoice.fill(gradient);
   invoice
     .fill('#fff')
     .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
     .fontSize(24)
-    .text('FACTURA', 50, 30, { align: 'right', characterSpacing: 5 })
-    .fontSize(15)
-    .text(`serie ${user.invoiceSeries}/nr. ${user.invoiceStartNumber}`, {
+    .text(req.t('invoice.title').toUpperCase(), 50, 30, {
       align: 'right',
-    });
+      characterSpacing: 2,
+    })
+    .fontSize(10)
+    .text(
+      `${req.t('invoice.series')} ${user.invoiceSeries}/${req.t(
+        'invoice.number'
+      )} ${user.invoiceStartNumber}`,
+      {
+        align: 'right',
+      }
+    );
   invoice
     .fontSize(10)
-    .text(`Data emiterii: ${new Date().toLocaleDateString('ro')}`, {
-      align: 'right',
-    });
+    .text(
+      `${req.t('invoice.issuedDate')}: ${new Date().toLocaleDateString(
+        user.language
+      )}`,
+      {
+        align: 'right',
+      }
+    );
   invoice
     .fontSize(10)
-    .text(`Data scadenta: ${new Date(dueDate).toLocaleDateString('ro')}`, {
-      align: 'right',
-    });
+    .text(
+      `${req.t('invoice.maturity')}: ${new Date(dueDate).toLocaleDateString(
+        user.language
+      )}`,
+      {
+        align: 'right',
+      }
+    );
 
   invoice.font('services/fonts/Titillium/TitilliumWeb-Regular.ttf');
   invoice.fill('black');
   invoice
     .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
     .fontSize(10)
-    .text(`Furnizor: ${user.name}`, 25, 140, { width: 270 })
+    .text(`${req.t('invoice.supplier')}: ${user.name}`, 25, 140, { width: 270 })
     .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(`Sediul: ${user.registeredOffice}`)
-    .text(`Nr. de inregistrare: ${user.registrationNumber}`)
-    .text(`Cod fiscal: ${user.taxNumber}`)
-    .text(`Banca: ${user.bank}`)
-    .text(`IBAN: ${user.iban}`);
+    .text(
+      `${req.t('invoice.registeredOffice')}: ${user.registeredOffice || ''}`
+    )
+    .text(
+      `${req.t('invoice.registrationNumber')}: ${user.registrationNumber || ''}`
+    )
+    .text(`${req.t('invoice.taxNumber')}: ${user.taxNumber}`)
+    .text(`${req.t('invoice.bank')}: ${user.bank || ''}`)
+    .text(`${req.t('invoice.iban')}: ${user.iban || ''}`);
 
   invoice
     .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
     .fontSize(10)
-    .text(`Client: ${client.name}`, 300, 140, { width: 280 })
+    .text(`${req.t('invoice.client')}: ${client.name}`, 300, 140, {
+      width: 280,
+    })
     .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(`Sediul: ${client.registeredOffice}`)
-    .text(`Nr. de inregistrare: ${client.registrationNumber}`)
-    .text(`Cod fiscal: ${client.taxNumber}`)
-    .text(`Banca: ${client.bank}`)
-    .text(`IBAN: ${client.iban}`);
+    .text(
+      `${req.t('invoice.registeredOffice')}: ${client.registeredOffice || ''}`
+    )
+    .text(
+      `${req.t('invoice.registrationNumber')}: ${
+        client.registrationNumber || ''
+      }`
+    )
+    .text(`${req.t('invoice.taxNumber')}: ${client.taxNumber}`)
+    .text(`${req.t('invoice.bank')}: ${client.bank || ''}`)
+    .text(`${req.t('invoice.iban')}: ${client.iban || ''}`);
 
-  invoice.rect(25, 260, 82, 18);
+  invoice.rect(25, 270, 82, 18);
   invoice.fill('#079992');
   invoice
     .fill('#fff')
     .fontSize(10)
     .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
-    .text('CONTACT', 30, 262, { characterSpacing: 5 });
-  invoice.moveDown(0.5);
+    .text(req.t('invoice.contact').toUpperCase(), 30, 272, {
+      characterSpacing: 5,
+    });
+  invoice.moveDown(0.3);
   invoice
     .fill('#000')
     .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(`Email: ${user.email}`, 25)
-    .text(`Telefon: ${user.phone}`);
+    .text(`${req.t('invoice.email')}: ${user.email || ''}`, 25)
+    .text(`${req.t('invoice.phone')}: ${user.phone || ''}`);
 
-  invoice.rect(300, 260, 82, 18);
+  invoice.rect(300, 270, 82, 18);
   invoice.fill('#079992');
   invoice
     .fill('#fff')
     .fontSize(10)
     .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
-    .text('CONTACT', 305, 262, { characterSpacing: 5 });
-  invoice.moveDown(0.5);
+    .text(req.t('invoice.contact').toUpperCase(), 305, 272, {
+      characterSpacing: 5,
+    });
+  invoice.moveDown(0.3);
   invoice
     .fill('#000')
     .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(`Email: ${client.email}`, 300)
-    .text(`Telefon: ${client.phone}`);
+    .text(`${req.t('invoice.email')}: ${client.email || ''}`, 300)
+    .text(`${req.t('invoice.phone')}: ${client.phone || ''}`);
 
   const table = {
     headers: [
-      { label: 'Nr.', headerColor: '#079992', headerOpacity: 0.5 },
       {
-        label: 'Tip serviciu/Referinta client',
+        label: req.t('invoice.it'),
         headerColor: '#079992',
         headerOpacity: 0.5,
       },
       {
-        label: 'Cantitate',
+        label: req.t('invoice.jobRef'),
         headerColor: '#079992',
         headerOpacity: 0.5,
       },
       {
-        label: 'UM',
+        label: req.t('invoice.qty'),
         headerColor: '#079992',
         headerOpacity: 0.5,
       },
       {
-        label: `Tarif (${client.currency}/unitate de tarifare)`,
+        label: req.t('invoice.mu'),
         headerColor: '#079992',
         headerOpacity: 0.5,
       },
       {
-        label: `Valoare (${client.currency})`,
+        label: `${req.t('invoice.rate')}*`,
+        headerColor: '#079992',
+        headerOpacity: 0.5,
+      },
+      {
+        label: `${req.t('invoice.amount')} (${client.currency})`,
         headerColor: '#079992',
         headerOpacity: 0.5,
       },
     ],
 
-    rows: [[0, 'Sold client', '', '', '', client.remainder]],
+    rows: [[0, req.t('invoice.clientBalance'), '', '', '', client.remainder]],
   };
-
   orders.forEach((order, index) => {
     table.rows.push([
       index + 1,
-      `Servicii ${translateServices([order.service])} / ${order.reference}`,
-      `${order.count.toLocaleString('ro')}`,
-      `${quantity(order)}`,
-      `${order.rate.toLocaleString('ro')}/${shortMU(order)}`,
-      order.total.toLocaleString('ro'),
+      `${translateServices([order.service], req.t).displayedValue} / ${
+        order.reference
+      }`,
+      `${order.count.toLocaleString(user.language)}`,
+      `${translateUnits([order.unit], req.t).displayedValue}`,
+      `${order.rate.toLocaleString(user.language)}/${
+        translateUnits([order.unit], req.t).short
+      }`,
+      order.total.toLocaleString(user.language),
     ]);
   });
 
@@ -166,12 +217,14 @@ exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
         .fontSize(8),
   });
 
+  invoice.text(`*${client.currency}/${req.t('invoice.billingUnit')}`);
+
   invoice.moveDown();
   invoice
     .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
-    .fontSize(14)
+    .fontSize(10)
     .text(
-      `DE PLATA: ${totalInvoice.toLocaleString('ro', {
+      `${req.t('invoice.toPay')}: ${totalInvoice.toLocaleString(user.language, {
         style: 'currency',
         currency: client.currency,
       })}`,
@@ -184,10 +237,13 @@ exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
     .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
     .fontSize(10)
     .text(
-      `Rest de plata: ${remainder.toLocaleString('ro', {
-        style: 'currency',
-        currency: client.currency,
-      })}`,
+      `${req.t('invoice.remainder')}: ${invoiceRemainder.toLocaleString(
+        user.language,
+        {
+          style: 'currency',
+          currency: client.currency,
+        }
+      )}`,
       {
         align: 'right',
       }
@@ -197,27 +253,14 @@ exports.InvoicePDF = (res, invoiceData, totalInvoice) => {
 
   invoice.rect(invoice.x, invoice.y, 560, 20).stroke();
   invoice
-    .text(' Plata se va face in contul: ', { continued: true })
-    .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
-    .text(user.iban, { continued: true })
     .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(' deschis la banca: ', { continued: true })
-    .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
-    .text(user.bank, { continued: true })
-    .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(', pana cel tarziu la: ', { continued: true })
-    .font('services/fonts/Titillium/TitilliumWeb-Bold.ttf')
-    .text(new Date(dueDate).toLocaleDateString('ro'), { continued: false });
+    .text(`${req.t('invoice.notes')}: ${user.invoiceNotes || ''}`);
 
   invoice.moveDown(1);
 
-  invoice
-    .font('services/fonts/Titillium/TitilliumWeb-Regular.ttf')
-    .text(user.invoiceNotes);
-
   invoice.moveDown(2);
 
-  invoice.text('Document generat cu ZenT Freelance');
+  invoice.text(req.t('signature'));
 
   invoice.end();
 

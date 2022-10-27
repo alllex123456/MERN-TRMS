@@ -103,19 +103,19 @@
 
 /* THEMING */
 .defaultOrderItem > * {
-  background: rgba(59, 61, 61, 0.05);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 
 .defaultOrderItem:hover > * {
-  background: rgba(59, 61, 61, 0.09);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.09);
 }
 
 .lightOrderItem > * {
-  background: rgba(59, 61, 61, 0.05);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 
 .lightOrderItem:hover > * {
-  background: rgba(59, 61, 61, 0.09);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.09);
 }
 
 .darkOrderItem > * {
@@ -123,5 +123,5 @@
 }
 
 .darkOrderItem:hover > * {
-  background: rgb(var(--SMARALD-MEDIUM-RGB), 0.7);
+  background: rgb(var(--SMARALD-MEDIUM-RGB), 0.6);
 }

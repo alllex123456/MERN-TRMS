@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { isBefore, isAfter, addDays } from 'date-fns';
 import { ArrowDown, ArrowUp } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import InvoiceSummary from './InvoiceSummary';
 
@@ -17,15 +18,17 @@ const ClientSummary = (props) => {
   const [clientInvoices, setClientInvoices] = useState([]);
   const [lastInvoice, setLastInvoice] = useState({});
 
+  const { t } = useTranslation();
+
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
   const getClientInvoices = useCallback(async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/invoicing/client/${props.client.id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/client/${props.client.id}`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setClientInvoices(responseData.message.invoices);
       const clientInvoices = responseData.message.invoices;
@@ -70,16 +73,22 @@ const ClientSummary = (props) => {
           <h2 className={styles.name}>{props.client.name}</h2>
 
           <p className={styles.invoiced}>
-            Ultima factură emisă la:{' '}
+            {t('statements.lastInvoicing')}:{' '}
             {lastInvoice
               ? new Date(lastInvoice.issuedDate).toLocaleDateString(language)
-              : 'nu exista facturi emise'}
+              : t('statements.noInvoice')}
           </p>
         </div>
         {showInvoices ? (
-          <ArrowUp size={32} className={!lastInvoice && styles.none} />
+          <ArrowUp
+            size={32}
+            className={!lastInvoice ? styles.none : undefined}
+          />
         ) : (
-          <ArrowDown className={!lastInvoice && styles.none} size={32} />
+          <ArrowDown
+            className={!lastInvoice ? styles.none : undefined}
+            size={32}
+          />
         )}
       </li>
       <section

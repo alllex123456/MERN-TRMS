@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
@@ -13,16 +14,18 @@ import { AuthContext } from '../../context/auth-context';
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
+  VALIDATOR_REQUIRE,
 } from '../../utilities/form-validator';
 
 import styles from './Auth.module.css';
 
 const Reset = () => {
-  const { login } = useContext(AuthContext);
+  const { login, language } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   const navigator = useNavigate();
   const email = searchParams.get('email');
   const token = searchParams.get('token');
+  const { t } = useTranslation();
 
   const [successMessage, setSuccessMessage] = useState();
   const [errorMessage, setErrorMessage] = useState();
@@ -43,15 +46,19 @@ const Reset = () => {
     const { password, repeatPassword } = formState.inputs;
 
     if (password.value !== repeatPassword.value) {
-      setErrorMessage('Cele două parole nu se potrivesc');
+      setErrorMessage(t('auth.passwordMismatch'));
     }
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/user/reset-password',
+        `${process.env.REACT_APP_BACKEND_URL}/user/reset-password`,
         'POST',
         JSON.stringify({ password: formState.inputs.password.value }),
-        { 'Content-Type': 'Application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'Application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setSuccessMessage(responseData.message);
     } catch (error) {}
@@ -62,13 +69,13 @@ const Reset = () => {
 
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/user/login`,
+        `${process.env.REACT_APP_BACKEND_URL}/user/login`,
         'POST',
         JSON.stringify({
           email: formState.inputs.email.value,
           password: formState.inputs.password.value,
         }),
-        { 'Content-Type': 'Application/json' }
+        { 'Content-Type': 'Application/json', 'Accept-Language': language }
       );
       login(
         responseData.token,
@@ -94,21 +101,20 @@ const Reset = () => {
               disabled
               id="email"
               element="input"
-              label="Email"
+              label={t('auth.authEmail')}
               type="text"
-              placeholder="Adresa de email..."
               validators={[VALIDATOR_EMAIL()]}
               defaultValue={formState.inputs.email.value}
-              errorText="Nu s-a introdus o adresă de email validă"
+              errorText={t('auth.resetEmailErrorText')}
               onInput={inputHandler}
             />
             <Input
               id="password"
               element="input"
-              label="Parola"
+              label={t('auth.authPass')}
               type="password"
-              placeholder="Parola..."
-              validators={[]}
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText={t('auth.resetPasswordErrorText')}
               onInput={inputHandler}
             />
 
@@ -116,15 +122,16 @@ const Reset = () => {
               <Input
                 id="repeatPassword"
                 element="input"
-                label="Repetă parola"
+                label={t('auth.repeatPass')}
                 type="password"
-                placeholder="Parola..."
                 validators={[VALIDATOR_MINLENGTH(5)]}
-                errorText="Parola trebuie să conțină minim 5 caractere"
+                errorText={t('auth.resetEmailErrorText')}
                 onInput={inputHandler}
               />
             )}
-            <Button>{successMessage ? 'Autentificare' : 'Resetare'}</Button>
+            <Button>
+              {successMessage ? t('auth.loginBtn') : t('auth.resetBtn')}
+            </Button>
             {successMessage && <p className="center">{successMessage}</p>}
             {errorMessage && <p className="center">{errorMessage}</p>}
           </form>

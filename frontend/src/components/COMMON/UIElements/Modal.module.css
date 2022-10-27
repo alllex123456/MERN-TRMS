@@ -14,6 +14,12 @@
   animation: slide-up 0.2s;
 }
 
+.noUserOverlay {
+  background: var(--MODALS-BACKGROUND);
+  left: 35vw;
+  width: 30vw;
+}
+
 .small {
   left: 45vw;
   width: 25vw;
@@ -40,14 +46,12 @@
 
 .close {
   cursor: pointer;
-  background: rgba(var(--GREY-MEDIUM-RGB), 0.5);
   transition: all 0.3s;
 }
 
 .close:hover {
   background: var(--GREY-DARK);
-  color: var(--RED-MEDIUM);
-  background-blend-mode: overlay;
+  color: var(--RED-DARK);
 }
 
 @keyframes slide-up {
@@ -67,6 +71,16 @@
     left: 30vw;
     width: 55vw;
   }
+
+  .small {
+    left: 40vw;
+    width: 30vw;
+  }
+
+  .medium {
+    left: 40vw;
+    width: 35vw;
+  }
 }
 
 @media (max-width: 1400px) {
@@ -74,6 +88,27 @@
     top: 10vh;
     left: 5vw;
     width: 90vw;
+  }
+  .small {
+    left: 20vw;
+    width: 60vw;
+  }
+
+  .medium {
+    left: 40vw;
+    width: 35vw;
+  }
+}
+
+@media (max-width: 700px) {
+  .small {
+    left: 5vw;
+    width: 90vw;
+  }
+
+  .medium {
+    left: 40vw;
+    width: 35vw;
   }
 }
 
@@ -83,7 +118,12 @@
   background: var(--MODALS-BACKGROUND);
 }
 
+.defaultOverlay .close,
+.lightOverlay .close {
+  background: var(--BLUE-LIGHT);
+}
+
 .darkOverlay {
-  background: var(--GREY-MEDIUM);
+  background: var(--SMARALD-DARKEST);
   color: var(--FONT-COLOR-LIGHT);
 }

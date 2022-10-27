@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useContext } from 'react';
-
 import { Pen, User } from 'phosphor-react';
-import { AuthContext } from '../../context/auth-context';
-import { useHttpClient } from '../../hooks/useHttpClient';
-import { useModal } from '../../hooks/useModal';
+import { useTranslation } from 'react-i18next';
 
+import UpdateInvoicingData from '../COMMON/Modals/UserModals/UpdateInvoicingData';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 import UpdateProfile from '../COMMON/Modals/UserModals/UpdateProfile';
 import UpdateLegalData from '../COMMON/Modals/UserModals/UpdateLegalData';
 
+import { AuthContext } from '../../context/auth-context';
+import { useHttpClient } from '../../hooks/useHttpClient';
+import { useModal } from '../../hooks/useModal';
+
 import styles from './Profile.module.css';
-import UpdateInvoicingData from '../COMMON/Modals/UserModals/UpdateInvoicingData';
 
 const Profile = () => {
-  const { token, theme } = useContext(AuthContext);
+  const { token, theme, language } = useContext(AuthContext);
   const [userData, setUserData] = useState({});
+
+  const { t } = useTranslation();
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
   const { modalState, closeModalHandler, showModalHandler } = useModal(
@@ -28,24 +31,24 @@ const Profile = () => {
     const getUserData = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/user',
+          `${process.env.REACT_APP_BACKEND_URL}/user`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
         setUserData(responseData.message);
       } catch (error) {}
     };
     getUserData();
-  }, [sendRequest, token, closeModalHandler]);
+  }, [sendRequest, token, closeModalHandler, language]);
 
   const refreshUser = async () => {
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/user',
+        `${process.env.REACT_APP_BACKEND_URL}/user`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setUserData(responseData.message);
     } catch (error) {}
@@ -82,112 +85,116 @@ const Profile = () => {
         {isLoading && <LoadingSpinner asOverlay />}
         <header className={styles.profileHeader}>
           <User size={32} className={styles.icon} />
-          <h2>Profil utilizator</h2>
+          <h2>{t('profile.title')}</h2>
         </header>
         <main className={styles.profileBody}>
           <div className={styles.personalData}>
-            <h2>Date personale</h2>
+            <div className={styles.head}>
+              <h2>{t('profile.personalData')}</h2>
+              <button
+                className={`${styles.userActions} ${
+                  styles[`${theme}UserActions`]
+                }`}
+                onClick={() =>
+                  showModalHandler('UPDATE_PERSONAL_DATA', userData)
+                }
+              >
+                <Pen className={styles.userActionsIcon} size={28} />
+              </button>
+            </div>
+
             <div className={styles.userContent}>
-              <h2>Date personale</h2>
               <p>
-                Nume <span className={styles.userData}>{userData.alias}</span>
+                {t('modals.user.personalData.name')}{' '}
+                <span className={styles.userData}>{userData.alias}</span>
               </p>
               <p>
-                Email
+                {t('modals.user.personalData.email')}
                 <span className={styles.userData}> {userData.email}</span>
               </p>
               <p>
-                Telefon{' '}
+                {t('modals.user.personalData.contact')}{' '}
                 <span className={styles.userData}>{userData.phone}</span>
               </p>
             </div>
-            <button
-              className={`${styles.userActions} ${
-                styles[`${theme}UserActions`]
-              }`}
-              onClick={() => showModalHandler('UPDATE_PERSONAL_DATA', userData)}
-            >
-              <Pen className={styles.userActionsIcon} size={32} />
-              <span>Actualizeaza</span>
-            </button>
           </div>
           <div className={styles.legalData}>
-            <h2>Date profesionale</h2>
+            <div className={styles.head}>
+              <h2>{t('profile.professionalData')}</h2>
+              <button
+                className={`${styles.userActions} ${
+                  styles[`${theme}UserActions`]
+                }`}
+                onClick={() => showModalHandler('UPDATE_LEGAL_DATA', userData)}
+              >
+                <Pen className={styles.userActionsIcon} size={28} />
+              </button>
+            </div>
             <div className={styles.userContent}>
               <p>
-                Denumire PFA/Societate{' '}
+                {t('modals.user.professionalData.name')}{' '}
                 <span className={styles.userData}>{userData.name}</span>
               </p>
               <p>
-                Sediul{' '}
+                {t('modals.user.professionalData.registeredOffice')}{' '}
                 <span className={styles.userData}>
                   {userData.registeredOffice}
                 </span>
               </p>
               <p>
-                Numar de inregistrare/autorizatie{' '}
+                {t('modals.user.professionalData.registrationNumber')}{' '}
                 <span className={styles.userData}>
                   {userData.registrationNumber}
                 </span>
               </p>
               <p>
-                Cod fiscal{' '}
+                {t('modals.user.professionalData.taxNumber')}{' '}
                 <span className={styles.userData}>{userData.taxNumber}</span>
               </p>
             </div>
-            <button
-              className={`${styles.userActions} ${
-                styles[`${theme}UserActions`]
-              }`}
-              onClick={() => showModalHandler('UPDATE_LEGAL_DATA', userData)}
-            >
-              <Pen className={styles.userActionsIcon} size={32} />
-              <span>Actualizeaza</span>
-            </button>
           </div>
           <div className={styles.invoicingData}>
-            <h2>Date de facturare</h2>
+            <div className={styles.head}>
+              <h2>{t('profile.invoicingData')}</h2>
+              <button
+                className={`${styles.userActions} ${
+                  styles[`${theme}UserActions`]
+                }`}
+                onClick={() =>
+                  showModalHandler('UPDATE_INVOICING_DATA', userData)
+                }
+              >
+                <Pen className={styles.userActionsIcon} size={28} />
+              </button>
+            </div>
             <div className={styles.userContent}>
-              <h5>
-                - datele asa cum apar in facturi, impreuna cu datele
-                profesionale -
-              </h5>
               <p>
-                Serie facturi{' '}
+                {t('modals.user.invoicingData.series')}{' '}
                 <span className={styles.userData}>
                   {userData.invoiceSeries}
                 </span>
               </p>
               <p>
-                Numar de incepere facturi{' '}
+                {t('modals.user.invoicingData.number')}{' '}
                 <span className={styles.userData}>
                   {userData.invoiceStartNumber}
                 </span>
               </p>
               <p>
-                Termen implicit de plata{' '}
+                {t('modals.user.invoicingData.defaultMaturity')}{' '}
                 <span className={styles.userData}>
                   {userData.invoiceDefaultDue}
                 </span>
               </p>
               <p>
-                Banca <span className={styles.userData}>{userData.bank}</span>
+                {t('modals.user.invoicingData.bank')}{' '}
+                <span className={styles.userData}>{userData.bank}</span>
               </p>
               <p>
-                IBAN <span className={styles.userData}>{userData.iban}</span>
+                {t('modals.user.invoicingData.iban')}{' '}
+                <span className={styles.userData}>{userData.iban}</span>
               </p>
             </div>
-            <button
-              className={`${styles.userActions} ${
-                styles[`${theme}UserActions`]
-              }`}
-              onClick={() =>
-                showModalHandler('UPDATE_INVOICING_DATA', userData)
-              }
-            >
-              <Pen className={styles.userActionsIcon} size={32} />
-              <span>Actualizeaza</span>
-            </button>
           </div>
         </main>
       </div>

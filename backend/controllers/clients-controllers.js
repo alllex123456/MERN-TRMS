@@ -14,12 +14,7 @@ exports.getAllClients = async (req, res, next) => {
   try {
     user = await User.findById(userId).populate('clients');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienți. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   res.json({
@@ -36,18 +31,11 @@ exports.getClient = async (req, res, next) => {
   try {
     client = await Client.findById(clientId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienți. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   if (client.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   res.json({ message: client.toObject({ getters: true }) });
@@ -60,12 +48,7 @@ exports.addClient = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   const newClient = new Client({
@@ -85,15 +68,10 @@ exports.addClient = async (req, res, next) => {
     await user.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la salvarea clientului. Vă rugăm să reîncercați sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.save_failed'), 500));
   }
 
-  res.json({ message: newClient.toObject({ getters: true }) });
+  res.json({ confirmation: req.t('success.clients.added') });
 };
 
 exports.modifyClient = async (req, res, next) => {
@@ -103,18 +81,11 @@ exports.modifyClient = async (req, res, next) => {
   try {
     client = await Client.findById(clientId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienți. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   if (client.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   if (req.file) {
@@ -131,15 +102,10 @@ exports.modifyClient = async (req, res, next) => {
   try {
     await client.save();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la salvarea modificărilor. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.modify_failed'), 500));
   }
 
-  res.json({ message: client.toObject({ getters: true }) });
+  res.json({ confirmation: req.t('success.clients.modified') });
 };
 
 exports.deleteClient = async (req, res, next) => {
@@ -149,27 +115,15 @@ exports.deleteClient = async (req, res, next) => {
   try {
     client = await Client.findById(clientId).populate('userId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienți. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   if (client.userId.id.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   if (client.orders.length !== 0) {
-    return next(
-      new HttpError(
-        'Clientul are comenzi în așteptare sau nefacturate. Finalizați sau arhivați comenzile clientului înainte de a încerca ștergerea acestuia.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.no_delete'), 500));
   }
 
   try {
@@ -180,13 +134,8 @@ exports.deleteClient = async (req, res, next) => {
     await client.userId.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la ștergerea clientului. Vă rugăm să reîncărcați pagina sau contactați administratorul de sistem.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.delete_failed'), 500));
   }
 
-  res.json({ message: client.toObject({ getters: true }) });
+  res.json({ confirmation: req.t('success.clients.deleted') });
 };

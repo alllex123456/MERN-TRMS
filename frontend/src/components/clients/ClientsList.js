@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AddressBook } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import ClientItem from './ClientItem';
 import DeleteModal from '../COMMON/Modals/ClientModals/DeleteModal';
@@ -16,9 +17,11 @@ import { AuthContext } from '../../context/auth-context';
 
 import styles from './ClientsList.module.css';
 
-const ClientsList = (props) => {
-  const { token } = useContext(AuthContext);
+const ClientsList = () => {
+  const { token, language, theme } = useContext(AuthContext);
   const [loadedClients, setLoadedClients] = useState();
+
+  const { t } = useTranslation();
 
   const { modalState, closeModalHandler, showModalHandler } = useModal(
     '',
@@ -30,10 +33,10 @@ const ClientsList = (props) => {
 
   const refreshClients = async () => {
     const responseData = await sendRequest(
-      `http://localhost:8000/clients`,
+      `${process.env.REACT_APP_BACKEND_URL}/clients`,
       'GET',
       null,
-      { Authorization: 'Bearer ' + token }
+      { Authorization: 'Bearer ' + token, 'Accept-Language': language }
     );
     setLoadedClients(responseData.message.clients);
   };
@@ -41,10 +44,10 @@ const ClientsList = (props) => {
   useEffect(() => {
     const getClients = async () => {
       const responseData = await sendRequest(
-        `http://localhost:8000/clients`,
+        `${process.env.REACT_APP_BACKEND_URL}/clients`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setLoadedClients(responseData.message.clients);
     };
@@ -90,9 +93,9 @@ const ClientsList = (props) => {
       <div className="pageContainer">
         <div className={styles.clientsHeader}>
           <AddressBook size={32} className={styles.icon} />
-          <h2>Nomenclator clienți</h2>
+          <h2>{t('clients.header')}</h2>
           <Button primary type="button" onClick={() => showModalHandler('ADD')}>
-            + Adaugă client nou
+            + {t('clients.addBtn')}
           </Button>
         </div>
 
@@ -100,7 +103,9 @@ const ClientsList = (props) => {
         {!isLoading && (
           <ul className={styles.clientsList}>
             {loadedClients && loadedClients.length === 0 && (
-              <li className="center noItems">Nu aveți clienți adăugați</li>
+              <li className={`center noItems ${theme}NoItems`}>
+                {t('clients.noClients')}
+              </li>
             )}
             {loadedClients &&
               loadedClients.map((client, index) => (

@@ -5,41 +5,51 @@
 }
 
 .profileBody {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-  padding: 2rem 0;
   margin-top: 5rem;
-  border-top: 3px solid rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  grid-gap: 3rem;
+  padding: 2rem 0;
 }
 
 .legalData,
 .personalData,
 .invoicingData {
   font-size: 1.4rem;
+  flex: 1 1 33%;
+
   display: flex;
-  gap: 3rem;
+  flex-direction: column;
 }
 
 .legalData h2,
 .personalData h2,
 .invoicingData h2 {
-  flex: 0 0 20rem;
+  flex-grow: 1;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--BLUE-MEDIUM);
+}
+
+.head {
+  display: flex;
+  /* align-items: center; */
 }
 
 .userData {
+  display: block;
+  min-height: 4rem;
   font-weight: 600;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  cursor: default;
+  border-radius: 3px;
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 
 .userActions {
-  display: flex;
-  gap: 1rem;
-
   opacity: 0.5;
   cursor: pointer;
-  align-self: start;
-  padding: 0 1rem 1rem;
-  font-weight: 700;
+
   margin-left: auto;
   transition: all 0.3s;
 }

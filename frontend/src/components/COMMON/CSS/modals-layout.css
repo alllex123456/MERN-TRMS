@@ -54,3 +54,11 @@
 .section {
   font-size: 1.4rem;
 }
+
+/* in user settings */
+@media (max-width: 450px) {
+  .settings {
+    display: flex;
+    flex-direction: column;
+  }
+}

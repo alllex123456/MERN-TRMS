@@ -1,19 +1,35 @@
+import i18next from 'i18next';
+
 export const translateUnits = (source) => {
   const units = source.map((unit) => {
     if (unit === '2000cw/s')
       return {
         value: unit,
-        displayedValue: '2000 ccs',
+        short: i18next.t('appUnits.short.2000cw/s'),
+        displayedValue: i18next.t('appUnits.2000cw/s'),
       };
-    else if (unit === 'word') return { value: unit, displayedValue: 'cuvânt' };
+    else if (unit === 'word')
+      return {
+        value: unit,
+        short: i18next.t('appUnits.short.word'),
+        displayedValue: i18next.t('appUnits.word'),
+      };
     else if (unit === '300w')
-      return { value: unit, displayedValue: '300 cuv.' };
+      return {
+        value: unit,
+        short: i18next.t('appUnits.short.300w'),
+        displayedValue: i18next.t('appUnits.300w'),
+      };
     else
       return {
         value: unit,
-        displayedValue: '1800 cfs',
+        short: i18next.t('appUnits.short.1800cw/os'),
+        displayedValue: i18next.t('appUnits.1800cw/os'),
       };
   });
+
+  if (units.length === 1) return units[0];
+
   return units;
 };
 
@@ -22,17 +38,17 @@ export const translateServices = (source) => {
     if (service === 'translation')
       return {
         value: service,
-        displayedValue: 'traducere',
+        displayedValue: i18next.t('appServices.translation'),
       };
     if (service === 'proofreading')
       return {
         value: service,
-        displayedValue: 'corectura',
+        displayedValue: i18next.t('appServices.proofreading'),
       };
     if (service === 'postediting')
       return {
         value: service,
-        displayedValue: 'post-editare',
+        displayedValue: i18next.t('appServices.postEditing'),
       };
   });
   if (services.length === 1) return services[0];

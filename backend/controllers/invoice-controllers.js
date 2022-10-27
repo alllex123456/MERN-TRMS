@@ -5,6 +5,7 @@ const Invoice = require('../models/invoice');
 const Client = require('../models/client');
 const User = require('../models/user');
 const Order = require('../models/order');
+const AddedItem = require('../models/added-item');
 
 const { sendInvoiceScript } = require('../utils/sendInvoiceScript');
 const { InvoicePDF } = require('../services/pdf-invoice');
@@ -19,15 +20,19 @@ exports.getAllInvoices = async (req, res, next) => {
       },
     });
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
-  res.json({ message: user });
+  let invoices;
+  try {
+    invoices = await Invoice.find({ _id: { $in: user.invoices } }).populate(
+      'clientId'
+    );
+  } catch (error) {
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
+  }
+
+  res.json({ message: user, invoicesOnly: invoices });
 };
 
 exports.getClientInvoices = async (req, res, next) => {
@@ -37,18 +42,11 @@ exports.getClientInvoices = async (req, res, next) => {
   try {
     client = await Client.findById(clientId).populate('invoices');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienti. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   if (client.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   res.json({ message: client });
@@ -59,14 +57,11 @@ exports.getInvoice = async (req, res, next) => {
 
   let invoice;
   try {
-    invoice = await Invoice.findById(invoiceId).populate('clientId orders');
-  } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori. Vă rugăm să reîncercați.',
-        500
-      )
+    invoice = await Invoice.findById(invoiceId).populate(
+      'clientId orders addedItems'
     );
+  } catch (error) {
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   res.json({ message: invoice.toObject({ getters: true }) });
@@ -74,44 +69,66 @@ exports.getInvoice = async (req, res, next) => {
 
 exports.createInvoice = async (req, res, next) => {
   const { userId } = req.userData;
-  const { clientId, orders, dueDate, issuedDate, totalInvoice, remainder } =
-    req.body;
+  const {
+    clientId,
+    orders,
+    dueDate,
+    issuedDate,
+    totalInvoice,
+    invoiceRemainder,
+    clientBalance,
+  } = req.body;
 
   let user;
   try {
     user = await User.findById(userId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   let client;
   try {
     client = await Client.findById(clientId).populate('orders');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienti. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   if (client.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   if (!user) {
-    return next(new HttpError('Utilizatorul nu există.', 404));
+    return next(new HttpError(req.t('errors.user.no_user'), 404));
   }
   if (!client) {
-    return next(new HttpError('Clientul nu există.', 404));
+    return next(new HttpError(req.t('errors.clients.no_client'), 404));
+  }
+
+  if (req.body.reverse) {
+    let reversedInvoice;
+    try {
+      reversedInvoice = await Invoice.findById(req.body.reversedInvoice);
+    } catch (error) {
+      return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
+    }
+    reversedInvoice.totalInvoice = -reversedInvoice.totalInvoice;
+    reversedInvoice.reversed = true;
+
+    await reversedInvoice.save();
+
+    const orderIds = orders.filter((order) => !order.addedItem);
+
+    let reversedOrders;
+    try {
+      reversedOrders = await Order.find({ _id: { $in: orderIds } });
+    } catch (error) {
+      return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
+    }
+    reversedOrders.forEach(async (order) => {
+      order.count = -order.count;
+      order.total = -order.total;
+      await order.save();
+    });
   }
 
   const newInvoice = new Invoice({
@@ -119,20 +136,42 @@ exports.createInvoice = async (req, res, next) => {
     clientId,
     series: user.invoiceSeries,
     number: user.invoiceStartNumber,
-    orders,
+    orders: orders.filter((order) => !order.addedItem),
     dueDate,
     issuedDate,
     totalInvoice,
-    remainder,
+    invoiceRemainder: req.body.reverse ? 0 : invoiceRemainder,
+    clientBalance,
     cashed: false,
   });
 
+  if (req.body.reverse) {
+    const addedItems = orders.filter((order) => order.addedItem);
+
+    let newAddedItem;
+    addedItems.forEach(async (item) => {
+      newAddedItem = new AddedItem({
+        userId,
+        clientId,
+        invoiceId: newInvoice._id,
+        reference: item.reference,
+        count: item.count,
+        rate: item.rate,
+        unit: item.unit,
+        total: item.total,
+      });
+
+      await newAddedItem.save();
+    });
+    newInvoice.addedItems.push(newAddedItem);
+  }
+
   user.invoices.push(newInvoice);
   client.invoices.push(newInvoice);
-  client.remainder += req.body.remainder;
+  if (!req.body.reverse) client.remainder = +invoiceRemainder;
+  if (req.body.reverse && req.body.totalInvoice < 0)
+    client.remainder += totalInvoice;
   user.invoiceStartNumber += 1;
-
-  if (req.body.remainder === 0) client.remainder = 0;
 
   try {
     const session = await mongoose.startSession();
@@ -140,24 +179,23 @@ exports.createInvoice = async (req, res, next) => {
     await user.save({ session });
     await client.save({ session });
     await newInvoice.save({ session });
-    await Order.updateMany(
-      {
-        _id: { $in: req.body.orders },
-      },
-      { $set: { status: 'invoiced', invoiceId: newInvoice._id } }
-    );
+    if (!req.body.reverse) {
+      await Order.updateMany(
+        {
+          _id: { $in: req.body.orders },
+        },
+        { $set: { status: 'invoiced', invoiceId: newInvoice._id } }
+      );
+    }
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'Factura nu a putut fi generata, va rugam sa reincercati',
-        401
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.issue_fail'), 401));
   }
 
   res.json({
-    message: 'Factura a fost emisa cu succes!',
+    message: req.body.reverse
+      ? req.t('success.invoicing.reversed_issued')
+      : req.t('success.invoicing.issued'),
     invoiceId: newInvoice._id,
   });
 };
@@ -171,21 +209,11 @@ exports.generateInvoice = async (req, res, next) => {
       'orders clientId userId'
     );
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de facturi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
   }
 
   if (req.userData.userId !== invoice.userId.id) {
-    return next(
-      new HttpError(
-        'Nu exista autorizatie pentru a efectua aceasta operatiune.',
-        401
-      )
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   const totalInvoice = invoice.orders.reduce(
@@ -194,14 +222,9 @@ exports.generateInvoice = async (req, res, next) => {
   );
 
   try {
-    InvoicePDF(res, invoice, totalInvoice);
+    InvoicePDF(req, res, invoice, totalInvoice);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la generarea fisierului PDF. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.PDF.gen_failed'), 500));
   }
 };
 
@@ -213,52 +236,35 @@ exports.sendInvoice = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de utilizatori. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.user.not_found'), 500));
   }
 
   let client;
   try {
     client = await Client.findById(clientId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienti. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.client.not_found'), 500));
   }
 
   let invoice;
   try {
     invoice = await Invoice.findById(invoiceId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de facturi. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
   }
 
   if (client.userId.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   if (!user) {
-    return next(new HttpError('Utilizatorul nu există.', 404));
+    return next(new HttpError(req.t('errors.user.no_user'), 404));
   }
   if (!client) {
-    return next(new HttpError('Clientul nu există.', 404));
+    return next(new HttpError(req.t('errors.client.no_client'), 404));
   }
   if (!invoice) {
-    return next(new HttpError('Factura nu există.', 404));
+    return next(new HttpError(req.t('errors.invoicing.no_invoice'), 404));
   }
 
   const body = {
@@ -272,17 +278,11 @@ exports.sendInvoice = async (req, res, next) => {
   try {
     sendInvoiceScript(user, client, body, email);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la trimiterea mesajului. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.send_failed'), 500));
   }
 
   res.json({
-    message:
-      'Factura a fost trimisa cu succes. Veti primi pe adresa dvs. de email o copie a mesajului trimis.',
+    message: req.t('success.invoicing.sent'),
   });
 };
 
@@ -294,12 +294,7 @@ exports.modifyInvoice = async (req, res, next) => {
   try {
     client = await Client.findById(req.body.clientId);
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la interogarea bazei de clienti. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.clients.not_found'), 500));
   }
 
   client.remainder += req.body.remainder;
@@ -331,7 +326,7 @@ exports.modifyInvoice = async (req, res, next) => {
           dueDate: req.body.dueDate,
           issuedDate: req.body.issuedDate,
           totalInvoice: req.body.totalInvoice,
-          remainder: req.body.remainder,
+          invoiceRemainder: req.body.remainder,
         },
         $pullAll: { orders: deletedIds },
       },
@@ -357,15 +352,10 @@ exports.modifyInvoice = async (req, res, next) => {
 
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'Factura nu a putut fi actualizata, va rugam sa reincercati',
-        401
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.update_failed'), 401));
   }
 
-  res.json({ message: 'Factura a fost modificata cu succes!' });
+  res.json({ message: req.t('success.invoicing.modified') });
 };
 
 exports.deleteInvoice = async (req, res, next) => {
@@ -376,31 +366,21 @@ exports.deleteInvoice = async (req, res, next) => {
   try {
     invoice = await Invoice.findById(invoiceId).populate('userId clientId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'Factura nu a putut fi actualizata, va rugam sa reincercati',
-        401
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.update_failed'), 401));
   }
 
   if (!invoice) {
-    return next(
-      new HttpError(
-        'Factura nu a putut fi regasita, va rugam sa reincercati',
-        401
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 401));
   }
 
   if (invoice.userId.id.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   if (invoice.cashed) {
-    return next(new HttpError('Eroare server: factura este incasata.', 401));
+    return next(
+      new HttpError(req.t('errors.invoicing.cannot_delete_cashed'), 401)
+    );
   }
 
   invoice.userId.invoices.pull(invoice);
@@ -439,15 +419,10 @@ exports.deleteInvoice = async (req, res, next) => {
 
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la anularea facturii. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.cancel_failed'), 500));
   }
 
-  res.json({ message: 'Factura a fost anulata!' });
+  res.json({ message: req.t('success.invoicing.canceled') });
 };
 
 exports.cashInvoice = async (req, res, next) => {
@@ -455,12 +430,7 @@ exports.cashInvoice = async (req, res, next) => {
   try {
     invoice = await Invoice.findById(req.body.invoiceId).populate('clientId');
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la regasirea facturii. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
   }
 
   invoice.cashedAmount = req.body.cashedAmount;
@@ -484,15 +454,10 @@ exports.cashInvoice = async (req, res, next) => {
     await invoice.clientId.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la salvarea facturii. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
   }
 
-  res.json({ message: 'Factura fost incasata cu succes!' });
+  res.json({ message: req.t('success.invoicing.cashed') });
 };
 
 exports.reverseInvoice = async (req, res, next) => {
@@ -502,18 +467,11 @@ exports.reverseInvoice = async (req, res, next) => {
       'userId clientId'
     );
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la regasirea facturii. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.not_found'), 500));
   }
 
   if (invoice.userId.id.toString() !== req.userData.userId) {
-    return next(
-      new HttpError('Nu există autorizație pentru această operațiune.', 401)
-    );
+    return next(new HttpError(req.t('errors.user.no_authorization'), 401));
   }
 
   invoice.reversed = true;
@@ -546,13 +504,8 @@ exports.reverseInvoice = async (req, res, next) => {
     await invoice.clientId.save({ session });
     session.commitTransaction();
   } catch (error) {
-    return next(
-      new HttpError(
-        'A survenit o problemă la stornarea facturii. Vă rugăm să reîncercați.',
-        500
-      )
-    );
+    return next(new HttpError(req.t('errors.invoicing.reversed_failed'), 500));
   }
 
-  res.json({ message: 'Factura fost stornata cu succes!' });
+  res.json({ message: req.t('success.invoicing.reversed') });
 };

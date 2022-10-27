@@ -9,9 +9,7 @@ module.exports = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
     if (!token) {
-      throw new Error(
-        'Nu sunteți autentificat sau valabilitatea token-ului a expirat.'
-      );
+      throw new Error(req.t('errors.user.no_token'));
     }
 
     const decodedToken = jwt.verify(token, 'zent-freelance-key');
@@ -20,11 +18,6 @@ module.exports = (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return next(
-      new HttpError(
-        'Nu sunteți autentificat sau valabilitatea token-ului a expirat. Vă rugăm să vă reautentificați.',
-        401
-      )
-    );
+    return next(new HttpError(req.t('errors.user.no_token'), 401));
   }
 };

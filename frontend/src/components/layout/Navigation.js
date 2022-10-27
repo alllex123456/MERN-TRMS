@@ -6,15 +6,19 @@ import {
   AddressBook,
   Activity,
   BookOpen,
-  User,
   Money,
 } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
+
 import { AuthContext } from '../../context/auth-context';
 
 import styles from './Navigation.module.css';
 
 export const Navigation = () => {
   const { theme, avatar } = useContext(AuthContext);
+
+  const { t } = useTranslation();
+
   const activeLinks = ({ isActive }) =>
     isActive
       ? `${styles.linkActive} ${styles.navigationItem}`
@@ -26,37 +30,49 @@ export const Navigation = () => {
         <li>
           <NavLink className={activeLinks} to="/main">
             <AppWindow size={32} className={styles.icon} />
-            <p className={styles.link}>PANOU DE BORD</p>
+            <p className={styles.link}>
+              {t('navigation.dashboard').toUpperCase()}
+            </p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/queue">
             <Hourglass size={32} className={styles.icon} />
-            <p className={styles.link}>COMENZI ÎN LUCRU</p>
+            <p className={styles.link}>
+              {t('navigation.pendingOrders').toUpperCase()}
+            </p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/clients">
             <AddressBook size={32} className={styles.icon} />
-            <p className={styles.link}>CLIENȚI</p>
+            <p className={styles.link}>
+              {t('navigation.clients').toUpperCase()}
+            </p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/statements">
             <BookOpen size={32} className={styles.icon} />
-            <p className={styles.link}>SITUAȚII CLIENȚI</p>
+            <p className={styles.link}>
+              {t('navigation.clientStatements').toUpperCase()}
+            </p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/invoicing">
             <Money size={32} className={styles.icon} />
-            <p className={styles.link}>FACTURI</p>
+            <p className={styles.link}>
+              {t('navigation.invoicing').toUpperCase()}
+            </p>
           </NavLink>
         </li>
         <li>
           <NavLink className={activeLinks} to="/metrics">
             <Activity size={32} className={styles.icon} />
-            <p className={styles.link}>DATE DE LUCRU</p>
+            <p className={styles.link}>
+              {t('navigation.metrics').toUpperCase()}
+            </p>
           </NavLink>
         </li>
       </ul>
@@ -66,12 +82,16 @@ export const Navigation = () => {
           <NavLink className={styles.profileItem} to="/profile">
             <div className={styles.userAvatar}>
               {avatar ? (
-                <img src={`http://localhost:8000/uploads/avatars/${avatar}`} />
+                <img
+                  src={`${process.env.REACT_APP_BACKEND_URL}/uploads/avatars/${avatar}`}
+                />
               ) : (
                 <div className="blankAvatar" />
               )}
             </div>
-            <p className={styles.link}>PROFIL</p>
+            <p className={styles.link}>
+              {t('navigation.profile').toUpperCase()}
+            </p>
           </NavLink>
         </li>
       </ul>

@@ -34,7 +34,6 @@
   display: inline-block;
   cursor: pointer;
   font-weight: 600;
-  background: var(--SMARALD-LIGHTEST);
   padding: 0.5rem 2rem;
   border: 2px solid transparent;
   transition: all 0.3s;
@@ -49,7 +48,20 @@
 }
 
 /* THEMING */
-.input,
-.select {
-  background: var(--GREY-LIGHT);
+.defaultInput,
+.defaultSelect {
+  background: #fff;
+}
+
+.lightInput,
+.lightSelect {
+  background: #fff;
+}
+
+.darkInput,
+.darkSelect {
+  background: var(--SMARALD-DARK);
+}
+.darkInput::placeholder {
+  color: var(--FONT-COLOR-LIGHT);
 }

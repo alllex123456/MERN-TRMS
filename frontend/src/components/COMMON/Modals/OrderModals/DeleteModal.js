@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Modal from '../../UIElements/Modal';
@@ -12,8 +13,11 @@ import { AuthContext } from '../../../../context/auth-context';
 import '../../CSS/modals-form.css';
 
 const DeleteModal = (props) => {
-  const { token } = useContext(AuthContext);
+  const { token, language } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
+
+  const { t } = useTranslation();
+
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
   const deleteHandler = async (event) => {
@@ -21,10 +25,14 @@ const DeleteModal = (props) => {
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/orders/delete-order',
+        `${process.env.REACT_APP_BACKEND_URL}/orders/delete-order`,
         'DELETE',
         JSON.stringify({ orderId: props.orderId.id }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setSuccessMessage(responseData.message);
     } catch (error) {}
@@ -37,7 +45,7 @@ const DeleteModal = (props) => {
     setSuccessMessage(null);
   };
 
-  const header = `Șterge comanda`;
+  const header = t('modals.orders.deleteOrder.header');
 
   return (
     <React.Fragment>
@@ -53,12 +61,12 @@ const DeleteModal = (props) => {
         >
           {isLoading && <LoadingSpinner asOverlay />}
           <h2 className="center marbo-xl">
-            Sigur dorești să ștergi această comandă?
+            {t('modals.orders.deleteOrder.confirmationMsg')}
           </h2>
 
           <div className="formActions">
             <Button danger type="submit">
-              CONFIRM
+              {t('buttons.confirmBtn')}
             </Button>
           </div>
         </Modal>

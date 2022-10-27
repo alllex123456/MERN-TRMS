@@ -1,6 +1,5 @@
 .notes {
   position: relative;
-  box-shadow: 0 0 3px rgb(0, 0, 0, 0.3);
   padding: 2rem;
   height: 40rem;
   overflow-y: scroll;
@@ -34,7 +33,7 @@
 }
 
 .notesItem:hover {
-  border: 1px solid var(--REEF);
+  border: 1px solid var(--SMARALD-LIGHT);
 }
 
 .removeNoteBtn {

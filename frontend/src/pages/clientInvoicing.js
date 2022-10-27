@@ -1,6 +1,8 @@
 import React from 'react';
 import CreateInvoice from '../components/invoicing/InvoiceTemplate';
 
-export const ClientInvoicingPage = () => {
+const ClientInvoicingPage = () => {
   return <CreateInvoice />;
 };
+
+export default ClientInvoicingPage;

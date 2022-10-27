@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Input from '../COMMON/FormElements/Input';
 import Button from '../COMMON/UIElements/Button';
 import Card from '../COMMON/UIElements/Card';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
+
 import { useForm } from '../../hooks/useForm';
 import { useHttpClient } from '../../hooks/useHttpClient';
 import {
@@ -20,10 +22,12 @@ import styles from './Auth.module.css';
 const Auth = () => {
   const navigator = useNavigate();
 
+  const { t, i18n } = useTranslation();
+
   const [isLoggingIn, setIsLoggingIn] = useState(true);
   const [recoverPassword, setRecoverPassword] = useState(false);
   const [recoverPasswordMessage, setRecoverPasswordMessage] = useState();
-  const { login, currencies, languages } = useContext(AuthContext);
+  const { login, currencies, languages, language } = useContext(AuthContext);
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -97,13 +101,13 @@ const Auth = () => {
     if (isLoggingIn) {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/user/login',
+          `${process.env.REACT_APP_BACKEND_URL}/user/login`,
           'POST',
           JSON.stringify({
             email: formState.inputs.email.value,
             password: formState.inputs.password.value,
           }),
-          { 'Content-Type': 'application/json' }
+          { 'Content-Type': 'application/json', 'Accept-Language': language }
         );
 
         login(responseData.token, responseData.user);
@@ -113,7 +117,7 @@ const Auth = () => {
     } else {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/user/signup',
+          `${process.env.REACT_APP_BACKEND_URL}/user/signup`,
           'POST',
           JSON.stringify({
             email: formState.inputs.email.value,
@@ -122,10 +126,11 @@ const Auth = () => {
             language: formState.inputs.language.value,
             preferredCurrency: formState.inputs.preferredCurrency.value,
           }),
-          { 'Content-Type': 'application/json' }
+          { 'Content-Type': 'application/json', 'Accept-Language': language }
         );
 
         login(responseData.token, responseData.user);
+        i18n.changeLanguage(formState.inputs.language.value);
         navigator('/main', { replace: true });
       } catch (error) {}
     }
@@ -136,10 +141,10 @@ const Auth = () => {
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/user/recover-password',
+        `${process.env.REACT_APP_BACKEND_URL}/user/recover-password`,
         'POST',
         JSON.stringify({ email: formState.inputs.email.value }),
-        { 'Content-Type': 'Application/json' }
+        { 'Content-Type': 'Application/json', 'Accept-Language': language }
       );
       setRecoverPasswordMessage(responseData.message);
     } catch (error) {}
@@ -151,25 +156,26 @@ const Auth = () => {
       <div className={styles.authBackground}>
         <Card className={styles.authCard}>
           {isLoading && <LoadingSpinner asOverlay />}
-          <h2>LOG IN</h2>
+          <h2>{t('auth.authTitle')}</h2>
           <hr />
           <form onSubmit={authSubmit}>
             <Input
               id="email"
               element="input"
-              label="Your e-mail address"
+              label={t('auth.authEmail')}
               type="text"
               validators={[VALIDATOR_EMAIL()]}
-              errorText="The email address you've entered is not valid"
+              errorText={t('auth.loginEmailErrorText')}
               onInput={inputHandler}
             />
 
             <Input
               id="password"
               element="input"
-              label="Password"
+              label={t('auth.authPass')}
               type="password"
-              validators={[]}
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText={t('auth.loginPasswordErrorText')}
               onInput={inputHandler}
             />
 
@@ -178,27 +184,27 @@ const Auth = () => {
                 <Input
                   id="repeatPassword"
                   element="input"
-                  label="Type the password again:"
+                  label={t('auth.repeatPass')}
                   type="password"
                   validators={[VALIDATOR_MINLENGTH(5)]}
-                  errorText="The password must be at least 5 characters long"
+                  errorText={t('auth.registerPasswordErrorText')}
                   onInput={inputHandler}
                 />
                 <Input
                   id="name"
                   element="input"
-                  label="Your name"
+                  label={t('auth.registerName')}
                   type="text"
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="You need to enter a name"
+                  errorText={t('auth.registerNameErrorText')}
                   onInput={inputHandler}
                 />
                 <Input
                   id="language"
                   element="select"
-                  label="Preferred language"
+                  label={t('auth.registerLanguage')}
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Please select your language"
+                  errorText={t('auth.registerLanguageErrorText')}
                   onInput={inputHandler}
                 >
                   <option>select...</option>
@@ -211,9 +217,9 @@ const Auth = () => {
                 <Input
                   id="preferredCurrency"
                   element="select"
-                  label="Preferred currency"
+                  label={t('auth.registerCurrency')}
                   validators={[VALIDATOR_REQUIRE()]}
-                  errorText="Please selected your preferred currency"
+                  errorText={t('auth.registerCurrencyErrorText')}
                   onInput={inputHandler}
                 >
                   <option>select...</option>
@@ -227,10 +233,10 @@ const Auth = () => {
             )}
             <div className={styles.authActions}>
               <Button primary onClick={inputHandler}>
-                {!isLoggingIn ? 'REGISTER' : 'LOG IN'}
+                {!isLoggingIn ? t('auth.registerBtn') : t('auth.loginBtn')}
               </Button>
               <Button inverse type="button" onClick={switchModeHandler}>
-                {!isLoggingIn ? 'LOG IN' : 'REGISTER'}
+                {!isLoggingIn ? t('auth.loginBtn') : t('auth.registerBtn')}
               </Button>
             </div>
           </form>
@@ -250,9 +256,9 @@ const Auth = () => {
                 id="recoverEmail"
                 element="input"
                 type="text"
-                label="The e-mail address used for registration:"
+                label={t('auth.recoverEmail')}
                 validators={[VALIDATOR_EMAIL()]}
-                errorText="The email address you've entered is not valid"
+                errorText={t('auth.recoverEmailErrorText')}
                 onInput={inputHandler}
               />
               <Button secondary type="submit">

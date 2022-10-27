@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { isThisMonth } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
-import { AreaChart } from '../COMMON/Charts/AreaChart';
-import {
-  getIntervalMetrics,
-  getUnitMetrics,
-} from '../../utilities/calculate-metrics';
-import { AuthContext } from '../../context/auth-context';
-
-import styles from './Activity.module.css';
-import { useHttpClient } from '../../hooks/useHttpClient';
 import ErrorModal from '../COMMON/Modals/MessageModals/ErrorModal';
 import LoadingSpinner from '../COMMON/UIElements/LoadingSpinner';
 
+import { AreaChart } from '../COMMON/Charts/AreaChart';
+import { getIntervalMetrics } from '../../utilities/calculate-metrics';
+import { AuthContext } from '../../context/auth-context';
+import { useHttpClient } from '../../hooks/useHttpClient';
+
+import styles from './Activity.module.css';
+
 const Activity = () => {
-  const { token, theme } = useContext(AuthContext);
+  const { token, theme, language } = useContext(AuthContext);
   const [loadedOrders, setLoadedOrders] = useState([]);
+
+  const { t } = useTranslation();
 
   const { sendRequest, isLoading, error, clearError } = useHttpClient();
 
@@ -23,10 +23,10 @@ const Activity = () => {
     const getOrders = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/metrics',
+          `${process.env.REACT_APP_BACKEND_URL}/metrics`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token }
+          { Authorization: 'Bearer ' + token, 'Accept-Language': language }
         );
 
         setLoadedOrders(responseData.completedOrders);
@@ -34,7 +34,7 @@ const Activity = () => {
     };
     getOrders();
   }, [sendRequest, token]);
-  console.log(loadedOrders);
+
   const ordersLastMonth = getIntervalMetrics(30, loadedOrders);
   const pagesArray = [];
   for (const [key, value] of Object.entries(ordersLastMonth)) {
@@ -56,20 +56,20 @@ const Activity = () => {
     datasets: [
       {
         fill: true,
-        label: 'Pagini',
+        label: t('charts.pages'),
         data: [],
         color:
           (theme === 'light' && 'rgba(53, 162, 235, 0.8)') ||
           (theme === 'dark' && 'rgba(53, 162, 235, 0.8)') ||
-          (theme === 'default' && 'rgb(53, 162, 235)'),
+          (theme === 'default' && 'rgba(53, 162, 235, 0.8)'),
         borderColor:
-          (theme === 'light' && 'rgb(53, 162, 235)') ||
-          (theme === 'dark' && 'rgb(53, 162, 235)') ||
-          (theme === 'default' && 'rgb(53, 162, 235)'),
+          (theme === 'light' && 'rgba(53, 162, 235)') ||
+          (theme === 'dark' && 'rgba(53, 162, 235)') ||
+          (theme === 'default' && 'rgba(53, 162, 235)'),
         backgroundColor:
-          (theme === 'light' && 'rgb(53, 162, 235)') ||
+          (theme === 'light' && 'rgba(53, 162, 235, 0.4)') ||
           (theme === 'dark' && 'rgba(53, 162, 235, 0.4)') ||
-          (theme === 'default' && 'rgb(53, 162, 235)'),
+          (theme === 'default' && 'rgba(53, 162, 235, 0.4)'),
       },
     ],
   };
@@ -102,7 +102,7 @@ const Activity = () => {
       },
       title: {
         display: true,
-        text: 'Lucrari finalizate in luna curenta',
+        text: t('charts.thisMonthLabel'),
       },
     },
   };

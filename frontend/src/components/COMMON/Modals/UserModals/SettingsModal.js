@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { FileImage } from 'phosphor-react';
+import { useTranslation } from 'react-i18next';
 
 import Button from '../../UIElements/Button';
 import Input from '../../FormElements/Input';
@@ -30,17 +31,19 @@ const SettingsModal = (props) => {
   const [userData, setUserData] = useState({});
   const [successMessage, setSuccessMessage] = useState(null);
 
+  const { t, i18n } = useTranslation();
+
   const imagePicker = useRef();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
       avatar: { value: avatar, isValid: true },
       language: {
-        value: language || 'RO',
+        value: language || 'EN',
         isValid: true,
       },
       theme: {
-        value: theme || 'Default-Implicit',
+        value: theme || 'default',
         isValid: true,
       },
       preferredCurrency: {
@@ -56,10 +59,14 @@ const SettingsModal = (props) => {
   useEffect(() => {
     const getUserData = async () => {
       const responseData = await sendRequest(
-        'http://localhost:8000/user',
+        `${process.env.REACT_APP_BACKEND_URL}/user`,
         'GET',
         null,
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setUserData(responseData.message);
       setFormData(
@@ -70,7 +77,7 @@ const SettingsModal = (props) => {
             isValid: true,
           },
           theme: {
-            value: responseData.message.theme || 'Default-Implicit',
+            value: responseData.message.theme || 'default',
             isValid: true,
           },
           preferredCurrency: {
@@ -124,13 +131,18 @@ const SettingsModal = (props) => {
 
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/user/update`,
+        `${process.env.REACT_APP_BACKEND_URL}/user/update`,
         'POST',
         formData,
-        { Authorization: 'Bearer ' + token }
+        {
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': formState.inputs.language.value,
+        }
       );
-      props.setShowSettings(false);
+
+      i18n.changeLanguage(formState.inputs.language.value);
       setSuccessMessage(responseData.confirmation);
+      props.setShowSettings(false);
       changeContextItem('avatar', responseData.message.filename);
     } catch (error) {}
   };
@@ -146,6 +158,7 @@ const SettingsModal = (props) => {
       {!successMessage && (
         <Modal
           small
+          className="settingsModal"
           form
           method="POST"
           enctype="multipart/form-data"
@@ -161,10 +174,8 @@ const SettingsModal = (props) => {
             props.setShowSettings(false);
             props.setPreview(null);
           }}
-          header={'setari de profil'}
-          footer={`Profil modificat ultima dată la: ${new Date(
-            userData.updatedAt
-          ).toLocaleString(language)}`}
+          header={t('modals.user.settings.header')}
+          footer={t('modals.user.settings.accountType')}
           onSubmit={submitHandler}
         >
           {isLoading && <LoadingSpinner asOverlay />}
@@ -175,7 +186,7 @@ const SettingsModal = (props) => {
                   src={
                     props.preview
                       ? props.preview
-                      : `http://localhost:8000/uploads/avatars/${formState.inputs.avatar.value}`
+                      : `${process.env.REACT_APP_BACKEND_URL}/uploads/avatars/${formState.inputs.avatar.value}`
                   }
                   alt="PROFILE IMAGE"
                 />
@@ -206,7 +217,7 @@ const SettingsModal = (props) => {
                 className="profileInput"
                 id="language"
                 element="select"
-                label="Limba selectată"
+                label={t('modals.user.settings.language')}
                 onInput={inputHandler}
                 validators={[]}
               >
@@ -228,7 +239,7 @@ const SettingsModal = (props) => {
                 className="profileInput"
                 id="preferredCurrency"
                 element="select"
-                label="Moneda preferată"
+                label={t('modals.user.settings.currency')}
                 onInput={inputHandler}
                 validators={[]}
               >
@@ -251,7 +262,7 @@ const SettingsModal = (props) => {
                 className="profileInput"
                 id="theme"
                 element="select"
-                label="Temă"
+                label={t('modals.user.settings.theme')}
                 onInput={inputHandler}
                 validators={[]}
               >
@@ -270,7 +281,7 @@ const SettingsModal = (props) => {
           </div>
           <div className="profileActions">
             <Button primary type="submit">
-              Salvează
+              {t('buttons.saveBtn')}
             </Button>
           </div>
         </Modal>

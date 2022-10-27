@@ -10,12 +10,14 @@ import Backdrop from './Backdrop';
 import styles from './Modal.module.css';
 
 const ModalOverlay = (props) => {
-  const { theme } = useContext(AuthContext);
+  const { theme, token } = useContext(AuthContext);
   const content = (
     <div
       className={`${styles.overlay} ${props.className} ${
         props.small && styles.small
-      } ${props.medium && styles.medium} ${styles[`${theme}Overlay`]}`}
+      } ${props.medium && styles.medium} ${styles[`${theme}Overlay`]} ${
+        !token && styles.noUserOverlay
+      }`}
     >
       <header className={`${styles.header} ${props.className}`}>
         <div className={styles.title}>{props.header}</div>

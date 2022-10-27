@@ -13,10 +13,10 @@
 
 /* THEMING */
 .defaultOrderItem {
-  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.5);
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
-.defaultOrderItem {
-  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.5);
+.lightOrderItem {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 .darkOrderItem {
   background: rgba(var(--SMARALD-MEDIUIM-RGB), 0.5);

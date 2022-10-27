@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+
 import ErrorModal from '../MessageModals/ErrorModal';
 import SuccessModal from '../MessageModals/SuccessModal';
 import Modal from '../../UIElements/Modal';
@@ -18,23 +20,25 @@ import EditInvoiceOrders from './EditInvoiceOrders';
 import { formatCurrency } from '../../../../utilities/format-currency';
 
 const EditInvoice = (props) => {
-  const { token, language } = useContext(AuthContext);
+  const { token, language, theme } = useContext(AuthContext);
   const [successMessage, setSuccessMessage] = useState();
   const [invoiceOrders, setInvoiceOrders] = useState([]);
   const [ordersEdited, setOrdersEdited] = useState([]);
   const [ordersDeleted, setOrdersDeleted] = useState([]);
   const [totalInvoiceTouched, setTotalInvoiceTouched] = useState(false);
 
+  const { t } = useTranslation();
+
   const [totalInvoice, setTotalInvoice] = useState(
     props.invoiceData.invoice.totalInvoice
   );
   const [remainder, setRemainder] = useState(
-    props.invoiceData.invoice.remainder
+    props.invoiceData.invoice.remainder || 0
   );
 
   const { series, number, dueDate, issuedDate, orders } =
     props.invoiceData.invoice;
-  const { name, currency } = props.invoiceData.client;
+  const { name } = props.invoiceData.client;
 
   const { sendRequest, error, clearError, isLoading } = useHttpClient();
 
@@ -51,10 +55,14 @@ const EditInvoice = (props) => {
     const getOrders = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:8000/orders',
+          `${process.env.REACT_APP_BACKEND_URL}/orders`,
           'GET',
           null,
-          { Authorization: 'Bearer ' + token, Payload: JSON.stringify(orders) }
+          {
+            Authorization: 'Bearer ' + token,
+            'Accept-Language': language,
+            Payload: JSON.stringify(orders),
+          }
         );
         setInvoiceOrders(responseData.message);
       } catch (error) {}
@@ -101,20 +109,24 @@ const EditInvoice = (props) => {
   const undoChanges = async () => {
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/orders',
-        'GET',
+        `${process.env.REACT_APP_BACKEND_URL}/orders',
+        'GET`,
         null,
-        { Authorization: 'Bearer ' + token, Payload: JSON.stringify(orders) }
+        {
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+          Payload: JSON.stringify(orders),
+        }
       );
       setInvoiceOrders(responseData.message);
     } catch (error) {}
 
     try {
       const responseData = await sendRequest(
-        `http://localhost:8000/invoicing/${props.invoiceData.invoice._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/${props.invoiceData.invoice._id}`,
         'GET',
         null,
-        { Authorization: 'Bearer ' + token }
+        { Authorization: 'Bearer ' + token, 'Accept-Language': language }
       );
       setTotalInvoice(responseData.message.totalInvoice);
       setRemainder(responseData.message.remainder);
@@ -127,7 +139,7 @@ const EditInvoice = (props) => {
 
     try {
       const responseData = await sendRequest(
-        'http://localhost:8000/invoicing/modify-invoice',
+        `${process.env.REACT_APP_BACKEND_URL}/invoicing/modify-invoice`,
         'PATCH',
         JSON.stringify({
           invoiceId: props.invoiceData.invoice._id,
@@ -139,7 +151,11 @@ const EditInvoice = (props) => {
           totalInvoice,
           remainder,
         }),
-        { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+          'Accept-Language': language,
+        }
       );
       setSuccessMessage(responseData.message);
       props.onRefresh();
@@ -165,7 +181,7 @@ const EditInvoice = (props) => {
         form
         show={props.show}
         close={closeModalHandler}
-        header="Editeaza factura"
+        header={t('modals.invoicing.edit.header')}
         onSubmit={submitHandler}
       >
         {isLoading && <LoadingSpinner asOverlay />}
@@ -173,7 +189,8 @@ const EditInvoice = (props) => {
           <div className="editInvoice">
             <header>
               <p className="modalTitle">
-                Factura {series} / {number} <span>emisa catre</span> {name}
+                {t('invoicing.invoice.title')} {series} / {number}{' '}
+                <span>{t('modals.invoicing.edit.issuedTo')}</span> {name}
               </p>
             </header>
             <div className="formGroup flexRow">
@@ -182,7 +199,7 @@ const EditInvoice = (props) => {
                 id="issuedDate"
                 element="input"
                 type="date"
-                label="Data emiterii"
+                label={t('invoicing.invoice.issuedDate')}
                 validators={[]}
                 defaultValue={new Date(formState.inputs.issuedDate.value)
                   .toISOString()
@@ -195,7 +212,7 @@ const EditInvoice = (props) => {
                 id="dueDate"
                 element="input"
                 type="date"
-                label="Data scadenta"
+                label={t('invoicing.invoice.maturity')}
                 validators={[]}
                 defaultValue={new Date(formState.inputs.dueDate.value)
                   .toISOString()
@@ -209,11 +226,11 @@ const EditInvoice = (props) => {
               <table className="table invoicingTable">
                 <thead>
                   <tr style={{ textAlign: 'left' }}>
-                    <th>Serviciu/Ref.</th>
-                    <th>Cantitate</th>
-                    <th>Tarif</th>
-                    <th>Total</th>
-                    <th>Optiuni</th>
+                    <th>{t('modals.invoicing.edit.jobRef')}</th>
+                    <th>{t('invoicing.invoice.qty')}</th>
+                    <th>{t('orders.rate')}</th>
+                    <th>{t('orders.total')}</th>
+                    <th>{t('modals.invoicing.edit.options')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -237,7 +254,7 @@ const EditInvoice = (props) => {
                       colSpan="5"
                       style={{ textAlign: 'right', paddingTop: '50px' }}
                     >
-                      Total
+                      {t('invoicing.invoice.value')}
                     </td>
                     <td
                       style={{
@@ -246,7 +263,10 @@ const EditInvoice = (props) => {
                       }}
                     >
                       <input
-                        style={{ textAlign: 'center' }}
+                        style={{
+                          textAlign: 'center',
+                          background: theme === 'dark' && 'black',
+                        }}
                         type="text"
                         step="0.01"
                         value={totalInvoice}
@@ -256,7 +276,7 @@ const EditInvoice = (props) => {
                           setRemainder(
                             props.invoiceData.invoice.totalInvoice -
                               +e.target.value +
-                              props.invoiceData.invoice.remainder
+                              (props.invoiceData.invoice.remainder || 0)
                           );
                         }}
                       />
@@ -270,7 +290,7 @@ const EditInvoice = (props) => {
                     }}
                   >
                     <td colSpan="5" style={{ textAlign: 'right' }}>
-                      Rest de platit
+                      {t('invoicing.invoice.remainder')}
                     </td>
                     <td>
                       {formatCurrency(
@@ -286,20 +306,14 @@ const EditInvoice = (props) => {
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <h5>IMPORTANT</h5>
-              <p>
-                - Modificarea articolelor individuale recalculeaza totalul, insa
-                nu afecteaza restul de platit (AJUSTARI).
-              </p>
-              <p>
-                - Modificarea totalului dezactiveaza optiunile articolelor
-                individuale si afecteaza restul de platit (INCASARE PARTIALA).
-              </p>
+              <h5>{t('modals.invoicing.edit.important')}</h5>
+              <p>{t('modals.invoicing.edit.note1')}</p>
+              <p>{t('modals.invoicing.edit.note2')}</p>
             </div>
 
             <div className="formActions">
               <Button primary type="submit">
-                SALVEAZA
+                {t('buttons.saveBtn')}
               </Button>
             </div>
           </div>

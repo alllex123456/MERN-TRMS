@@ -12,11 +12,13 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  border-radius: 3px;
   margin: 0.1rem;
   padding: 0.1rem;
 }
 
+.clientItem > *:first-child {
+  border-radius: 5px 5px 0 0;
+}
 .clientItemIcon {
   color: var(--ELECTROMAGNETIC);
   opacity: 0.5;
@@ -76,6 +78,8 @@
 }
 
 .rateGroup {
+  font-size: 1.2rem;
+  font-weight: 600;
   display: flex;
   gap: 2rem;
   justify-content: center;
@@ -83,13 +87,22 @@
 
 /* THEMING */
 .defaultClientItem {
-  border-bottom: 2px solid var(--BLUE-MEDIUM);
+  border-bottom: 2px solid var(--BLUE-LIGHT);
+}
+.defaultClientItem > * {
+  background: rgba(var(--ITEM-BACKGROUNDS-RGB), 0.05);
 }
 
 .lightClientItem {
   border-bottom: 2px solid var(--BLUE-MEDIUM);
 }
+.lightClientItem > * {
+  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.03);
+}
 
 .darkClientItem {
   border-bottom: 2px solid var(--BLUE-MEDIUM);
+}
+.darkClientItem > * {
+  background: rgba(var(--SMARALD-MEDIUM-RGB), 0.3);
 }
